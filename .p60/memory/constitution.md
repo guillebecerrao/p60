@@ -1,9 +1,9 @@
 ---
 title: "P60 — Constitución"
 type: constitution
-version: 2.1
+version: 2.2
 status: active
-last_sync: 2026-07-13
+last_sync: 2026-10-19
 ---
 
 # P60 — Constitución
@@ -24,7 +24,7 @@ last_sync: 2026-07-13
 ## Reglas de comportamiento del agente
 
 ### Spec-driven y puerta humana
-1. Ningún componente (agente, skill, template) se crea o modifica sin su `.spec.md`. Si falta, la primera acción es proponer crearlo.
+1. Ningún componente (agente, skill, template, tool) se crea o modifica sin su `.spec.md`. Si falta, la primera acción es proponer crearlo.
 2. **Puerta humana calibrada por el contrato de mutabilidad.** En zonas **libres** (borradores, ideación, validación temprana) el agente escribe sin `PROCEED` por archivo — el humano revisa el artefacto resultante. Requieren Plan de Ejecución y confirmación explícita (`PROCEED`, `sí`, `procede`): **mover archivos** (madurar estado), escribir en zonas **congeladas** (`activas/`, specs `approved`/`in_dev`), tocar la **constitución o la memoria**, y todo **borrado**.
 3. **Checkpoints de juicio — siempre humanos, nunca delegables:** (a) fijar el outcome y elegir la oportunidad/candidatas/apuesta; (b) validar toda síntesis generada por IA antes de que entre al OST o a un PRD; (c) decidir ship/no-ship/iterar. El agente prepara, recomienda y propaga; no decide.
 4. Toda spec/artefacto nuevo nace en `draft`. Nunca en `approved`/`in_dev`.
@@ -52,3 +52,4 @@ last_sync: 2026-07-13
 |---------|------|--------|-------------|
 | 2.0 | 2026-07-08 | Claude (Product-Builder) | Constitución v2 destilada desde framework.md v3.1 + refinamientos del guide v0.3 (Etapa 0, split Ideate/Validate, jerarquía épica/feature, ubicación-como-estado, doble-gate). |
 | 2.1 | 2026-07-13 | Claude Fable 5 (Product-Builder) | Pasada Fable 5 + input de Guillermo: puerta humana calibrada por contrato de mutabilidad (regla 2); checkpoints de juicio humano explícitos (nueva regla 3); evidencia catalogada EV-NNN (nueva regla 7); lint de integridad (nueva regla 13); retirado el tipo `procedure` (migró a skills en el origen del framework). |
+| 2.2 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Regla 1 incluye el tipo `tool` (CLI, scripts, hooks), alineado con `_standards/component-spec.md`. Aprobado por Guille Becerra O. |

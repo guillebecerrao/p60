@@ -19,6 +19,7 @@ Es la **fuente del framework P60** (descriptor técnico: *End-to-End Spec-Driven
 | Ejecutar una tarea concreta | `skills/_index.md` → el `SKILL.md` que corresponda |
 | El template de un context-repo o de un artefacto | `templates/` |
 | Verificar la integridad del repo | `tools/p60-lint.sh` |
+| El contrato del CLI (instalar, init, update) | `tools/_specs/p60-cli.spec.md` |
 | Decisiones estructurales del framework | `docs/adr/` |
 | El estándar de un componente (`.spec.md`) | `_standards/component-spec.md` |
 | El estándar de un skill (`SKILL.md`) | `skills/_standards/SKILL-format.md` |
