@@ -28,7 +28,7 @@ mkdir mi-producto && cd mi-producto                    # o una carpeta que ya te
 claude                                                  # ábrelo siempre desde esta carpeta (la raíz)
 ```
 
-`init` muestra primero un **plan** (qué crea, qué fusiona, qué ya existe) y no reemplaza nada tuyo sin preguntar. Con `--dry-run` solo muestra el plan. Si la carpeta no tenía git, lo inicializa con un commit; si ya tenía, deja los cambios para que los revises.
+`init` muestra primero un **plan** (qué crea, qué fusiona, qué ya existe) y no reemplaza nada tuyo sin preguntar. Con `--dry-run` solo muestra el plan. Si la carpeta no tenía git, lo inicializa con un commit; si ya tenía, deja los cambios para que los revises. También puedes instalarlo dentro del repo de código de un proyecto chico (una landing, por ejemplo): `init` te avisa y sugiere un repo separado, pero continúa, porque todo queda en `p60/` sin mezclarse con el código.
 
 El contenido del repo se genera en el idioma elegido; los nombres de carpetas son estructura canónica del framework y no cambian entre idiomas.
 

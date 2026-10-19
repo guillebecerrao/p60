@@ -5,7 +5,7 @@ author: Guille Becerra O
 created: 2026-07-08
 last_modified: 2026-07-14
 last_modified_by: Claude Fable 5 (Product-Builder)
-version: 0.5
+version: 0.6
 status: draft
 audience: PM · Product Designer · Technical Lead · Solo-builder
 language: es
@@ -66,14 +66,14 @@ Esto le garantiza al agente — y al equipo humano — el contexto correcto, en 
 
 P60 se compone de seis piezas que se refuerzan entre sí: **(a)** una topología de repositorios, **(b)** una Etapa 0 de fundación, **(c)** un pipeline de sub-procesos, **(d)** un sistema de documentación con lifecycle físico, **(e)** una capa agéntica (agentes, skills, memoria) y **(f)** una capa de cadencia (giro, filtro, goteo).
 
-### 2.a — Topología: el contexto siempre vive en su propio repo
+### 2.a — Topología: el contexto vive en su propia carpeta, por defecto en su propio repo
 
-P60 —el contexto— vive **siempre en un repositorio autocontenido, separado del código**. No comparte repo con la implementación, sin excepciones.
+P60 —el contexto— vive **autocontenido en una carpeta `p60/`**, y **por defecto en un repositorio propio, separado del código**. Para proyectos chicos (una landing, un prototipo) se acepta instalarlo dentro del codebase: `p60 init` lo advierte y sugiere el repo separado, pero no lo impide. En los dos casos el contexto no se mezcla con el código, porque todo vive en `p60/`.
 
 | Repo | Contiene |
 |------|----------|
 | **Context repo (P60)** | Discovery, specs, evidencia, artefactos del framework. El "OS del producto", autocontenido. |
-| **Codebase repo(s)** | Código fuente. Uno o más, según arquitectura. Viven por separado. |
+| **Codebase repo(s)** | Código fuente. Uno o más, según arquitectura. Por defecto viven por separado; en proyectos chicos pueden alojar la carpeta `p60/`. |
 
 Que el contexto sea autocontenido garantiza que cualquier sesión de trabajo tenga todo lo que necesita sin dependencias externas al repo.
 
@@ -224,3 +224,4 @@ P60 se adapta a un dominio nuevo sin reescribirse:
 | 0.3 | 2026-07-08 | Claude (Product-Builder) | Feedback de Guillermo: matiz de evidencia raíz reformulado — no es "de negocio y no de usuario", sino "más amplia que el research de usuario": ancla en estrategia de negocio pero también admite mercado y usuario temprano (entrevistas, early adopters, señales de demanda). Nueva fila "Mercado / Usuario temprano" en la tabla de Etapa 0. |
 | 0.4 | 2026-07-13 | Claude Fable 5 (Product-Builder) | Pasada Fable 5 + input de Guillermo: (1) origen del nombre — metáfora V60 (giro=discovery/delivery continuo, filtro=criterio, goteo=cadencia); (2) nueva pieza §2.f capa de cadencia: touchpoint semanal, apetito fijo + circuit breaker, 3 checkpoints de juicio humano, cool-down, vía rápida; (3) sistema de evidencia bibliotecario (fichas EV-NNN) documentado en §2.e; (4) agentes nativos de Claude Code (`.claude/agents/`); (5) cobertura completa de skills en los 6 sub-procesos. |
 | 0.5 | 2026-07-14 | Claude Fable 5 (Product-Builder) | Onboarding: `p60 init` pasa de futuro a operativo (§4), con `fundacion-etapa-0` como pieza agent-driven y `docs/arranque-rapido.md` como guía de capacitación. HTML regenerado y sincronizado a esta versión. i18n operativo en init: `--lang es\|en\|pt` (pt-BR) — contenido localizado, carpetas canónicas. |
+| 0.6 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | §2.a: el contexto vive en `p60/`; repo propio por defecto, dentro del codebase como opción aceptada con advertencia (constitución 2.3). |

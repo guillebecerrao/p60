@@ -244,8 +244,8 @@
       <h2><span class="n">2</span> Core Concepts</h2>
       <p>P60 se compone de seis piezas que se refuerzan entre sí: <strong>(a)</strong> una topología de repositorios, <strong>(b)</strong> una Etapa&nbsp;0 de fundación, <strong>(c)</strong> un pipeline de sub-procesos, <strong>(d)</strong> un sistema de documentación con lifecycle físico, <strong>(e)</strong> una capa agéntica y <strong>(f)</strong> una capa de cadencia (giro, filtro, goteo).</p>
 
-      <h3><span class="tag">2.a</span> Topología: el contexto siempre vive en su propio repo</h3>
-      <p>P60 —el contexto— vive <strong>siempre en un repositorio autocontenido, separado del código</strong>. No comparte repo con la implementación, sin excepciones.</p>
+      <h3><span class="tag">2.a</span> Topología: el contexto vive en su propia carpeta, por defecto en su propio repo</h3>
+      <p>P60 —el contexto— vive <strong>autocontenido en una carpeta <code>p60/</code></strong>, y <strong>por defecto en un repositorio propio, separado del código</strong>. Para proyectos chicos (una landing, un prototipo) se acepta instalarlo dentro del codebase: <code>p60 init</code> lo advierte y sugiere el repo separado, pero no lo impide. En los dos casos el contexto no se mezcla con el código, porque todo vive en <code>p60/</code>.</p>
       <div class="tw"><table>
         <tr><th>Repo</th><th>Contiene</th></tr>
         <tr><td><strong>Context repo (P60)</strong></td><td>Discovery, specs, evidencia, artefactos del framework. El "OS del producto", autocontenido.</td></tr>

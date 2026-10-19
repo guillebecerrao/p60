@@ -1,7 +1,7 @@
 ---
 component: p60-cli
 type: tool
-version: 0.3
+version: 0.4
 status: draft
 agent_role: architect
 last_sync: 2026-10-19
@@ -42,7 +42,7 @@ Instalar, instanciar y actualizar P60 de forma determinística: dejar el framewo
 
 ### Layout que produce `init`
 
-Todo P60 vive en **una carpeta visible `p60/`** dentro de RUTA. Es el mismo layout para un context repo dedicado y (si se habilita, ver Pendientes) para un codebase. Lo único fuera de `p60/` es lo que la herramienta exige en la raíz.
+Todo P60 vive en **una carpeta visible `p60/`** dentro de RUTA. Es el mismo layout para un context repo dedicado y para un codebase. Lo único fuera de `p60/` es lo que la herramienta exige en la raíz.
 
 ```
 <RUTA>/
@@ -121,7 +121,7 @@ Cada herramienta es un adaptador con tres funciones: `plan` (qué crearía o fus
 1. **Autocontenido:** ningún archivo del context repo contiene rutas absolutas ni symlinks hacia fuera del repo.
 2. **No destructivo:** `init` nunca reemplaza un archivo existente del equipo. Fuera de `p60/` solo se toca `CLAUDE.md` de la raíz (bloque `<!-- P60:BEGIN -->…<!-- P60:END -->` que apunta a `p60/CLAUDE.md`) y `.claude/`. El `README.md` de la raíz no se toca. `settings.json` se fusiona como JSON, sin sobrescribir.
 3. **Colisiones:** agente o skill con el mismo nombre, hook ya registrado o `p60/` existente → se listan en el plan. En modo interactivo se pregunta; con `--yes` o sin TTY, aborta (exit 2). Si `p60/_framework/` ya existe, `init` se niega y sugiere `update`.
-4. **Git condicional:** si RUTA no está dentro de un repo git → `git init` + commit inicial. Si ya está en un repo → no commitea; informa qué agregó. Si RUTA es o está dentro de un repo *de código*, el comportamiento depende de la decisión pendiente P1 (ver Pendientes).
+4. **Git condicional:** si RUTA no está dentro de un repo git → `git init` + commit inicial. Si ya está en un repo → no commitea; informa qué agregó. Si RUTA es o está dentro de un repo *de código* (marcadores como `package.json`, `pyproject.toml`, `src/`), el plan muestra una advertencia con la sugerencia de usar un repo separado y la instalación continúa (constitución 2.3, principio 3).
 5. **Idempotencia:** re-ejecutar `init` o `update` sin cambios no modifica nada.
 6. **i18n:** todo mensaje nuevo existe en es/en/pt. Las carpetas no se traducen.
 7. **Sin privilegios:** nada usa sudo ni edita archivos de shell.
@@ -129,10 +129,6 @@ Cada herramienta es un adaptador con tres funciones: `plan` (qué crearía o fus
 
 ### Códigos de salida
 `0` ok · `1` error · `2` requiere confirmación (colisión en modo no interactivo) · `3` prerequisito faltante.
-
-## Pendientes (decisión humana)
-
-- **P1 — P60 dentro de un codebase.** El principio 3 de la constitución dice "el contexto vive en un repo autocontenido, separado del código. Sin excepción de mono-repo". Mientras no se enmiende, `init` sobre un repo de código **avisa y se niega** (exit 2), con `--allow-codebase` reservado para cuando el principio lo permita. Si se enmienda: `init` avisa y continúa.
 
 ## Criterios de aceptación
 
@@ -172,6 +168,7 @@ Cada herramienta es un adaptador con tres funciones: `plan` (qué crearía o fus
 - **Manifiesto con hashes** como frontera de propiedad: permite actualizar sin pisar ediciones locales y sin pedirle al equipo que no toque nada.
 - **CLI solo global; el repo registra la versión.** Una copia del CLI dentro de cada repo agregaba un segundo lugar que se desincroniza. El trabajo diario no necesita el CLI (solo Claude Code); solo `init` y `update` lo requieren.
 - **La carpeta es el context repo** (no `<producto>-context` creado al lado). Coincide con cómo se trabaja en la práctica (crear la carpeta y abrir la herramienta) y habilita instalar sobre una carpeta que ya existe.
+- **Codebase permitido con advertencia** (P1, resuelto): con todo dentro de `p60/`, alojar el contexto en un codebase chico no mezcla contexto y código. Se advierte porque, para productos que crecen o equipos que comparten contexto, el repo separado sigue siendo mejor.
 - **Sin prefijo en agentes y skills.** La carpeta es dedicada al producto, así que las colisiones son raras y se resuelven en el plan. El prefijo obligaba a renombrar referencias en el registry y los skills sin un beneficio práctico.
 - **Skills solo en la carpeta de la herramienta** (no también en `p60/_framework/skills/`): evita duplicar. La fuente para generar adaptadores futuros es la instalación global, no el context repo.
 - **`--dry-run` como base de la puerta humana del instalador:** el agente de `install.md` nunca escribe archivos; muestra el plan del CLI, pide confirmación y ejecuta.
@@ -182,3 +179,4 @@ Cada herramienta es un adaptador con tres funciones: `plan` (qué crearía o fus
 | 0.1 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Creación (draft). Contrato v2 del CLI: instalación global, init sobre carpeta existente, vendorizado en `.p60/`, manifiesto, update, adaptadores multi-herramienta. Decisiones D1–D6 de Guille Becerra O. |
 | 0.2 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Layout: todo dentro de una carpeta visible `p60/` (framework en `p60/_framework/`); fuera solo `.claude/` y un bloque en `CLAUDE.md`. Rutas explícitas `p60/…` en skills. Pendiente P1 (codebase vs. principio 3). |
 | 0.3 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Implementadas fases 1 y 2 en `tools/p60` (init portable sobre carpeta nueva o existente, plan/`--dry-run`, colisiones, git condicional, manifiesto). Criterios verificados con pruebas en carpetas desechables y descubrimiento real en Claude Code. Pendiente: P1, fases 3–4, prueba del flujo interactivo de colisiones con terminal real. |
+| 0.4 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | P1 resuelto: `init` en un codebase advierte y sugiere repo separado, pero continúa (constitución 2.3). |

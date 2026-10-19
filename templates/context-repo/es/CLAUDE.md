@@ -6,7 +6,7 @@
 
 ## Qué es este repo
 
-El **sistema operativo de producto** de [PRODUCTO]: discovery, specs, evidencia y decisiones. Separado del código (la implementación vive en su propio repo — ver ADR-001 del framework). El agente construye contexto aquí y el código allá.
+El **sistema operativo de producto** de [PRODUCTO]: discovery, specs, evidencia y decisiones. Todo vive en `p60/`, sin mezclarse con código: por defecto el código está en otro repo; si este proyecto también lo aloja, el código vive fuera de `p60/` (ver ADR-001 del framework). El agente construye contexto en `p60/` y el código en su lugar.
 
 ## Estado del ciclo (actualizar al cerrar cada sub-proceso)
 

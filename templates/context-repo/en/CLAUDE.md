@@ -6,7 +6,7 @@
 
 ## What this repo is
 
-The **product operating system** of [PRODUCTO]: discovery, specs, evidence and decisions. Separate from the code (implementation lives in its own repo — see framework ADR-001). The agent builds context here and code there.
+The **product operating system** of [PRODUCTO]: discovery, specs, evidence and decisions. Everything lives in `p60/`, never mixed with code: by default the code is in another repo; if this project also hosts it, the code lives outside `p60/` (see framework ADR-001). The agent builds context in `p60/` and code where it belongs.
 
 > **Note:** folder names are canonical framework structure (part of the pipeline logic) and are not translated. Content is in English.
 

@@ -128,9 +128,12 @@ m() {
     en:installed)  f="P60 is already installed here (p60/_framework/ exists). To update it: p60 update";;
     pt:installed)  f="O P60 já está instalado aqui (p60/_framework/ existe). Para atualizar: p60 update";;
     *:installed)   f="P60 ya está instalado aquí (existe p60/_framework/). Para actualizarlo: p60 update";;
-    en:codebase)   f="This looks like a code repository (%s). P60's constitution (principle 3) keeps product context in its own repo, separate from the code. Create a folder for the context repo and run p60 init there.";;
-    pt:codebase)   f="Isto parece um repositório de código (%s). A constituição do P60 (princípio 3) mantém o contexto de produto num repo próprio, separado do código. Crie uma pasta para o context repo e rode p60 init nela.";;
-    *:codebase)    f="Esto parece un repositorio de código (%s). La constitución de P60 (principio 3) mantiene el contexto de producto en un repo propio, separado del código. Crea una carpeta para el context repo y corre p60 init ahí.";;
+    en:codebase)   f="  ! This looks like a code repository (%s). It works: everything stays in p60/, apart from the code.\n    Suggestion: for a product that will grow or a team that shares context, a separate repo works better (P60 principle 3)."
+                   ;;
+    pt:codebase)   f="  ! Isto parece um repositório de código (%s). Funciona: tudo fica em p60/, separado do código.\n    Sugestão: para um produto que vai crescer ou um time que compartilha contexto, um repo separado funciona melhor (princípio 3 do P60)."
+                   ;;
+    *:codebase)    f="  ! Esto parece un repositorio de código (%s). Funciona: todo queda en p60/, aparte del código.\n    Sugerencia: para un producto que va a crecer o un equipo que comparte contexto, conviene un repo separado (principio 3 de P60)."
+                   ;;
   esac
   # shellcheck disable=SC2059
   printf "$f\n" "$@"
@@ -239,7 +242,7 @@ with open(os.path.join(root, 'p60/_framework/manifest.json'), 'w') as fh:
 EOF
 }
 
-# Marcadores típicos de un repo de código (para la regla del principio 3).
+# Marcadores típicos de un repo de código (advertencia del principio 3: se permite, se sugiere repo aparte).
 marcador_codigo() { # $1=carpeta → imprime el primer marcador encontrado
   local d="$1" x
   for x in package.json pyproject.toml requirements.txt go.mod Cargo.toml pom.xml build.gradle Gemfile composer.json src app; do
@@ -431,11 +434,7 @@ cmd_init() {
   if [ -n "$colisiones" ]; then
     say ""; m col_h; for a in $colisiones; do say "  ! $a"; done
   fi
-  if [ -n "$codigo" ]; then
-    say ""; m codebase "$codigo" >&2
-    [ "$dry" -eq 1 ] && m dry
-    exit 2
-  fi
+  if [ -n "$codigo" ]; then say ""; m codebase "$codigo"; fi
   if [ "$dry" -eq 1 ]; then say ""; m dry; exit 0; fi
 
   # ── Confirmaciones (puerta humana) ──

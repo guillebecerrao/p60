@@ -5,7 +5,7 @@ status: accepted
 scope: framework
 decision_owner: Guille Becerra O (Product Builder)
 created: 2026-07-13
-last_modified: 2026-07-13
+last_modified: 2026-10-19
 supersedes: []
 ---
 
@@ -15,7 +15,7 @@ supersedes: []
 
 ## Contexto
 
-El contexto vive en un repo autocontenido separado del código (principio constitucional #3). El sub-proceso **Build** ocurre en el/los repo(s) de código. Falta definir cómo cruzan la frontera las specs congeladas (Iteration PRDs en `activas/`): ¿puntero, copia, submodule, MCP?
+El contexto vive autocontenido en `p60/`, por defecto en un repo separado del código (principio constitucional #3; desde la constitución 2.3 se acepta alojarlo dentro de un codebase chico, con advertencia). El sub-proceso **Build** ocurre en el/los repo(s) de código. Falta definir cómo cruzan la frontera las specs congeladas (Iteration PRDs en `activas/`): ¿puntero, copia, submodule, MCP?
 
 ## Decisión
 
@@ -50,3 +50,4 @@ Reglas que hacen viable este contrato:
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
 | 1.0 | 2026-07-13 | Claude Fable 5 (Product-Builder) | Creación — documenta la interfaz pull-based vigente (input de Guillermo, hallazgo H10 del análisis de mejoras). |
+| 1.1 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Contexto actualizado a la constitución 2.3. Si `p60/` vive dentro del codebase, el contrato no cambia: el constructor toma el Iteration PRD de `p60/…/activas/` como input, la dirección sigue siendo contexto → código, y nadie edita esa copia desde el código. |

@@ -1,7 +1,7 @@
 ---
 title: "P60 — Constitución"
 type: constitution
-version: 2.2
+version: 2.3
 status: active
 last_sync: 2026-10-19
 ---
@@ -15,7 +15,7 @@ last_sync: 2026-10-19
 
 1. **Nada se construye sin spec. Ninguna spec sin evidencia. Todo lo construido se valida.** El loop `Evidencia → Especificación → Implementación → Validación → Aprendizaje` es la ley del framework.
 2. **La evidencia raíz es más amplia que el research de usuario.** Ancla en la estrategia de negocio (Etapa 0) y admite mercado y usuario temprano. Sin fundación, el discovery prioriza en el vacío.
-3. **El contexto vive en un repo autocontenido, separado del código.** Sin excepción de mono-repo.
+3. **El contexto vive autocontenido en su carpeta `p60/`, por defecto en un repo propio separado del código.** Instalarlo dentro de un codebase (p. ej. una landing o un proyecto chico) es una opción aceptada: el framework lo advierte y sugiere el repo separado, pero no lo impide. En ambos casos el contexto no se mezcla con el código: todo vive en `p60/`.
 4. **Fuente única del OST.** Toda oportunidad, solución y spec se traza a un nodo del Opportunity Solution Tree. Nunca se copia ni duplica.
 5. **La ubicación de un artefacto ES su estado.** Cada carpeta declara un contrato de mutabilidad (libre → congelado → respaldo-como-contexto). Madurar = mover físicamente el archivo, no solo cambiar un campo.
 6. **PRD Maestro (épica, vivo) ≠ PRD de feature (validado).** El maestro gobierna; las features se subrogan a él.
@@ -53,3 +53,4 @@ last_sync: 2026-10-19
 | 2.0 | 2026-07-08 | Claude (Product-Builder) | Constitución v2 destilada desde framework.md v3.1 + refinamientos del guide v0.3 (Etapa 0, split Ideate/Validate, jerarquía épica/feature, ubicación-como-estado, doble-gate). |
 | 2.1 | 2026-07-13 | Claude Fable 5 (Product-Builder) | Pasada Fable 5 + input de Guillermo: puerta humana calibrada por contrato de mutabilidad (regla 2); checkpoints de juicio humano explícitos (nueva regla 3); evidencia catalogada EV-NNN (nueva regla 7); lint de integridad (nueva regla 13); retirado el tipo `procedure` (migró a skills en el origen del framework). |
 | 2.2 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Regla 1 incluye el tipo `tool` (CLI, scripts, hooks), alineado con `_standards/component-spec.md`. Aprobado por Guille Becerra O. |
+| 2.3 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Principio 3 enmendado: el contexto vive autocontenido en `p60/`; repo propio por defecto, dentro de un codebase como opción aceptada con advertencia. Decisión de Guille Becerra O. |
