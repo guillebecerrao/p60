@@ -1,0 +1,43 @@
+# Registry data-driven de agentes P60
+# Fuente única de verdad para el scaffolding y la activación de perfiles expertos.
+# Patrón tomado del INTEGRATION_REGISTRY de spec-kit: una entrada declarativa por agente.
+#
+# Descubrimiento nativo (Claude Code): cada agente tiene un wrapper en `.claude/agents/[id].md`
+# (frontmatter name/description) que habilita descubrimiento automático, delegación con contexto
+# aislado y paralelismo. El wrapper carga el system prompt canónico de `agents/[id].md` —
+# fuente única: el contenido vive en `file`, nunca se duplica en el wrapper.
+
+version: 2.1
+last_sync: 2026-07-13
+
+agents:
+  - id: product-builder
+    file: agents/product-builder.md
+    native: .claude/agents/product-builder.md
+    role: apex
+    activate_when: "Orquestación, arquitectura del framework, decisiones cross-componente, evolución técnica del repo"
+    default: true
+
+  - id: product-management
+    file: agents/product-management.md
+    native: .claude/agents/product-management.md
+    role: expert
+    activate_when: "Priorización, briefs, backlog, outcomes, métricas, stakeholder management"
+
+  - id: product-design
+    file: agents/product-design.md
+    native: .claude/agents/product-design.md
+    role: expert
+    activate_when: "UX research, user flows, prototipos, design system, validación de usabilidad"
+
+  - id: software-engineering
+    file: agents/software-engineering.md
+    native: .claude/agents/software-engineering.md
+    role: expert
+    activate_when: "Viabilidad técnica, arquitectura, trade-offs, acceptance criteria, integración con dev"
+
+  - id: spec-driven-development
+    file: agents/spec-driven-development.md
+    native: .claude/agents/spec-driven-development.md
+    role: expert
+    activate_when: "Specs detalladas, acceptance criteria en Gherkin, edge cases, ADRs"

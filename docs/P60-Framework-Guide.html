@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P60 — Framework Guide</title>
+<style>
+  :root{
+    --paper:#faf9f6; --ink:#1a1a1a; --ink-soft:#4a4a4a; --ink-faint:#8a8a83;
+    --line:#e6e3dc; --line-strong:#d4d0c6; --card:#ffffff;
+    --accent:#b45309;           /* amber-800, blueprint-warm */
+    --accent-soft:#fef3e2;
+    --spec:#1e40af;             /* blueprint blue */
+    --spec-soft:#eef2ff;
+    --ok:#15803d; --freeze:#0369a1; --free:#6d28d9;
+    --mono:"SFMono-Regular",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --paper:#12120f; --ink:#eeece4; --ink-soft:#c2beb2; --ink-faint:#8f8b7e;
+      --line:#2a2a24; --line-strong:#3a3a31; --card:#191916;
+      --accent:#f0a850; --accent-soft:#2a2013;
+      --spec:#93b4ff; --spec-soft:#161d33;
+      --ok:#5cc98a; --freeze:#5cb4e0; --free:#b09bf0;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#12120f; --ink:#eeece4; --ink-soft:#c2beb2; --ink-faint:#8f8b7e;
+    --line:#2a2a24; --line-strong:#3a3a31; --card:#191916;
+    --accent:#f0a850; --accent-soft:#2a2013;
+    --spec:#93b4ff; --spec-soft:#161d33;
+    --ok:#5cc98a; --freeze:#5cb4e0; --free:#b09bf0;
+  }
+  :root[data-theme="light"]{
+    --paper:#faf9f6; --ink:#1a1a1a; --ink-soft:#4a4a4a; --ink-faint:#8a8a83;
+    --line:#e6e3dc; --line-strong:#d4d0c6; --card:#ffffff;
+    --accent:#b45309; --accent-soft:#fef3e2;
+    --spec:#1e40af; --spec-soft:#eef2ff;
+    --ok:#15803d; --freeze:#0369a1; --free:#6d28d9;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+    line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px;display:grid;
+    grid-template-columns:210px 1fr;gap:56px}
+  @media(max-width:900px){.wrap{grid-template-columns:1fr;gap:0}}
+
+  /* ---- top bar ---- */
+  .topbar{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--paper) 88%,transparent);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .topbar .inner{max-width:1180px;margin:0 auto;padding:12px 24px;display:flex;
+    align-items:center;justify-content:space-between;gap:16px}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:600;letter-spacing:-.01em}
+  .brand .mark{width:30px;height:30px;border-radius:7px;background:var(--ink);color:var(--paper);
+    display:grid;place-items:center;font-family:var(--mono);font-weight:700;font-size:13px;letter-spacing:-.03em}
+  .brand small{display:block;font-weight:400;font-size:11.5px;color:var(--ink-faint);letter-spacing:.02em}
+  .toggle{border:1px solid var(--line-strong);background:var(--card);color:var(--ink-soft);
+    border-radius:999px;padding:6px 13px;font-size:12.5px;cursor:pointer;font-family:var(--sans)}
+  .toggle:hover{border-color:var(--accent);color:var(--accent)}
+
+  /* ---- side nav ---- */
+  nav.toc{position:sticky;top:78px;align-self:start;height:max-content;padding-top:40px}
+  @media(max-width:900px){nav.toc{display:none}}
+  nav.toc ol{list-style:none;margin:0;padding:0;border-left:2px solid var(--line)}
+  nav.toc a{display:block;padding:6px 0 6px 16px;margin-left:-2px;border-left:2px solid transparent;
+    color:var(--ink-faint);text-decoration:none;font-size:13px;transition:.15s}
+  nav.toc a:hover{color:var(--ink)}
+  nav.toc a.active{color:var(--accent);border-left-color:var(--accent);font-weight:500}
+  nav.toc .kicker{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink-faint);padding-left:16px;margin-bottom:8px}
+
+  /* ---- content ---- */
+  main{padding:40px 0 80px;min-width:0}
+  .hero{border-bottom:1px solid var(--line);padding-bottom:34px;margin-bottom:14px}
+  .hero .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:16px}
+  .hero h1{font-family:var(--serif);font-size:clamp(34px,5vw,52px);line-height:1.04;margin:0 0 12px;
+    letter-spacing:-.02em;font-weight:600}
+  .hero .sub{font-size:18px;color:var(--ink-soft);max-width:60ch;margin:0}
+  .hero .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+  .chip{font-family:var(--mono);font-size:11.5px;border:1px solid var(--line-strong);border-radius:999px;
+    padding:4px 11px;color:var(--ink-faint)}
+  .chip.v{color:var(--accent);border-color:var(--accent)}
+
+  section{padding-top:48px;scroll-margin-top:80px}
+  h2{font-family:var(--serif);font-size:27px;letter-spacing:-.01em;font-weight:600;margin:0 0 4px;
+    display:flex;align-items:baseline;gap:14px}
+  h2 .n{font-family:var(--mono);font-size:14px;color:var(--accent);font-weight:700}
+  h3{font-size:16.5px;font-weight:650;margin:30px 0 10px;letter-spacing:-.01em}
+  h3 .tag{font-family:var(--mono);font-size:11px;color:var(--ink-faint);font-weight:400;margin-right:8px}
+  p{margin:0 0 14px;max-width:70ch}
+  strong{font-weight:650;color:var(--ink)}
+  em{color:var(--ink-soft)}
+  a.inline{color:var(--accent);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--accent) 40%,transparent)}
+
+  .lead{font-size:17.5px;color:var(--ink-soft);max-width:70ch}
+  .lead strong{color:var(--ink)}
+
+  /* callouts */
+  .callout{border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 10px 10px 0;
+    padding:14px 18px;margin:20px 0;font-size:15px}
+  .callout.spec{border-left-color:var(--spec);background:var(--spec-soft)}
+  .callout .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--accent);display:block;margin-bottom:5px}
+  .callout.spec .lbl{color:var(--spec)}
+  .callout p{margin:0;max-width:none}
+
+  /* diagram / code cards */
+  .diagram{background:var(--card);border:1px solid var(--line-strong);border-radius:12px;
+    padding:20px 22px;margin:22px 0;overflow-x:auto}
+  .diagram pre{margin:0;font-family:var(--mono);font-size:12.5px;line-height:1.7;color:var(--ink-soft);white-space:pre}
+  .diagram .cap{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-faint);margin-bottom:12px}
+
+  /* tables */
+  .tw{overflow-x:auto;margin:20px 0;border:1px solid var(--line);border-radius:12px}
+  table{border-collapse:collapse;width:100%;font-size:14px;min-width:520px}
+  th{text-align:left;font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;
+    color:var(--ink-faint);font-weight:600;padding:12px 16px;background:color-mix(in srgb,var(--ink) 3%,var(--card));
+    border-bottom:1px solid var(--line-strong)}
+  td{padding:12px 16px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink-soft)}
+  tr:last-child td{border-bottom:none}
+  td strong{color:var(--ink)}
+  code{font-family:var(--mono);font-size:.86em;background:color-mix(in srgb,var(--ink) 6%,transparent);
+    padding:1px 5px;border-radius:5px;color:var(--ink)}
+  .pill{font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:999px;white-space:nowrap;font-weight:600}
+  .pill.free{color:var(--free);background:color-mix(in srgb,var(--free) 12%,transparent)}
+  .pill.freeze{color:var(--freeze);background:color-mix(in srgb,var(--freeze) 12%,transparent)}
+  .pill.backup{color:var(--ink-faint);background:color-mix(in srgb,var(--ink-faint) 14%,transparent)}
+
+  /* pipeline strip */
+  .pipe{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0}
+  .pipe .step{flex:1;min-width:120px;background:var(--card);border:1px solid var(--line-strong);
+    border-radius:10px;padding:12px 13px;position:relative}
+  .pipe .step .k{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+  .pipe .step .t{font-weight:650;font-size:14px;margin:3px 0 2px}
+  .pipe .step .d{font-size:12px;color:var(--ink-faint);line-height:1.45}
+  .pipe .step.zero{border-color:var(--accent);border-style:dashed}
+
+  ol.steps{counter-reset:s;list-style:none;padding:0;margin:16px 0}
+  ol.steps li{position:relative;padding:0 0 16px 44px;margin:0}
+  ol.steps li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:-2px;
+    width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--paper);
+    display:grid;place-items:center;font-family:var(--mono);font-size:13px;font-weight:700}
+  ol.steps li.z::before{content:"0";background:var(--accent)}
+  ol.steps b{color:var(--ink)}
+
+  ul.clean{list-style:none;padding:0;margin:14px 0}
+  ul.clean li{padding:8px 0 8px 24px;position:relative;border-bottom:1px solid var(--line);color:var(--ink-soft)}
+  ul.clean li:last-child{border-bottom:none}
+  ul.clean li::before{content:"→";position:absolute;left:0;color:var(--accent);font-family:var(--mono)}
+  ul.clean b{color:var(--ink)}
+
+  footer{margin-top:64px;border-top:1px solid var(--line);padding-top:24px;text-align:center}
+  footer .meta{font-size:12px;color:var(--ink-faint);line-height:1.7}
+  footer .ai{font-family:var(--mono);font-size:11px;color:var(--ink-faint);margin-top:10px;letter-spacing:.03em}
+  .src{font-family:var(--mono);font-size:11.5px;color:var(--ink-faint)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="inner">
+    <div class="brand">
+      <span class="mark">P60</span>
+      <span>P60 — Framework Guide<small>AI-Native Spec-Driven Product Building</small></span>
+    </div>
+    <button class="toggle" id="tgl">◐ Tema</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <nav class="toc">
+    <div class="kicker">Contenido</div>
+    <ol>
+      <li><a href="#brief">Brief</a></li>
+      <li><a href="#intro">1 · Introducción</a></li>
+      <li><a href="#core">2 · Core Concepts</a></li>
+      <li><a href="#workflow">3 · Workflow típico</a></li>
+      <li><a href="#ext">4 · Extensibilidad</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <div class="hero" id="top">
+      <div class="eyebrow">Framework Guide · v0.5 · borrador</div>
+      <h1>P60</h1>
+      <p class="sub">Lleva todo el trabajo de un Product Leader —descubrir, priorizar, validar, especificar— a un repositorio de git operado con agentes de IA.</p>
+      <div class="meta">
+        <span class="chip">End-to-End Spec-Driven Product Building</span>
+        <span class="chip">PM · Designer · Tech Lead · Solo-builder</span>
+        <span class="chip v">es · 2026-07-14</span>
+      </div>
+    </div>
+
+    <!-- BRIEF -->
+    <section id="brief">
+      <h2><span class="n">§</span> Brief</h2>
+      <p class="lead"><strong>P60 es un framework que lleva todo el trabajo de un Product Leader —descubrir oportunidades, priorizar, validar soluciones y especificar con precisión— a un repositorio de git operado con agentes de IA.</strong> El resultado es un sistema operativo del producto que vive donde vive el código, sin Jira ni Notion obligatorios. Está pensado para tríadas de producto (PM&nbsp;+&nbsp;Designer&nbsp;+&nbsp;Engineer) y para el solo-builder que cubre los tres roles con agentes. Importa porque resuelve el problema que la era de la IA dejó abierto: no <em>cómo construir rápido</em> (eso ya está resuelto), sino <strong>qué construir, por qué eso, y cómo darle al agente el contexto correcto para que construya lo que de verdad importa.</strong></p>
+    </section>
+
+    <!-- 1 INTRO -->
+    <section id="intro">
+      <h2><span class="n">1</span> Introducción — Contexto y filosofía</h2>
+
+      <h3>El problema que P60 resuelve</h3>
+      <p>La comunidad de IA ya resolvió el "cómo construir rápido". Con Claude Code, Cursor o cualquier LLM con acceso a un shell, un solo builder produce en horas lo que antes tomaba semanas. Ese cuello de botella desapareció.</p>
+      <p>El que <strong>no</strong> está resuelto es el que va antes: <em>¿qué construyo, por qué eso y no otra cosa, y cómo le paso al agente el contexto suficiente para que lo que construya realmente impacte al usuario en la dirección que le importa al negocio?</em> En la mayoría de los equipos esto sigue siendo informal, ad-hoc e inconsistente. Cuando el que construye es un agente, la ambigüedad se amplifica: un agente con contexto pobre construye rápido — la cosa equivocada.</p>
+
+      <h3>El nombre: la V60 de producto</h3>
+      <p><strong>P60 hereda su nombre de la V60</strong> — la cafetera de filtrado manual con su cono de 60 grados. La <strong>P</strong> es de producto. La metáfora es el modelo operativo del framework:</p>
+      <ul class="clean">
+        <li><b>Los giros constantes</b> al verter el agua son el <b>discovery y delivery continuos</b>: nunca se detienen, se alternan en espiral durante todo el ciclo.</li>
+        <li><b>El filtro</b> es el <b>criterio</b>: no todo lo que se vierte pasa — la evidencia, los umbrales y el juicio humano filtran qué llega a construirse.</li>
+        <li><b>El goteo</b> es la <b>cadencia</b>: el valor sale en entregables regulares y acotados, no en una gran entrega al final.</li>
+      </ul>
+      <div class="callout">
+        <span class="lbl">La metáfora</span>
+        <p>Café bien hecho no es agua vertida rápido: es giro constante, filtro que discrimina y goteo sostenido. Producto bien hecho, igual.</p>
+      </div>
+
+      <h3>La filosofía: nada se construye sin spec, ninguna spec sin evidencia</h3>
+      <p>P60 parte de un principio de <strong>Spec-Driven Development (SDD)</strong>: la especificación es el artefacto central que guía diseño, implementación y validación. Y toda spec se respalda en evidencia. El ciclo completo es un loop de aprendizaje:</p>
+      <div class="diagram">
+        <div class="cap">El loop central</div>
+<pre>   Evidencia ──▶ Especificación ──▶ Implementación ──▶ Validación
+       ▲                                                    │
+       └──────────────────── Aprendizaje ───────────────────┘</pre>
+      </div>
+      <div class="callout spec">
+        <span class="lbl">Principio</span>
+        <p><strong>Nada se construye sin spec. Ninguna spec se escribe sin evidencia. Todo lo construido se valida.</strong></p>
+      </div>
+      <p>Esto le garantiza al agente —y al equipo humano— el contexto correcto, en el momento correcto, para construir lo correcto. El repositorio no es un archivo de documentos: es el <strong>sistema de contexto compartido</strong> del squad, y crece con cada ciclo.</p>
+
+      <h3>Un matiz fundamental: la evidencia raíz es más amplia que el research de usuario</h3>
+      <p>"Ninguna spec sin evidencia" suele reducirse a "ninguna spec sin research de usuario". P60 va un paso atrás: <strong>la evidencia fundacional ancla en la estrategia del negocio</strong> —modelo de negocio, estructura del equipo, estrategia empresarial, objetivos de corto/mediano/largo plazo— <strong>pero no se limita a ella ni excluye al usuario.</strong> El contexto fundante también puede traer evidencia de mercado y de usuario temprano: entrevistas, early adopters, señales de demanda. El punto es que la evidencia es más amplia que el research de usuario, y que sin esa base el discovery prioriza en el vacío. Por eso P60 abre con una <strong>Etapa&nbsp;0 de fundación de contexto</strong> antes de cualquier ciclo de producto.</p>
+    </section>
+
+    <!-- 2 CORE -->
+    <section id="core">
+      <h2><span class="n">2</span> Core Concepts</h2>
+      <p>P60 se compone de seis piezas que se refuerzan entre sí: <strong>(a)</strong> una topología de repositorios, <strong>(b)</strong> una Etapa&nbsp;0 de fundación, <strong>(c)</strong> un pipeline de sub-procesos, <strong>(d)</strong> un sistema de documentación con lifecycle físico, <strong>(e)</strong> una capa agéntica y <strong>(f)</strong> una capa de cadencia (giro, filtro, goteo).</p>
+
+      <h3><span class="tag">2.a</span> Topología: el contexto siempre vive en su propio repo</h3>
+      <p>P60 —el contexto— vive <strong>siempre en un repositorio autocontenido, separado del código</strong>. No comparte repo con la implementación, sin excepciones.</p>
+      <div class="tw"><table>
+        <tr><th>Repo</th><th>Contiene</th></tr>
+        <tr><td><strong>Context repo (P60)</strong></td><td>Discovery, specs, evidencia, artefactos del framework. El "OS del producto", autocontenido.</td></tr>
+        <tr><td><strong>Codebase repo(s)</strong></td><td>Código fuente. Uno o más, según arquitectura. Viven por separado.</td></tr>
+      </table></div>
+      <p>Que el contexto sea autocontenido garantiza que cualquier sesión de trabajo tenga todo lo que necesita sin dependencias externas al repo.</p>
+      <div class="callout">
+        <span class="lbl">Eje ortogonal</span>
+        <p><strong>Cuántas personas operan el repo es una dimensión aparte de la topología.</strong> En el mismo repo puede trabajar un solo Product Builder, una tríada o el squad completo. La estructura no cambia; lo único que escala con el número de personas es el <strong>cuidado con las ramas y las ceremonias</strong> (<code>main</code> ← <code>triada</code> ← <code>[sub-proceso]/ciclo</code>).</p>
+      </div>
+
+      <h3><span class="tag">2.b</span> Etapa 0: Fundación de Contexto</h3>
+      <p>Antes del primer ciclo se configura la base. Es la evidencia raíz a la que todo lo demás se traza:</p>
+      <div class="tw"><table>
+        <tr><th>Fundación</th><th>Qué captura</th></tr>
+        <tr><td><strong>Negocio</strong></td><td>Modelo de negocio, estrategia empresarial, objetivos corto/mediano/largo plazo</td></tr>
+        <tr><td><strong>Mercado / Usuario temprano</strong></td><td>Contexto de mercado y evidencia de usuario disponible al inicio: entrevistas, early adopters, señales de demanda (si existe)</td></tr>
+        <tr><td><strong>Equipo</strong></td><td>Estructura organizacional, composición del squad, roles, modelo de trabajo</td></tr>
+        <tr><td><strong>Dominio</strong></td><td>Glosario, design system semilla, tech-stack y ADRs iniciales</td></tr>
+      </table></div>
+      <p>Esta etapa es el objetivo del comando <code>p60 init</code>. No es un trámite: es lo que ancla la trazabilidad de toda oportunidad y toda spec al negocio.</p>
+
+      <h3><span class="tag">2.c</span> El pipeline de sub-procesos</h3>
+      <p>El trabajo se organiza en un pipeline. Cada sub-proceso tiene su carpeta, su índice de contexto (<code>_contexto/indice-contexto.md</code>, que define qué subset del repo cargar) y sus artefactos.</p>
+      <div class="pipe">
+        <div class="step zero"><div class="k">Etapa 0</div><div class="t">Setup</div><div class="d">Fundación de negocio</div></div>
+        <div class="step"><div class="k">1</div><div class="t">Shape</div><div class="d">Descubrir y priorizar</div></div>
+        <div class="step"><div class="k">2</div><div class="t">Ideate</div><div class="d">Ideas de solución</div></div>
+        <div class="step"><div class="k">3</div><div class="t">Validate</div><div class="d">Validar supuestos</div></div>
+        <div class="step"><div class="k">4</div><div class="t">Handoff</div><div class="d">PRD validado + ADR</div></div>
+        <div class="step"><div class="k">5</div><div class="t">Build</div><div class="d">Speckit / dev team</div></div>
+        <div class="step"><div class="k">6</div><div class="t">Experimentación</div><div class="d">Validación post-build</div></div>
+      </div>
+      <div class="tw"><table>
+        <tr><th>Sub-proceso</th><th>Propósito</th><th>Cierra con</th></tr>
+        <tr><td><strong>Shape</strong></td><td>Descubrir y priorizar oportunidades</td><td>Nodo hoja del OST elegido con criterio explícito</td></tr>
+        <tr><td><strong>Ideate</strong></td><td>Generar ideas de solución para la oportunidad elegida</td><td>Candidatas preseleccionadas</td></tr>
+        <tr><td><strong>Validate</strong></td><td>De-riskear y validar supuestos de las candidatas</td><td>Solución elegida con evidencia (PRD-brief <code>selected</code>)</td></tr>
+        <tr><td><strong>Handoff</strong></td><td>Convertir la solución en specs de desarrollo</td><td>Iteration PRD <code>approved</code> por todos</td></tr>
+        <tr><td><strong>Build</strong></td><td>Materializar las specs en producto funcional</td><td>Producto deployado y verificado</td></tr>
+        <tr><td><strong>Experimentación</strong></td><td>Validar lo construido con uso real (A/B, fake door…)</td><td>Decisión ship/no-ship/iterar; spec <code>validated</code></td></tr>
+      </table></div>
+      <div class="callout">
+        <span class="lbl">Fuente única del OST</span>
+        <p>El <em>Opportunity Solution Tree</em> (<code>contexto/estrategia/ost.md</code>) es la columna vertebral: toda oportunidad, solución y spec se traza a un nodo. Nunca se copia ni duplica.</p>
+      </div>
+      <p><strong>Bypass con ADR.</strong> Un sub-proceso puede omitirse si su output ya existe o su propósito no aplica (ej. infraestructura pura salta Shape/Ideate/Validate), siempre que se documente en un ADR. El bypass es una regla del framework, no una excepción; lo que no se permite es omitir sin justificación.</p>
+
+      <h3><span class="tag">2.d</span> Sistema de documentación: niveles + jerarquía épica/feature + fidelidad + ubicación como estado</h3>
+      <p>La documentación de producto se organiza por <strong>niveles</strong> (dueño y horizonte distintos) y por <strong>jerarquía</strong> (una épica gobierna sus features):</p>
+      <div class="tw"><table>
+        <tr><th>Nivel</th><th>Artefacto</th><th>Alcance</th><th>Qué es</th></tr>
+        <tr><td><strong>1</strong></td><td><strong>PRD-brief</strong></td><td>Candidata de solución</td><td>Documento ligero. Nace en Validate, siembra un <strong>prototipo de baja fidelidad</strong>. Estados: <code>draft</code> / <code>selected</code> / <code>discarded</code></td></tr>
+        <tr><td><strong>2 · Maestro</strong></td><td><strong>PRD Maestro</strong></td><td><strong>Épica</strong></td><td>Documento estratégico <strong>vivo</strong> de la épica. Se actualiza a medida que sus features mutan o se agregan. No "se cierra" mientras la épica viva</td></tr>
+        <tr><td><strong>2 · Feature</strong></td><td><strong>PRD de feature</strong> (+ <strong>ADR</strong> + <strong>prototipo alta-fi</strong>)</td><td><strong>Feature</strong></td><td>El PRD-brief seleccionado que maduró a validado. <strong>Gobernado (subrogado) por el PRD Maestro</strong> de su épica</td></tr>
+        <tr><td><strong>3</strong></td><td><strong>Iteration PRD</strong></td><td>Sprint</td><td>Input ejecutable acotado, sin preguntas abiertas</td></tr>
+      </table></div>
+      <p><strong>Jerarquía épica → feature.</strong> Una épica tiene su carpeta con el <strong>PRD Maestro</strong> y, debajo, una carpeta por cada feature que va saliendo, cada una con su <strong>propio PRD</strong> gobernado por el maestro. Así se tiene visión global sin repetir, y se mantiene coherencia entre features:</p>
+      <div class="diagram">
+        <div class="cap">Estructura de carpetas</div>
+<pre>handoff-delivery/epicas/[epica-slug]/
+├── prd-maestro.md                 ← PRD Maestro: gobierna la épica, se actualiza siempre
+└── features/[feature-slug]/
+    ├── prd-[feature].md           ← PRD de feature (validado) + ADR + prototipo alta-fi
+    ├── activas/[NN]-[slug].md     ← Iteration PRD en ventana de sprint (congelado)
+    └── cerradas/[NN]-[slug].md    ← Iteration PRD ya implementado (respaldo-como-contexto)</pre>
+      </div>
+      <div class="callout">
+        <span class="lbl">PRD Maestro ≠ feature validada</span>
+        <p>Que una feature tenga su PRD validado es distinto de que el maestro esté "listo": el maestro es un documento vivo de la épica que nunca deja de evolucionar mientras entran o mutan features. Un PRD-brief puede dar origen a una <strong>épica nueva</strong> (con su Maestro) o a una <strong>feature</strong> —nueva o un ajuste— que se acomoda bajo una épica existente; la misma jerarquía los absorbe sin duplicar.</p>
+      </div>
+      <p><strong>Fidelidad del prototipo acompaña la madurez.</strong> El PRD-brief arranca con un prototipo de <strong>baja fidelidad</strong> para de-riskear barato en Validate; a medida que la evidencia confirma supuestos, madura a <strong>alta fidelidad</strong> junto al PRD de feature validado.</p>
+      <p><strong>La ubicación del archivo ES su estado — y cada ubicación tiene un contrato de mutabilidad.</strong> Un documento no solo cambia un campo <code>status</code>: <strong>se mueve físicamente</strong> de carpeta al madurar, y la carpeta donde vive declara si puede tocarse:</p>
+      <div class="tw"><table>
+        <tr><th>Ubicación</th><th>Momento del lifecycle</th><th>Contrato de mutabilidad</th></tr>
+        <tr><td><code>ideate-validate/oportunidades/[opp]/[idea]/</code></td><td>Ideación / validación temprana</td><td><span class="pill free">LIBRE</span> se itera sin fricción</td></tr>
+        <tr><td><code>…/epicas/[epica]/features/[feature]/activas/</code></td><td>Aprobado, en ventana de sprint (<code>in_dev</code>)</td><td><span class="pill freeze">CONGELADO</span> no se modifica sin comunicar</td></tr>
+        <tr><td><code>…/features/[feature]/cerradas/</code> + <code>_historia/</code></td><td>Ya implementado</td><td><span class="pill backup">RESPALDO</span> inmutable; alimenta decisiones futuras</td></tr>
+      </table></div>
+      <div class="callout spec">
+        <span class="lbl">El valor de memoria del framework</span>
+        <p>Los docs de cosas ya implementadas no se archivan y se olvidan — quedan como contexto de respaldo que el agente lee para decidir mejor la próxima vez.</p>
+      </div>
+
+      <h3><span class="tag">2.e</span> Capa agéntica: agentes, skills, memoria</h3>
+      <div class="tw"><table>
+        <tr><th>Pieza</th><th>Qué es</th><th>Ejemplos</th></tr>
+        <tr><td><strong>Agentes</strong> <code>agentes/</code></td><td>System prompts que activan un perfil experto</td><td>Product Management · Spec-Driven Development · Ingeniería · Product Design</td></tr>
+        <tr><td><strong>Skills</strong> <code>skills/</code></td><td>Protocolos de <em>cómo ejecutar una tarea concreta</em>, cargados bajo demanda. Etapa&nbsp;0 y los 6 sub-procesos tienen cobertura</td><td>OST facilitator · ideación estructurada · assumption testing · redactar PRD · diseñar experimento · decisión ship · bibliotecario de evidencia · cierre de ciclo</td></tr>
+        <tr><td><strong>Memoria</strong></td><td>Contexto persistente entre sesiones</td><td><code>CLAUDE.md</code> (reglas de navegación) · <code>bitacora/</code> (registro agéntico + humano)</td></tr>
+      </table></div>
+      <p>El agente lee <code>CLAUDE.md</code> al inicio, recupera contexto de la bitácora, carga el índice del sub-proceso activo, y opera bajo reglas explícitas (fuente única del OST, no leer <code>_historia/</code> por defecto, toda spec nace <code>draft</code>, puerta humana según el contrato de mutabilidad, etc.).</p>
+      <p><strong>Agentes nativos.</strong> Los perfiles expertos están publicados como subagentes nativos de Claude Code (<code>.claude/agents/</code>): el harness los descubre y delega automáticamente, con contexto aislado y trabajo en paralelo. Los prompts canónicos siguen en <code>agentes/</code> (fuente única).</p>
+      <div class="callout spec">
+        <span class="lbl">Sistema de evidencia — el bibliotecario</span>
+        <p>Todo material bruto (transcripciones, analytics, informes) entra por <code>contexto/evidencia/_inbox/</code>; el skill <code>bibliotecario-evidencia</code> lo identifica, crea su <strong>ficha <code>EV-NNN</code></strong> (resumen + hallazgos + dónde está cada cosa), archiva el original y actualiza el índice. Investigar contexto interno = <strong>índice → fichas → recién entonces el original</strong>. Los artefactos citan la sigla <code>[EV-NNN]</code>, estable aunque los archivos se muevan.</p>
+      </div>
+
+      <h3><span class="tag">2.f</span> La cadencia: giro, filtro, goteo</h3>
+      <p>La metáfora de la V60 se operacionaliza en tres ritmos que corren <strong>en paralelo al pipeline</strong>, no después de él:</p>
+      <div class="tw"><table>
+        <tr><th>Ritmo</th><th>Qué significa</th><th>Mecanismos</th></tr>
+        <tr><td><strong>El giro</strong></td><td>Discovery y delivery continuos, en espiral durante todo el ciclo</td><td>Contacto con usuarios <strong>semanal</strong> (touchpoint → snapshot/ficha → OST); el delivery corre en paralelo</td></tr>
+        <tr><td><strong>El filtro</strong></td><td>Criterio: tres decisiones que el agente prepara pero <strong>nunca toma</strong></td><td>(1) Outcome, oportunidad y apuesta con <strong>apetito fijo</strong> · (2) validación humana de toda síntesis IA antes de entrar a OST/PRD · (3) ship/no-ship/iterar</td></tr>
+        <tr><td><strong>El goteo</strong></td><td>Entregables regulares y acotados, verificables</td><td>Iteration PRDs como <strong>rebanadas verticales</strong> · experimentos con <strong>fecha de corte pre-registrada</strong> · <strong>cool-down</strong> al cierre de cada sub-proceso (retro + mantenimiento + mejora de skills)</td></tr>
+      </table></div>
+      <div class="callout">
+        <span class="lbl">Circuit breaker</span>
+        <p>Lo que no cabe en su apetito <strong>no se extiende por defecto</strong> — vuelve a Shape/Ideate re-dimensionado, con ADR. Con agentes construyendo, "seguir intentando" parece gratis; no lo es. Y a la inversa, la <strong>vía rápida</strong>: un ajuste menor a una feature validada entra como Iteration PRD directo, con nota de bypass — el rigor es proporcional al tamaño del cambio.</p>
+      </div>
+    </section>
+
+    <!-- 3 WORKFLOW -->
+    <section id="workflow">
+      <h2><span class="n">3</span> Workflow típico — de <code>init</code> a MVP</h2>
+      <p>Un recorrido concreto por un ciclo completo:</p>
+      <ol class="steps">
+        <li class="z"><b>p60 init</b> — se crea el Context repo y se completa la <b>Etapa 0</b>: negocio, equipo, dominio. Queda la evidencia raíz.</li>
+        <li><b>Shape</b> — con la estrategia como base, se mapean y priorizan oportunidades en el OST. Cierra con un <b>nodo hoja elegido</b> con criterio explícito de sizing.</li>
+        <li><b>Ideate</b> — para esa oportunidad se generan ideas de solución y se preseleccionan candidatas.</li>
+        <li><b>Validate</b> — cada candidata arranca un <b>PRD-brief</b> + <b>prototipo de baja fidelidad</b>; se identifican y validan supuestos con evidencia real. La ganadora queda <code>selected</code>.</li>
+        <li><b>Handoff</b> — el PRD-brief seleccionado madura a <b>PRD de feature validado + ADR + prototipo alta-fi</b>, bajo el <b>PRD Maestro</b> de su épica (que se actualiza para reflejar la nueva feature). Se descompone en <b>Iteration PRDs</b> dev-ready. Al aprobarse, el doc se mueve a <code>activas/</code> — y se congela.</li>
+        <li><b>Build</b> — las specs se materializan. Cuando construye un agente, lo orquesta <b>Speckit</b> (<code>constitution → specify → plan → tasks → analyze → implement</code>); cuando construye un dev team externo, recibe las specs aprobadas y usa su propio proceso.</li>
+        <li><b>Experimentación</b> — lo construido se valida con uso real. La decisión (ship/no-ship/iterar) cierra el loop; la spec pasa a <code>validated</code> y su Iteration PRD se mueve a <code>cerradas/</code> como respaldo-de-contexto.</li>
+      </ol>
+      <p>Cada cierre de sub-proceso dispara una retro de proceso, una actualización de la bitácora y —opcionalmente— una presentación HTML ejecutiva para stakeholders. El OST se actualiza en cada etapa.</p>
+    </section>
+
+    <!-- 4 EXT -->
+    <section id="ext">
+      <h2><span class="n">4</span> Extensibilidad</h2>
+      <p>P60 se adapta a un dominio nuevo sin reescribirse:</p>
+      <ul class="clean">
+        <li><b>Bypass de sub-procesos.</b> No todo producto necesita los seis. Oportunidad obvia → salta Shape. Solución conocida → salta Ideate/Validate. Producto existente → entra desde su estado actual. Cada salto se documenta con un ADR.</li>
+        <li><b>Escala de equipo.</b> Un PB solo, una tríada o el squad completo operan la misma estructura de repo autocontenido; lo único que escala con el número de personas es el rigor de ramas y ceremonias.</li>
+        <li><b>Skills y agentes propios.</b> Añadir un protocolo de tarea o un perfil experto es crear un archivo en <code>skills/</code> o <code>agentes/</code> con su frontmatter — el agente lo descubre y lo carga bajo demanda.</li>
+        <li><b>i18n.</b> El framework opera en <b>ES / EN / PT (pt-BR)</b>: <code>p60 init --lang</code> genera el context repo con el contenido en el idioma elegido. Los <b>nombres de carpetas son canónicos</b> y no se traducen — son la lógica del pipeline; lo que se localiza es el contenido.</li>
+        <li><b>p60 init operativo.</b> <code>tools/p60 init &lt;producto&gt; --escala pb|triada|squad --lang es|en|pt</code> instancia el context repo completo: estructura, semillas (OST, evidencia, bitácoras) en el idioma elegido, agentes y skills conectados y guardarraíles instalados. La fundación se puebla con el skill <code>fundacion-etapa-0</code> (entrevista guiada). Onboarding con ejemplos: <code>docs/arranque-rapido.md</code>.</li>
+      </ul>
+    </section>
+
+    <footer>
+      <p class="src">Fuente: P60-Framework-Guide.md · v0.5 · status: draft</p>
+      <div class="meta">
+        Autoría original: <strong>Guillermo Becerra</strong> — MIRA Studio<br>
+        Última modificación: 2026-07-14
+      </div>
+      <div class="ai">Generado con asistencia de Claude</div>
+    </footer>
+  </main>
+</div>
+
+<script>
+  // theme toggle
+  const root=document.documentElement, btn=document.getElementById('tgl');
+  btn.addEventListener('click',()=>{
+    const cur=root.getAttribute('data-theme')
+      || (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+    root.setAttribute('data-theme', cur==='dark'?'light':'dark');
+  });
+  // scrollspy
+  const links=[...document.querySelectorAll('nav.toc a')];
+  const map=new Map(links.map(a=>[a.getAttribute('href').slice(1),a]));
+  const obs=new IntersectionObserver((es)=>{
+    es.forEach(e=>{ if(e.isIntersecting){
+      links.forEach(l=>l.classList.remove('active'));
+      const a=map.get(e.target.id); if(a)a.classList.add('active');
+    }});
+  },{rootMargin:'-20% 0px -70% 0px'});
+  document.querySelectorAll('section[id]').forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>

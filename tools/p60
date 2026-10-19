@@ -1,0 +1,242 @@
+#!/usr/bin/env bash
+# p60 — CLI del framework P60 (AI-Native Spec-Driven Product Building).
+# Comandos pensados para operar, capacitar y demostrar el framework.
+#
+#   p60 init <producto> [--dir RUTA] [--escala pb|triada|squad] [--lang es|en|pt]
+#           Instancia un context-repo desde los templates (Etapa 0 lista para poblar).
+#           Idiomas: es (español) · en (inglés) · pt (portugués de Brasil). El contenido
+#           se genera en el idioma elegido; los nombres de carpetas son estructura
+#           canónica del framework y no se traducen.
+#   p60 skills      Lista los skills disponibles (índice del framework).
+#   p60 agents      Lista los perfiles expertos y cuándo se activan.
+#   p60 lint        Verifica la integridad del repo del framework.
+#   p60 doctor      Chequea prerequisitos del entorno (git, python3, Claude Code).
+#   p60 help        Esta ayuda.
+#
+# El framework NO exige este CLI: todo puede hacerse conversando con el agente
+# (patrón agent-driven). El CLI existe para onboarding, demos y scripting.
+
+set -euo pipefail
+P60_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+HOY="$(date +%Y-%m-%d)"
+
+say()  { printf '%s\n' "$*"; }
+die()  { printf 'p60: %s\n' "$*" >&2; exit 1; }
+titulo(){ printf '\n\033[1m%s\033[0m\n' "$*"; }
+
+cmd_help() { sed -n '2,19p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; }
+
+cmd_doctor() {
+  titulo "p60 doctor"
+  local fallos=0
+  for bin in git python3; do
+    if command -v "$bin" >/dev/null; then say "OK    $bin ($(command -v "$bin"))"; else say "FAIL  falta $bin"; fallos=1; fi
+  done
+  command -v claude >/dev/null && say "OK    claude (Claude Code CLI)" || say "WARN  Claude Code CLI no encontrado — el framework se opera con Claude Code"
+  [ -f "$P60_ROOT/.p60/memory/constitution.md" ] && say "OK    framework P60 en $P60_ROOT" || { say "FAIL  no encuentro el framework en $P60_ROOT"; fallos=1; }
+  exit "$fallos"
+}
+
+cmd_skills() {
+  titulo "Skills P60 (fuente: skills/_index.md)"
+  grep '^|' "$P60_ROOT/skills/_index.md" | sed 's/](.*SKILL\.md)//; s/\[//' | column -t -s'|' | sed 's/^ *//'
+}
+
+cmd_agents() {
+  titulo "Agentes P60 (fuente: .p60/registry/agents.yaml)"
+  awk '/- id:/{id=$3} /role:/{role=$2} /activate_when:/{sub(/.*activate_when: /,""); gsub(/"/,""); printf "  %-26s %-7s %s\n", id, role, $0}' \
+    "$P60_ROOT/.p60/registry/agents.yaml"
+}
+
+cmd_lint() { exec "$P60_ROOT/tools/p60-lint.sh" "$P60_ROOT"; }
+
+cmd_init() {
+  local producto="" dir="." escala="" lang=""
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --dir)    dir="$2"; shift 2;;
+      --escala) escala="$2"; shift 2;;
+      --lang)   lang="$2"; shift 2;;
+      -*)       die "flag desconocido: $1";;
+      *)        producto="$1"; shift;;
+    esac
+  done
+
+  # Wizard de 3 decisiones (solo pregunta lo que falta)
+  if [ -z "$producto" ]; then read -r -p "Nombre del producto (kebab-case): " producto; fi
+  [ -n "$producto" ] || die "se necesita un nombre de producto"
+  echo "$producto" | grep -Eq '^[a-z0-9][a-z0-9-]*$' || die "el nombre debe ser kebab-case ([a-z0-9-])"
+  if [ -z "$escala" ]; then
+    read -r -p "Escala del equipo [pb=product-builder solo | triada | squad] (pb): " escala
+    escala="${escala:-pb}"
+  fi
+  case "$escala" in pb|triada|squad) ;; *) die "escala inválida: $escala (pb|triada|squad)";; esac
+  if [ -z "$lang" ]; then
+    read -r -p "Idioma del contenido [es=español | en=english | pt=português BR] (es): " lang
+    lang="${lang:-es}"
+  fi
+  case "$lang" in es|en|pt) ;; *) die "idioma inválido: $lang (es|en|pt)";; esac
+
+  local repo="$dir/${producto}-context"
+  [ -e "$repo" ] && die "ya existe $repo"
+  local tpl="$P60_ROOT/templates/context-repo/$lang"
+
+  titulo "p60 init — instanciando $repo"
+
+  # 1) Esqueleto de carpetas (estructura canónica del template README)
+  local carpetas=(
+    "contexto/negocio" "contexto/mercado-usuario" "contexto/equipo" "contexto/dominio"
+    "contexto/estrategia" "contexto/evidencia/_inbox" "contexto/evidencia/fichas" "contexto/evidencia/originales"
+    "shape/entrevistas/transcripciones" "shape/entrevistas/snapshots" "shape/_retro"
+    "ideate/oportunidades" "ideate/_retro"
+    "validate/oportunidades" "validate/_retro"
+    "handoff-delivery/epicas" "handoff-delivery/_retro"
+    "experimentacion/experimentos"
+    "bitacora" "presentaciones" "_historia" "legacy"
+    ".claude/agents" ".claude/skills" "tools/hooks"
+  )
+  for c in "${carpetas[@]}"; do mkdir -p "$repo/$c"; touch "$repo/$c/.keep"; done
+
+  # 2) Archivos semilla desde el template (placeholders: [PRODUCTO], [FECHA], [RUTA_P60])
+  instanciar() { # $1=origen relativo al template  $2=destino relativo al repo
+    sed -e "s|\[PRODUCTO\]|$producto|g" -e "s|\[FECHA\]|$HOY|g" -e "s|\[RUTA_P60\]|$P60_ROOT|g" \
+      "$tpl/$1" > "$repo/$2"
+  }
+  instanciar "CLAUDE.md" "CLAUDE.md"
+  instanciar "framework.md" "framework.md"
+  instanciar "README.md" "README.md"
+  instanciar "contexto/evidencia/_index.md" "contexto/evidencia/_index.md"
+  instanciar "bitacora/bitacora-agentica.md" "bitacora/bitacora-agentica.md"
+  instanciar "bitacora/bitacora-humana.md" "bitacora/bitacora-humana.md"
+  instanciar "experimentacion/pipeline.md" "experimentacion/pipeline.md"
+  # OST semilla (fuente única), localizada
+  case "$lang" in
+    en) cat > "$repo/contexto/estrategia/ost.md" <<EOF
+---
+type: ost
+producto: $producto
+status: draft
+created: $HOY
+---
+
+# OST — $producto (single source)
+
+> Created and maintained with the \`ost-facilitator\` skill. Every opportunity, solution and spec traces to a node of this tree. Never duplicated.
+
+## Outcome
+*(pending — defined at foundation / first Shape: measurable behavior change, not an output)*
+
+## Tree
+*(pending)*
+EOF
+    ;;
+    pt) cat > "$repo/contexto/estrategia/ost.md" <<EOF
+---
+type: ost
+producto: $producto
+status: draft
+created: $HOY
+---
+
+# OST — $producto (fonte única)
+
+> Criado e mantido com o skill \`ost-facilitator\`. Toda oportunidade, solução e spec se rastreia a um nó desta árvore. Nunca se duplica.
+
+## Outcome
+*(pendente — se define na fundação / primeiro Shape: mudança de comportamento mensurável, não um output)*
+
+## Árvore
+*(pendente)*
+EOF
+    ;;
+    *)  cat > "$repo/contexto/estrategia/ost.md" <<EOF
+---
+type: ost
+producto: $producto
+status: draft
+created: $HOY
+---
+
+# OST — $producto (fuente única)
+
+> Se crea y mantiene con el skill \`ost-facilitator\`. Toda oportunidad, solución y spec se traza a un nodo de este árbol. Nunca se duplica.
+
+## Outcome
+*(pendiente — se define en la fundación / primer Shape: comportamiento medible, no output)*
+
+## Árbol
+*(pendiente)*
+EOF
+    ;;
+  esac
+
+  # 3) Capa agéntica: hooks + agentes nativos + skills nativos (apuntando al framework)
+  cp "$P60_ROOT/tools/hooks/gate-zonas.sh" "$repo/tools/hooks/gate-zonas.sh"
+  chmod +x "$repo/tools/hooks/gate-zonas.sh"
+  cp "$P60_ROOT/.claude/settings.json" "$repo/.claude/settings.json"
+  for a in "$P60_ROOT"/.claude/agents/*.md; do
+    local an; an=$(basename "$a" .md)
+    sed "s|\`agents/$an.md\`[^:]*|\`$P60_ROOT/agents/$an.md\`|" "$a" > "$repo/.claude/agents/$an.md"
+  done
+  for s in "$P60_ROOT"/skills/*/; do
+    local sn; sn=$(basename "$s")
+    [ "$sn" = "_standards" ] && continue
+    ln -s "$P60_ROOT/skills/$sn" "$repo/.claude/skills/$sn"
+  done
+
+  # 4) Git
+  ( cd "$repo" && git init -q && git add -A && git commit -qm "p60 init — context repo de $producto (escala: $escala, lang: $lang)" )
+
+  # 5) Próximos pasos (localizado)
+  case "$lang" in
+    en)
+      titulo "✓ Context repo created: $repo"
+      cat <<EOF
+
+Next steps (Stage 0 — Context foundation):
+  1. cd $repo && claude
+  2. Tell the agent: "run the context foundation (fundacion-etapa-0)"
+     → it will interview you about business, market/users, team and domain, and populate contexto/.
+  3. Once the foundation is in, start the first cycle: "let's start Shape: create the OST".
+
+Quickstart guide with examples: $P60_ROOT/docs/arranque-rapido.md
+EOF
+      ;;
+    pt)
+      titulo "✓ Context repo criado: $repo"
+      cat <<EOF
+
+Próximos passos (Etapa 0 — Fundação de contexto):
+  1. cd $repo && claude
+  2. Diga ao agente: "rode a fundação de contexto (fundacion-etapa-0)"
+     → ele vai te entrevistar sobre negócio, mercado/usuários, time e domínio, e popular contexto/.
+  3. Com a fundação pronta, comece o primeiro ciclo: "vamos começar o Shape: criar o OST".
+
+Guia de início rápido com exemplos: $P60_ROOT/docs/arranque-rapido.md
+EOF
+      ;;
+    *)
+      titulo "✓ Context repo creado: $repo"
+      cat <<EOF
+
+Próximos pasos (Etapa 0 — Fundación de contexto):
+  1. cd $repo && claude
+  2. Dile al agente: "corre la fundación de contexto (fundacion-etapa-0)"
+     → te entrevistará sobre negocio, mercado/usuario, equipo y dominio, y poblará contexto/.
+  3. Cuando la fundación esté, arranca el primer ciclo: "iniciemos Shape: creemos el OST".
+
+Guía de arranque con ejemplos: $P60_ROOT/docs/arranque-rapido.md
+EOF
+      ;;
+  esac
+}
+
+case "${1:-help}" in
+  init)   shift; cmd_init "$@";;
+  skills) cmd_skills;;
+  agents) cmd_agents;;
+  lint)   cmd_lint;;
+  doctor) cmd_doctor;;
+  help|--help|-h) cmd_help;;
+  *) die "comando desconocido: $1 (p60 help)";;
+esac
