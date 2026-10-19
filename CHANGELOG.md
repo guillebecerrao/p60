@@ -2,6 +2,16 @@
 
 Versiones del framework P60. Cada versión es un tag `vX.Y.Z` en GitHub; `install.sh` instala el último release y `p60 update` lleva cada producto a la versión del CLI instalado.
 
+## v2.1.1 — 2026-10-19
+
+Ajustes del primer test real (la landing de P60 instalada con `install.md`).
+
+- **`p60 lint` dentro de un producto** revisa el producto: archivos gestionados, hook, links rotos en `p60/` y catálogo de evidencia (`EV-NNN` sin ficha o sin fila en el índice). `p60 lint --framework` revisa la fuente del framework.
+- **Salida limpia para agentes:** sin códigos de color cuando la salida no es una terminal, y respeta `NO_COLOR`.
+- **Guardarraíl anclado a `p60/`:** carpetas del código con nombres como `legacy/` o `activas/` ya no piden confirmación.
+- **Código en el mismo repo:** el `CLAUDE.md` del producto explica dónde va el código y cómo registrar un spike antes de la Etapa 0.
+- README trilingüe (es/pt/en) y `docs/quickstart/etapas.json` como fuente única de las etapas.
+
 ## v2.1.0 — 2026-10-19
 
 Primera versión distribuible.

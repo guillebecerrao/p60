@@ -6,7 +6,7 @@
 
 ## Qué es este repo
 
-El **sistema operativo de producto** de [PRODUCTO]: discovery, specs, evidencia y decisiones. Todo vive en `p60/`, sin mezclarse con código: por defecto el código está en otro repo; si este proyecto también lo aloja, el código vive fuera de `p60/` (ver ADR-001 del framework). El agente construye contexto en `p60/` y el código en su lugar.
+El **sistema operativo de producto** de [PRODUCTO]: discovery, specs, evidencia y decisiones. Todo vive en `p60/`, sin mezclarse con código: por defecto el código está en otro repo; si este proyecto también lo aloja, el código vive fuera de `p60/` (p. ej. `src/` o `site/`): P60 no lo gobierna y los guardarraíles no lo tocan. El agente construye contexto en `p60/` y el código en su lugar. Un spike de código antes de la Etapa 0 (infraestructura, una primera página) es válido: se registra en la bitácora y su aprendizaje entra luego como evidencia.
 
 ## Estado del ciclo (actualizar al cerrar cada sub-proceso)
 

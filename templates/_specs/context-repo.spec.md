@@ -1,7 +1,7 @@
 ---
 component: context-repo
 type: template
-version: 2.2
+version: 2.3
 status: draft
 agent_role: architect
 last_sync: 2026-10-19
@@ -53,3 +53,4 @@ Definir la estructura canónica y los archivos semilla del context repo de un pr
 | 2.0 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Draft del contrato portable: init sobre la carpeta actual (vacía o existente), git condicional, framework vendorizado en `.p60/` con manifiesto, adaptadores por herramienta, fin de symlinks y rutas absolutas. Pendiente de implementación. |
 | 2.1 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Layout: todo el contexto y el framework dentro de `p60/` (visible); framework en `p60/_framework/`. Fuera solo `.claude/` y un bloque en `CLAUDE.md` de la raíz. |
 | 2.2 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Admite instalar en un codebase con advertencia (constitución 2.3). |
+| 2.3 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | CLAUDE.md semilla: dónde vive el código cuando comparte repo (`src/`, `site/`), fuera de los guardarraíles, y cómo registrar un spike previo a la Etapa 0. |

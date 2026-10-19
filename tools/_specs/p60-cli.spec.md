@@ -1,7 +1,7 @@
 ---
 component: p60-cli
 type: tool
-version: 0.6
+version: 0.7
 status: draft
 agent_role: architect
 last_sync: 2026-10-19
@@ -26,7 +26,7 @@ Instalar, instanciar y actualizar P60 de forma determinística: dejar el framewo
 | `p60 self-update [--to vX.Y.Z]` | Actualiza la instalación global del CLI y el framework | cualquier lugar |
 | `p60 doctor` | Prerequisitos del entorno; dentro de un context repo, además: versión instalada vs. disponible, integridad del manifiesto, hook registrado | cualquier lugar |
 | `p60 skills` · `p60 agents` | Listan skills y agentes (del context repo si estás en uno; si no, del framework instalado) | cualquier lugar |
-| `p60 lint` | Integridad del repo del framework o del context repo | cualquier lugar |
+| `p60 lint [--framework]` | En una instancia: gestionados, hook, links de `p60/` y catálogo de evidencia. Fuera o con `--framework`: integridad del repo del framework | cualquier lugar |
 | `p60 version` · `p60 help` | Versión del CLI y ayuda | cualquier lugar |
 
 ### Flags de `init`
@@ -185,3 +185,4 @@ Cada herramienta es un adaptador con tres funciones: `plan` (qué crearía o fus
 | 0.4 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | P1 resuelto: `init` en un codebase advierte y sugiere repo separado, pero continúa (constitución 2.3). |
 | 0.5 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Fase 3 implementada: `p60 update` (plan, `--dry-run`, `--yes`, conflictos con `.p60-new`, restauración, borrado solo con confirmación) y `doctor` de instancia (versión, integridad, hook, subcarpeta). Commit de `init` limitado a lo que crea p60. Probado con un framework simulado v2.2.0. |
 | 0.6 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Fase 4: `install.sh`, `install.md`, `self-update`, `--overwrite`, `docs/instalacion.md`, `CHANGELOG.md`, release v2.1.0. |
+| 0.7 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Test real (landing): `lint` dentro de una instancia revisa la instancia (gestionados, hook, links de `p60/`, catálogo de evidencia); `--framework` para la fuente. Negrita solo con TTY y sin `NO_COLOR`. |

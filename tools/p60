@@ -20,7 +20,9 @@
 #           después corre `p60 update` en cada producto.
 #   p60 skills      Lista los skills disponibles (de la instancia si estás en una).
 #   p60 agents      Lista los perfiles expertos y cuándo se activan.
-#   p60 lint        Verifica la integridad del repo del framework.
+#   p60 lint [--framework]
+#           Dentro de un producto: archivos gestionados, hook, links de p60/ y catálogo
+#           de evidencia. Fuera (o con --framework): integridad del repo del framework.
 #   p60 doctor      Prerequisitos (git, python3, Claude Code) y, dentro de una instancia,
 #                   versión, archivos gestionados editados y estado del hook.
 #   p60 version     Versión del framework que trae este CLI.
@@ -43,7 +45,12 @@ HOY="$(date +%Y-%m-%d)"
 
 say()  { printf '%s\n' "$*"; }
 die()  { printf 'p60: %s\n' "$*" >&2; exit 1; }
-titulo(){ printf '\n\033[1m%s\033[0m\n' "$*"; }
+# Negrita solo en una terminal interactiva y sin NO_COLOR (https://no-color.org).
+if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
+  titulo(){ printf '\n\033[1m%s\033[0m\n' "$*"; }
+else
+  titulo(){ printf '\n%s\n' "$*"; }
+fi
 
 cmd_help() { awk 'NR>1 && /^#/{sub(/^# ?/,""); print; next} NR>1{exit}' "${BASH_SOURCE[0]}"; }
 cmd_version() { say "p60 $P60_VERSION ($P60_ROOT)"; }
@@ -75,7 +82,18 @@ cmd_agents() {
     "$reg"
 }
 
-cmd_lint() { exec "$P60_ROOT/tools/p60-lint.sh" "$P60_ROOT"; }
+# Dentro de una instancia revisa la instancia; si no (o con --framework), el repo del framework.
+cmd_lint() {
+  local root
+  if [ "${1:-}" != "--framework" ] && root=$(instancia_raiz .); then
+    local fallos=0
+    doctor_instancia "$root" || fallos=1
+    lint_instancia "$root" || fallos=1
+    say ""; m l_fw_hint
+    return "$fallos"
+  fi
+  exec "$P60_ROOT/tools/p60-lint.sh" "$P60_ROOT"
+}
 
 # ── Mensajes de init (es/en/pt). Uso: m CLAVE [args printf] ─────────────────────────
 m() {
@@ -231,6 +249,9 @@ m() {
     en:d_sub)      f="WARN  you're in a subfolder: open Claude Code from %s so it finds .claude/";;
     pt:d_sub)      f="WARN  você está numa subpasta: abra o Claude Code a partir de %s para ele achar o .claude/";;
     *:d_sub)       f="WARN  estás en una subcarpeta: abre Claude Code desde %s para que encuentre .claude/";;
+    en:l_fw_hint)  f="(This checked your product. To check the framework source: p60 lint --framework)";;
+    pt:l_fw_hint)  f="(Isto verificou seu produto. Para verificar a fonte do framework: p60 lint --framework)";;
+    *:l_fw_hint)   f="(Esto revisó tu producto. Para revisar la fuente del framework: p60 lint --framework)";;
   esac
   # shellcheck disable=SC2059
   printf "$f\n" "$@"
@@ -665,6 +686,48 @@ EOF
   return "$fallos"
 }
 
+# Integridad del contenido del equipo en p60/ (fuera de _framework/): links relativos
+# rotos y catálogo de evidencia coherente con las fichas. Devuelve 1 si hay FAIL.
+lint_instancia() { # $1=raíz
+  python3 - "$1" "${LANG_P60:-es}" <<'EOF'
+import os, re, sys
+root, lang = sys.argv[1], sys.argv[2]
+T = {
+  'es': ('FAIL  link roto en %s → %s', 'FAIL  %s está en evidencia/_index.md pero no tiene ficha', 'WARN  la ficha %s no está en evidencia/_index.md', 'OK    links y catálogo de evidencia de p60/ (%d archivos)'),
+  'en': ('FAIL  broken link in %s → %s', 'FAIL  %s is in evidencia/_index.md but has no card', 'WARN  card %s is not in evidencia/_index.md', 'OK    links and evidence catalog in p60/ (%d files)'),
+  'pt': ('FAIL  link quebrado em %s → %s', 'FAIL  %s está em evidencia/_index.md mas não tem ficha', 'WARN  a ficha %s não está em evidencia/_index.md', 'OK    links e catálogo de evidências de p60/ (%d arquivos)'),
+}[lang if lang in ('es', 'en', 'pt') else 'es']
+p60 = os.path.join(root, 'p60')
+fail = warn = n = 0
+link = re.compile(r'\[[^\]]*\]\(([^)\s]+)\)')
+for d, dirs, files in os.walk(p60):
+    dirs[:] = [x for x in dirs if x != '_framework' and not x.startswith('.')]
+    for f in files:
+        if not f.endswith('.md'):
+            continue
+        n += 1
+        path = os.path.join(d, f)
+        for target in link.findall(open(path, encoding='utf-8', errors='replace').read()):
+            if re.match(r'^[a-z]+:|^#|^/', target) or '[' in target or '<' in target:
+                continue
+            t = target.split('#')[0]
+            if t and not os.path.exists(os.path.normpath(os.path.join(d, t))):
+                print(T[0] % (os.path.relpath(path, root), target)); fail += 1
+ev = os.path.join(p60, 'contexto/evidencia')
+idx = os.path.join(ev, '_index.md')
+if os.path.isfile(idx):
+    listadas = set(re.findall(r'^\|\s*(EV-\d{3,})\s*\|', open(idx, encoding='utf-8').read(), re.M))
+    fdir = os.path.join(ev, 'fichas')
+    fichas = set(m.group(1) for f in (os.listdir(fdir) if os.path.isdir(fdir) else [])
+                 for m in [re.match(r'(EV-\d{3,})', f)] if m)
+    for s in sorted(listadas - fichas): print(T[1] % s); fail += 1
+    for s in sorted(fichas - listadas): print(T[2] % s); warn += 1
+if fail == 0 and warn == 0:
+    print(T[3] % n)
+sys.exit(1 if fail else 0)
+EOF
+}
+
 # Actualiza la instalación global (~/.p60) reutilizando el install.sh de esta versión.
 cmd_self_update() {
   local to=""
@@ -829,7 +892,7 @@ case "${1:-help}" in
   self-update) shift; cmd_self_update "$@";;
   skills)  cmd_skills;;
   agents)  cmd_agents;;
-  lint)    cmd_lint;;
+  lint)    shift; cmd_lint "$@";;
   doctor)  cmd_doctor;;
   version|--version) cmd_version;;
   help|--help|-h) cmd_help;;

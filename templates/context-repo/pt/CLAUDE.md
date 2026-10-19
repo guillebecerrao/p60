@@ -6,7 +6,7 @@
 
 ## O que é este repo
 
-O **sistema operacional de produto** de [PRODUCTO]: discovery, specs, evidências e decisões. Tudo vive em `p60/`, sem se misturar com código: por padrão o código está em outro repo; se este projeto também o hospeda, o código vive fora de `p60/` (ver ADR-001 do framework). O agente constrói contexto em `p60/` e o código no seu lugar.
+O **sistema operacional de produto** de [PRODUCTO]: discovery, specs, evidências e decisões. Tudo vive em `p60/`, sem se misturar com código: por padrão o código está em outro repo; se este projeto também o hospeda, o código vive fora de `p60/` (p. ex. `src/` ou `site/`): o P60 não o governa e os guardrails não o tocam. O agente constrói contexto em `p60/` e o código no seu lugar. Um spike de código antes da Etapa 0 (infraestrutura, uma primeira página) é válido: registre-o na bitácora e traga o aprendizado depois como evidência.
 
 > **Nota:** os nomes das pastas são estrutura canônica do framework (fazem parte da lógica do pipeline) e não se traduzem. O conteúdo está em português (BR).
 

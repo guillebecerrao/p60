@@ -6,7 +6,7 @@
 
 ## What this repo is
 
-The **product operating system** of [PRODUCTO]: discovery, specs, evidence and decisions. Everything lives in `p60/`, never mixed with code: by default the code is in another repo; if this project also hosts it, the code lives outside `p60/` (see framework ADR-001). The agent builds context in `p60/` and code where it belongs.
+The **product operating system** of [PRODUCTO]: discovery, specs, evidence and decisions. Everything lives in `p60/`, never mixed with code: by default the code is in another repo; if this project also hosts it, the code lives outside `p60/` (e.g. `src/` or `site/`): P60 doesn't govern it and the guardrails don't touch it. The agent builds context in `p60/` and code where it belongs. A code spike before Stage 0 (infrastructure, a first page) is fine: log it in the bitácora and bring what it taught you in later as evidence.
 
 > **Note:** folder names are canonical framework structure (part of the pipeline logic) and are not translated. Content is in English.
 
