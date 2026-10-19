@@ -3,7 +3,7 @@ title: "P60 — Arranque rápido"
 subtitle: "De cero a primer ciclo, con ejemplos explícitos"
 author: Guille Becerra O
 created: 2026-07-14
-version: 1.3
+version: 1.4
 status: active
 audience: nuevo usuario de P60 (PM · Designer · Tech Lead · solo-builder)
 language: es
@@ -45,9 +45,9 @@ p60 doctor              # versión instalada, archivos editados y estado de los 
 **Comandos útiles del CLI en cualquier momento:**
 
 ```bash
-P60/tools/p60 skills    # qué sabe hacer el agente (y cuándo usar cada skill)
-P60/tools/p60 agents    # los perfiles expertos y cuándo se activan
-P60/tools/p60 lint      # integridad del repo del framework
+p60 skills              # qué sabe hacer el agente (y cuándo usar cada skill)
+p60 agents              # los perfiles expertos y cuándo se activan
+p60 doctor              # prerequisitos, versión y guardarraíles
 ```
 
 ## 2. Etapa 0 — Fundación (una sesión de ~30–45 min)
@@ -102,3 +102,4 @@ El agente prepara, recomienda y propaga; **tú decides**: (1) el outcome y la ap
 | 1.1 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | `p60 init` sobre la carpeta actual (nueva o existente), todo dentro de `p60/`, plan previo y `--dry-run`. |
 | 1.2 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Cómo actualizar (`p60 update`, `doctor`) y uso dentro de un codebase. |
 | 1.3 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Prerequisitos con el instalador de un comando (`install.sh`); detalle en `docs/instalacion.md`. |
+| 1.4 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Comandos útiles con `p60` global (antes rutas `P60/tools/p60`). |

@@ -1,0 +1,390 @@
+{
+  "_meta": {
+    "title": "P60 quickstart — stages data",
+    "version": "1.0",
+    "updated": "2026-10-19",
+    "framework_version": "2.1.0",
+    "languages": ["es", "pt", "en"],
+    "source": "Derivado de docs/P60-Framework-Guide.md (§2–3), docs/arranque-rapido.md, skills/_index.md y los SKILL.md. Fuente única para el README y la landing p60.lat: si cambia un skill o una ruta, se actualiza aquí.",
+    "cadence_keys": "giro = discovery/delivery continuos · filtro = criterio (decisión humana) · goteo = cadencia (entregables acotados)"
+  },
+  "tagline": {
+    "es": "Saber qué construir, antes de construirlo rápido.",
+    "pt": "Saber o que construir, antes de construir rápido.",
+    "en": "Know what to build, before you build it fast."
+  },
+  "promesa": {
+    "es": "P60 convierte una carpeta en el sistema de contexto de tu producto: estrategia, evidencia, oportunidades y specs en markdown versionado, operado con agentes de IA. El agente prepara y recomienda; tú decides.",
+    "pt": "O P60 transforma uma pasta no sistema de contexto do seu produto: estratégia, evidências, oportunidades e specs em markdown versionado, operado com agentes de IA. O agente prepara e recomenda; você decide.",
+    "en": "P60 turns a folder into your product's context system: strategy, evidence, opportunities and specs as versioned markdown, run with AI agents. The agent prepares and recommends; you decide."
+  },
+  "cadencia": [
+    {
+      "id": "giro",
+      "nombre": { "es": "El giro", "pt": "O giro", "en": "The pour" },
+      "es_igual_a": { "es": "Discovery y delivery continuos", "pt": "Discovery e delivery contínuos", "en": "Continuous discovery and delivery" },
+      "detalle": {
+        "es": "Contacto con usuarios cada semana, durante todo el ciclo. Mientras una feature se construye, el discovery de la siguiente ya gira.",
+        "pt": "Contato com usuários toda semana, durante todo o ciclo. Enquanto uma feature é construída, o discovery da próxima já está girando.",
+        "en": "Talking to users every week, through the whole cycle. While one feature is being built, discovery for the next one is already turning."
+      }
+    },
+    {
+      "id": "filtro",
+      "nombre": { "es": "El filtro", "pt": "O filtro", "en": "The filter" },
+      "es_igual_a": { "es": "Criterio", "pt": "Critério", "en": "Judgment" },
+      "detalle": {
+        "es": "No todo lo que se vierte pasa. La evidencia, los umbrales y tres decisiones humanas filtran qué llega a construirse.",
+        "pt": "Nem tudo o que se despeja passa. Evidências, limiares e três decisões humanas filtram o que chega a ser construído.",
+        "en": "Not everything you pour gets through. Evidence, thresholds and three human decisions filter what gets built."
+      }
+    },
+    {
+      "id": "goteo",
+      "nombre": { "es": "El goteo", "pt": "O gotejamento", "en": "The drip" },
+      "es_igual_a": { "es": "Cadencia", "pt": "Cadência", "en": "Cadence" },
+      "detalle": {
+        "es": "El valor sale en gotas verificables: fichas de evidencia cada semana, rebanadas verticales shippeables, experimentos con fecha de corte.",
+        "pt": "O valor sai em gotas verificáveis: fichas de evidência toda semana, fatias verticais entregáveis, experimentos com data de corte.",
+        "en": "Value comes out in verifiable drops: evidence cards every week, shippable vertical slices, experiments with a cut-off date."
+      }
+    }
+  ],
+  "decisiones_humanas": [
+    {
+      "id": "que-perseguir",
+      "es": "Qué perseguir: el outcome, la oportunidad, las candidatas y cuánto apetito (tiempo y esfuerzo) vale el problema.",
+      "pt": "O que perseguir: o outcome, a oportunidade, as candidatas e quanto apetite (tempo e esforço) o problema vale.",
+      "en": "What to pursue: the outcome, the opportunity, the candidates, and how much appetite (time and effort) the problem is worth."
+    },
+    {
+      "id": "que-es-evidencia",
+      "es": "Qué cuenta como evidencia: toda síntesis hecha por IA la validas tú antes de que entre al OST o a un PRD.",
+      "pt": "O que conta como evidência: toda síntese feita por IA é validada por você antes de entrar no OST ou em um PRD.",
+      "en": "What counts as evidence: you validate every AI-made synthesis before it enters the OST or a PRD."
+    },
+    {
+      "id": "que-se-consolida",
+      "es": "Qué se consolida: ship, no-ship o iterar, con los resultados del experimento a la vista.",
+      "pt": "O que se consolida: ship, no-ship ou iterar, com os resultados do experimento à vista.",
+      "en": "What gets consolidated: ship, no-ship or iterate, with the experiment results in front of you."
+    }
+  ],
+  "etapas": [
+    {
+      "id": "instalar",
+      "orden": 0,
+      "cadencia": null,
+      "nombre": { "es": "Instalar", "pt": "Instalar", "en": "Install" },
+      "objetivo": {
+        "es": "Tener el comando p60 y convertir la carpeta del producto en su context repo.",
+        "pt": "Ter o comando p60 e transformar a pasta do produto no seu context repo.",
+        "en": "Get the p60 command and turn your product folder into its context repo."
+      },
+      "comandos": [
+        "curl -fsSL https://raw.githubusercontent.com/guillebecerrao/p60/main/install.md | claude",
+        "p60 init",
+        "claude"
+      ],
+      "frases": [],
+      "skills": [],
+      "artefactos": [
+        { "ruta": "p60/", "es": "Todo el contexto del producto", "pt": "Todo o contexto do produto", "en": "All of the product's context" },
+        { "ruta": "p60/_framework/", "es": "Copia del framework (no se edita a mano)", "pt": "Cópia do framework (não se edita à mão)", "en": "Copy of the framework (not edited by hand)" },
+        { "ruta": ".claude/", "es": "Agentes, skills y guardarraíles", "pt": "Agentes, skills e guardrails", "en": "Agents, skills and guardrails" }
+      ],
+      "preguntas": {
+        "es": ["¿El contexto va en un repo propio o dentro del código? (por defecto, propio)", "¿En qué idioma trabaja el equipo?", "¿Es una persona, una tríada o un squad?"],
+        "pt": ["O contexto fica em um repo próprio ou dentro do código? (por padrão, próprio)", "Em que idioma a equipe trabalha?", "É uma pessoa, uma tríade ou um squad?"],
+        "en": ["Does the context live in its own repo or inside the code? (own repo by default)", "What language does the team work in?", "Is it one person, a triad or a squad?"]
+      },
+      "checkpoint": {
+        "es": "Apruebas el plan que muestra init antes de que escriba nada.",
+        "pt": "Você aprova o plano que o init mostra antes de escrever qualquer coisa.",
+        "en": "You approve the plan init shows before anything is written."
+      },
+      "sales_cuando": {
+        "es": "Abres Claude Code en la carpeta y ves los agentes y skills de P60.",
+        "pt": "Você abre o Claude Code na pasta e vê os agentes e skills do P60.",
+        "en": "You open Claude Code in the folder and see P60's agents and skills."
+      }
+    },
+    {
+      "id": "etapa-0",
+      "orden": 1,
+      "cadencia": null,
+      "nombre": { "es": "Etapa 0 · Fundación", "pt": "Etapa 0 · Fundação", "en": "Stage 0 · Foundation" },
+      "objetivo": {
+        "es": "Dejar la evidencia raíz: negocio, mercado y usuario temprano, equipo y dominio. Todo lo demás se traza a esto.",
+        "pt": "Deixar a evidência raiz: negócio, mercado e usuário inicial, equipe e domínio. Todo o resto se rastreia até aqui.",
+        "en": "Lay down the root evidence: business, market and early users, team and domain. Everything else traces back to it."
+      },
+      "comandos": [],
+      "frases": [
+        { "es": "Corre la fundación de contexto", "pt": "Rode a fundação de contexto", "en": "Run the context foundation" }
+      ],
+      "skills": ["fundacion-etapa-0"],
+      "artefactos": [
+        { "ruta": "p60/contexto/negocio/", "es": "Modelo de negocio, estrategia y objetivos", "pt": "Modelo de negócio, estratégia e objetivos", "en": "Business model, strategy and goals" },
+        { "ruta": "p60/contexto/mercado-usuario/", "es": "Mercado y evidencia temprana de usuario", "pt": "Mercado e evidência inicial de usuário", "en": "Market and early user evidence" },
+        { "ruta": "p60/contexto/equipo/", "es": "Quién está y cómo trabaja", "pt": "Quem está e como trabalha", "en": "Who's on the team and how it works" },
+        { "ruta": "p60/contexto/dominio/", "es": "Glosario, design system semilla, stack", "pt": "Glossário, design system inicial, stack", "en": "Glossary, seed design system, stack" }
+      ],
+      "preguntas": {
+        "es": ["¿Qué tiene que lograr el negocio en 3, 12 y 36 meses?", "¿Qué sabemos hoy del usuario, y qué solo creemos?", "¿Qué material ya tenemos (entrevistas, métricas, informes)?"],
+        "pt": ["O que o negócio precisa alcançar em 3, 12 e 36 meses?", "O que sabemos hoje do usuário, e o que só acreditamos?", "Que material já temos (entrevistas, métricas, relatórios)?"],
+        "en": ["What does the business need to achieve in 3, 12 and 36 months?", "What do we know about the user today, and what do we only believe?", "What material do we already have (interviews, metrics, reports)?"]
+      },
+      "checkpoint": {
+        "es": "Validas cada bloque de la entrevista antes de que quede escrito.",
+        "pt": "Você valida cada bloco da entrevista antes de ficar registrado.",
+        "en": "You validate each interview block before it is written down."
+      },
+      "sales_cuando": {
+        "es": "Las cuatro fundaciones están pobladas y el material previo quedó en el inbox de evidencia.",
+        "pt": "As quatro fundações estão preenchidas e o material prévio ficou no inbox de evidências.",
+        "en": "All four foundations are filled in and existing material is in the evidence inbox."
+      }
+    },
+    {
+      "id": "shape",
+      "orden": 2,
+      "cadencia": "giro",
+      "nombre": { "es": "Shape", "pt": "Shape", "en": "Shape" },
+      "objetivo": {
+        "es": "Descubrir y priorizar oportunidades en el Opportunity Solution Tree (OST).",
+        "pt": "Descobrir e priorizar oportunidades na Opportunity Solution Tree (OST).",
+        "en": "Discover and prioritize opportunities in the Opportunity Solution Tree (OST)."
+      },
+      "comandos": [],
+      "frases": [
+        { "es": "Creemos el OST", "pt": "Vamos criar a OST", "en": "Let's build the OST" },
+        { "es": "Diseña una guía de entrevista para este nodo", "pt": "Desenhe um roteiro de entrevista para este nó", "en": "Design an interview guide for this node" },
+        { "es": "Procesa esta transcripción", "pt": "Processe esta transcrição", "en": "Process this transcript" }
+      ],
+      "skills": ["ost-facilitator", "brief-entrevista", "interview-snapshot"],
+      "artefactos": [
+        { "ruta": "p60/contexto/estrategia/ost.md", "es": "El OST: fuente única de outcomes, oportunidades y soluciones", "pt": "A OST: fonte única de outcomes, oportunidades e soluções", "en": "The OST: single source of outcomes, opportunities and solutions" },
+        { "ruta": "p60/shape/entrevistas/snapshots/", "es": "Snapshots de una página por entrevista", "pt": "Snapshots de uma página por entrevista", "en": "One-page snapshot per interview" },
+        { "ruta": "p60/shape/guia-entrevistas/", "es": "Guías de entrevista por nodo", "pt": "Roteiros de entrevista por nó", "en": "Interview guides per node" }
+      ],
+      "preguntas": {
+        "es": ["¿Qué outcome de negocio queremos mover?", "¿Qué oportunidad tiene más evidencia y más impacto?", "¿Cuánto apetito le damos antes de pensar soluciones?"],
+        "pt": ["Que outcome de negócio queremos mover?", "Qual oportunidade tem mais evidência e mais impacto?", "Quanto apetite damos antes de pensar em soluções?"],
+        "en": ["Which business outcome do we want to move?", "Which opportunity has the most evidence and impact?", "How much appetite do we give it before thinking about solutions?"]
+      },
+      "checkpoint": {
+        "es": "Tú eliges la oportunidad target y el apetito.",
+        "pt": "Você escolhe a oportunidade alvo e o apetite.",
+        "en": "You pick the target opportunity and the appetite."
+      },
+      "sales_cuando": {
+        "es": "Hay un nodo hoja del OST elegido con criterio explícito.",
+        "pt": "Há um nó folha da OST escolhido com critério explícito.",
+        "en": "A leaf node of the OST is chosen with explicit criteria."
+      }
+    },
+    {
+      "id": "ideate",
+      "orden": 3,
+      "cadencia": "filtro",
+      "nombre": { "es": "Ideate", "pt": "Ideate", "en": "Ideate" },
+      "objetivo": {
+        "es": "Generar ideas de solución para la oportunidad elegida y preseleccionar candidatas.",
+        "pt": "Gerar ideias de solução para a oportunidade escolhida e pré-selecionar candidatas.",
+        "en": "Generate solution ideas for the chosen opportunity and shortlist candidates."
+      },
+      "comandos": [],
+      "frases": [
+        { "es": "Generemos ideas para la oportunidad target", "pt": "Vamos gerar ideias para a oportunidade alvo", "en": "Let's generate ideas for the target opportunity" }
+      ],
+      "skills": ["ideacion-estructurada"],
+      "artefactos": [
+        { "ruta": "p60/ideate/oportunidades/[opp]/candidatas.md", "es": "8 o más ideas, matriz y unas 3 candidatas", "pt": "8 ou mais ideias, matriz e umas 3 candidatas", "en": "8+ ideas, a matrix and about 3 candidates" }
+      ],
+      "preguntas": {
+        "es": ["¿Cuáles caben en el apetito que fijamos?", "¿Exploramos ideas realmente distintas o variaciones de la misma?"],
+        "pt": ["Quais cabem no apetite que definimos?", "Exploramos ideias realmente diferentes ou variações da mesma?"],
+        "en": ["Which ones fit the appetite we set?", "Did we explore truly different ideas, or variations of one?"]
+      },
+      "checkpoint": {
+        "es": "Tú preseleccionas las candidatas.",
+        "pt": "Você pré-seleciona as candidatas.",
+        "en": "You shortlist the candidates."
+      },
+      "sales_cuando": {
+        "es": "Hay candidatas preseleccionadas.",
+        "pt": "Há candidatas pré-selecionadas.",
+        "en": "Candidates are shortlisted."
+      }
+    },
+    {
+      "id": "validate",
+      "orden": 4,
+      "cadencia": "filtro",
+      "nombre": { "es": "Validate", "pt": "Validate", "en": "Validate" },
+      "objetivo": {
+        "es": "Bajar el riesgo de las candidatas: mapear supuestos y probarlos con prototipos de baja fidelidad.",
+        "pt": "Reduzir o risco das candidatas: mapear premissas e testá-las com protótipos de baixa fidelidade.",
+        "en": "De-risk the candidates: map assumptions and test them with low-fidelity prototypes."
+      },
+      "comandos": [],
+      "frases": [
+        { "es": "Mapea los supuestos de esta candidata", "pt": "Mapeie as premissas desta candidata", "en": "Map this candidate's assumptions" },
+        { "es": "Diseña el test no moderado", "pt": "Desenhe o teste não moderado", "en": "Design the unmoderated test" }
+      ],
+      "skills": ["assumption-testing", "brief-test-no-moderado"],
+      "artefactos": [
+        { "ruta": "p60/validate/oportunidades/[opp]/[idea]/", "es": "Mapa de supuestos, test y PRD-brief", "pt": "Mapa de premissas, teste e PRD-brief", "en": "Assumption map, test and PRD-brief" }
+      ],
+      "preguntas": {
+        "es": ["¿Qué supuesto, si es falso, mata la idea?", "¿Cuál es el test más barato que lo prueba?", "¿Qué umbral fijamos antes de ver los resultados?"],
+        "pt": ["Qual premissa, se for falsa, mata a ideia?", "Qual é o teste mais barato que a prova?", "Que limiar definimos antes de ver os resultados?"],
+        "en": ["Which assumption kills the idea if it's false?", "What's the cheapest test that proves it?", "What threshold do we set before seeing results?"]
+      },
+      "checkpoint": {
+        "es": "Tú validas la síntesis de los tests antes de que cuente como evidencia.",
+        "pt": "Você valida a síntese dos testes antes de contar como evidência.",
+        "en": "You validate the test synthesis before it counts as evidence."
+      },
+      "sales_cuando": {
+        "es": "Una solución quedó elegida con evidencia (PRD-brief selected).",
+        "pt": "Uma solução foi escolhida com evidência (PRD-brief selected).",
+        "en": "One solution is chosen with evidence (PRD-brief selected)."
+      }
+    },
+    {
+      "id": "handoff",
+      "orden": 5,
+      "cadencia": "goteo",
+      "nombre": { "es": "Handoff", "pt": "Handoff", "en": "Handoff" },
+      "objetivo": {
+        "es": "Madurar la solución a specs listas para construir, en rebanadas verticales.",
+        "pt": "Amadurecer a solução em specs prontas para construir, em fatias verticais.",
+        "en": "Mature the solution into build-ready specs, in vertical slices."
+      },
+      "comandos": [],
+      "frases": [
+        { "es": "Madura el brief seleccionado a PRD", "pt": "Amadureça o brief selecionado em PRD", "en": "Mature the selected brief into a PRD" }
+      ],
+      "skills": ["redactar-prd"],
+      "artefactos": [
+        { "ruta": "p60/handoff-delivery/epicas/[epica]/prd-maestro.md", "es": "PRD Maestro de la épica (documento vivo)", "pt": "PRD Mestre do épico (documento vivo)", "en": "Epic master PRD (living document)" },
+        { "ruta": "p60/handoff-delivery/epicas/[epica]/features/[feature]/", "es": "PRD de feature, ADR e Iteration PRDs", "pt": "PRD de feature, ADR e Iteration PRDs", "en": "Feature PRD, ADR and Iteration PRDs" },
+        { "ruta": ".../activas/", "es": "Iteration PRDs aprobados y congelados", "pt": "Iteration PRDs aprovados e congelados", "en": "Approved, frozen Iteration PRDs" }
+      ],
+      "preguntas": {
+        "es": ["¿Cada rebanada se puede usar y verificar sola?", "¿Queda alguna pregunta abierta para quien construye?", "¿Qué decisión técnica merece un ADR?"],
+        "pt": ["Cada fatia pode ser usada e verificada sozinha?", "Resta alguma pergunta aberta para quem constrói?", "Que decisão técnica merece um ADR?"],
+        "en": ["Can each slice be used and verified on its own?", "Is any question left open for whoever builds it?", "Which technical decision deserves an ADR?"]
+      },
+      "checkpoint": {
+        "es": "Apruebas el Iteration PRD; al moverse a activas/ queda congelado (el guardarraíl pide confirmación para tocarlo).",
+        "pt": "Você aprova o Iteration PRD; ao ir para activas/ ele fica congelado (o guardrail pede confirmação para mexer).",
+        "en": "You approve the Iteration PRD; once it moves to activas/ it is frozen (the guardrail asks before anyone edits it)."
+      },
+      "sales_cuando": {
+        "es": "Hay un Iteration PRD aprobado, sin preguntas abiertas.",
+        "pt": "Há um Iteration PRD aprovado, sem perguntas abertas.",
+        "en": "There's an approved Iteration PRD with no open questions."
+      }
+    },
+    {
+      "id": "build",
+      "orden": 6,
+      "cadencia": "goteo",
+      "nombre": { "es": "Build", "pt": "Build", "en": "Build" },
+      "objetivo": {
+        "es": "Construir la rebanada en el repo de código, con el Iteration PRD como input.",
+        "pt": "Construir a fatia no repo de código, com o Iteration PRD como input.",
+        "en": "Build the slice in the code repo, with the Iteration PRD as input."
+      },
+      "comandos": [],
+      "frases": [],
+      "skills": [],
+      "nota": {
+        "es": "Si construye un agente, lo orquesta Speckit (specify → plan → tasks → implement). Si construye un equipo de desarrollo, usa su propio proceso.",
+        "pt": "Se quem constrói é um agente, o Speckit orquestra (specify → plan → tasks → implement). Se é uma equipe de desenvolvimento, ela usa seu próprio processo.",
+        "en": "If an agent builds it, Speckit orchestrates (specify → plan → tasks → implement). If a dev team builds it, they use their own process."
+      },
+      "artefactos": [],
+      "preguntas": {
+        "es": ["¿Quién construye: un agente o un equipo?", "¿Cabe en el apetito? Si no cabe, vuelve a Shape re-dimensionado, no se extiende."],
+        "pt": ["Quem constrói: um agente ou uma equipe?", "Cabe no apetite? Se não couber, volta ao Shape redimensionado, não se estende."],
+        "en": ["Who builds it: an agent or a team?", "Does it fit the appetite? If not, it goes back to Shape resized; it doesn't get extended."]
+      },
+      "checkpoint": null,
+      "sales_cuando": {
+        "es": "El producto está desplegado y verificado.",
+        "pt": "O produto está publicado e verificado.",
+        "en": "The product is deployed and verified."
+      }
+    },
+    {
+      "id": "experimentacion",
+      "orden": 7,
+      "cadencia": "filtro",
+      "nombre": { "es": "Experimentación", "pt": "Experimentação", "en": "Experimentation" },
+      "objetivo": {
+        "es": "Validar lo construido con uso real y decidir: ship, no-ship o iterar.",
+        "pt": "Validar o que foi construído com uso real e decidir: ship, no-ship ou iterar.",
+        "en": "Validate what you built with real usage and decide: ship, no-ship or iterate."
+      },
+      "comandos": [],
+      "frases": [
+        { "es": "Diseñemos el experimento de esta feature", "pt": "Vamos desenhar o experimento desta feature", "en": "Let's design the experiment for this feature" },
+        { "es": "Llegó el corte: decidamos", "pt": "Chegou o corte: vamos decidir", "en": "Cut-off reached: let's decide" }
+      ],
+      "skills": ["disenar-experimento", "decision-ship"],
+      "artefactos": [
+        { "ruta": "p60/experimentacion/experimentos/[NN]-[slug].md", "es": "Experimento con umbral y fecha de corte pre-registrados", "pt": "Experimento com limiar e data de corte pré-registrados", "en": "Experiment with pre-registered threshold and cut-off date" },
+        { "ruta": ".../cerradas/", "es": "Iteration PRD implementado, como contexto de respaldo", "pt": "Iteration PRD implementado, como contexto de apoio", "en": "Implemented Iteration PRD, kept as backing context" }
+      ],
+      "preguntas": {
+        "es": ["¿Qué umbral y fecha de corte registramos antes de lanzar?", "¿El resultado alcanzó el umbral, o estamos leyendo lo que queremos ver?"],
+        "pt": ["Que limiar e data de corte registramos antes de lançar?", "O resultado atingiu o limiar, ou estamos lendo o que queremos ver?"],
+        "en": ["What threshold and cut-off date did we register before launch?", "Did the result hit the threshold, or are we reading what we want to see?"]
+      },
+      "checkpoint": {
+        "es": "Tú decides ship, no-ship o iterar.",
+        "pt": "Você decide ship, no-ship ou iterar.",
+        "en": "You decide ship, no-ship or iterate."
+      },
+      "sales_cuando": {
+        "es": "La decisión quedó registrada y el OST actualizado. El loop vuelve a Shape.",
+        "pt": "A decisão ficou registrada e a OST atualizada. O loop volta ao Shape.",
+        "en": "The decision is recorded and the OST updated. The loop returns to Shape."
+      }
+    }
+  ],
+  "transversales": [
+    {
+      "skill": "bibliotecario-evidencia",
+      "frase": { "es": "Deja esto en el inbox / ¿Qué evidencia tenemos de X?", "pt": "Deixe isto no inbox / Que evidência temos de X?", "en": "Put this in the inbox / What evidence do we have on X?" },
+      "resultado": { "es": "Ficha EV-NNN en p60/contexto/evidencia/fichas/ y el índice actualizado", "pt": "Ficha EV-NNN em p60/contexto/evidencia/fichas/ e o índice atualizado", "en": "EV-NNN card in p60/contexto/evidencia/fichas/ and an updated index" }
+    },
+    {
+      "skill": "cierre-de-ciclo",
+      "frase": { "es": "Cerremos el ciclo de Shape", "pt": "Vamos fechar o ciclo de Shape", "en": "Let's close the Shape cycle" },
+      "resultado": { "es": "Retro, archivado y bitácora actualizada", "pt": "Retro, arquivamento e diário atualizado", "en": "Retro, archiving and an updated log" }
+    },
+    {
+      "skill": "actualizar-bitacora-humana",
+      "frase": { "es": "Consolida mis notas en la bitácora", "pt": "Consolide minhas notas no diário", "en": "Consolidate my notes into the log" },
+      "resultado": { "es": "p60/bitacora/bitacora-humana.md al día", "pt": "p60/bitacora/bitacora-humana.md em dia", "en": "p60/bitacora/bitacora-humana.md up to date" }
+    },
+    {
+      "skill": "generar-presentacion-html",
+      "frase": { "es": "Genera el HTML del OST para presentarlo", "pt": "Gere o HTML da OST para apresentar", "en": "Generate the OST HTML to present it" },
+      "resultado": { "es": "Presentación ejecutiva en p60/presentaciones/", "pt": "Apresentação executiva em p60/presentaciones/", "en": "Executive presentation in p60/presentaciones/" }
+    }
+  ],
+  "cli": [
+    { "cmd": "p60 init", "es": "Convierte la carpeta actual en context repo", "pt": "Transforma a pasta atual em context repo", "en": "Turns the current folder into a context repo" },
+    { "cmd": "p60 update", "es": "Actualiza el framework sin pisar lo que editaste", "pt": "Atualiza o framework sem sobrescrever o que você editou", "en": "Updates the framework without overwriting your edits" },
+    { "cmd": "p60 doctor", "es": "Revisa prerequisitos, versión y guardarraíles", "pt": "Verifica pré-requisitos, versão e guardrails", "en": "Checks prerequisites, version and guardrails" },
+    { "cmd": "p60 skills", "es": "Qué sabe hacer el agente y cuándo", "pt": "O que o agente sabe fazer e quando", "en": "What the agent can do, and when" },
+    { "cmd": "p60 agents", "es": "Los perfiles expertos", "pt": "Os perfis especialistas", "en": "The expert profiles" },
+    { "cmd": "p60 self-update", "es": "Actualiza el comando en tu computador", "pt": "Atualiza o comando no seu computador", "en": "Updates the command on your computer" }
+  ]
+}
