@@ -49,6 +49,9 @@ t() { # mensajes es/en/pt
     en:next)    echo "Next: go to your product folder and run  p60 init";;
     pt:next)    echo "Próximo passo: vá até a pasta do produto e rode  p60 init";;
     *:next)     echo "Siguiente: entra a la carpeta de tu producto y corre  p60 init";;
+    en:next_up) echo "Updated from $2. Next: in each product folder, run  p60 update";;
+    pt:next_up) echo "Atualizado de $2. Próximo passo: em cada pasta de produto, rode  p60 update";;
+    *:next_up)  echo "Actualizado desde $2. Siguiente: en la carpeta de cada producto, corre  p60 update";;
   esac
 }
 die() { printf 'p60 install: %s\n' "$*" >&2; exit 1; }
@@ -90,6 +93,7 @@ mkdir "$tmp/src" && tar -xzf "$tmp/p60.tar.gz" -C "$tmp/src" --strip-components=
 ver=$(cat "$tmp/src/VERSION" 2>/dev/null || echo "${VERSION#v}")
 
 # Instalar: versions/<ver> + current + bin/p60 (reemplazos atómicos dentro de PREFIX)
+previa=$(readlink "$PREFIX/current" 2>/dev/null | sed 's#^versions/##' || true)
 rm -rf "$PREFIX/versions/$ver"; mkdir -p "$PREFIX/versions"
 mv "$tmp/src" "$PREFIX/versions/$ver"
 ln -sfn "versions/$ver" "$PREFIX/current"
@@ -103,4 +107,4 @@ case ":$PATH:" in
     ;;
   *) t path "$BIN_DIR";;
 esac
-echo "$(t next)"
+if [ -n "$previa" ] && [ "$previa" != "$ver" ]; then echo "$(t next_up "$previa")"; else echo "$(t next)"; fi

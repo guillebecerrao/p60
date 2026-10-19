@@ -2,6 +2,11 @@
 
 Versiones del framework P60. Cada versión es un tag `vX.Y.Z` en GitHub; `install.sh` instala el último release y `p60 update` lleva cada producto a la versión del CLI instalado.
 
+## Sin publicar
+
+- `p60 update` lista en el plan los metadatos que siempre cambian (`config.yaml`, `manifest.json`).
+- `install.sh` (y por lo tanto `p60 self-update`) detecta que está actualizando y sugiere `p60 update` en cada producto. Rige desde la versión siguiente: el `self-update` corre el instalador de la versión que ya tienes.
+
 ## v2.1.1 — 2026-10-19
 
 Ajustes del primer test real (la landing de P60 instalada con `install.md`).

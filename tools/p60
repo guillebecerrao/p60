@@ -198,6 +198,9 @@ m() {
     en:h_gone)     f="No longer in the framework (I'll ask before deleting each one):";;
     pt:h_gone)     f="Não existem mais no framework (pergunto antes de apagar cada um):";;
     *:h_gone)      f="Ya no existen en el framework (pregunto antes de borrar cada uno):";;
+    en:h_meta)     f="Metadata (always): p60/_framework/config.yaml (framework_version) and p60/_framework/manifest.json (version and hashes)";;
+    pt:h_meta)     f="Metadados (sempre): p60/_framework/config.yaml (framework_version) e p60/_framework/manifest.json (versão e hashes)";;
+    *:h_meta)      f="Metadatos (siempre): p60/_framework/config.yaml (framework_version) y p60/_framework/manifest.json (versión y hashes)";;
     en:u_ask)      f="Apply this plan? [Y/n] ";;
     pt:u_ask)      f="Aplicar este plano? [S/n] ";;
     *:u_ask)       f="¿Aplicar este plan? [S/n] ";;
@@ -604,6 +607,7 @@ EOF
     say ""; m "h_$acc"
     grep "^$acc	" "$plan" | cut -f2 | sed 's/^/  · /'
   done
+  say ""; m h_meta
   if [ "$dry" -eq 1 ]; then say ""; m dry; exit 0; fi
 
   local resp=""

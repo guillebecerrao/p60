@@ -1,7 +1,7 @@
 ---
 component: p60-cli
 type: tool
-version: 0.7
+version: 0.8
 status: draft
 agent_role: architect
 last_sync: 2026-10-19
@@ -186,3 +186,4 @@ Cada herramienta es un adaptador con tres funciones: `plan` (qué crearía o fus
 | 0.5 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Fase 3 implementada: `p60 update` (plan, `--dry-run`, `--yes`, conflictos con `.p60-new`, restauración, borrado solo con confirmación) y `doctor` de instancia (versión, integridad, hook, subcarpeta). Commit de `init` limitado a lo que crea p60. Probado con un framework simulado v2.2.0. |
 | 0.6 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Fase 4: `install.sh`, `install.md`, `self-update`, `--overwrite`, `docs/instalacion.md`, `CHANGELOG.md`, release v2.1.0. |
 | 0.7 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Test real (landing): `lint` dentro de una instancia revisa la instancia (gestionados, hook, links de `p60/`, catálogo de evidencia); `--framework` para la fuente. Negrita solo con TTY y sin `NO_COLOR`. |
+| 0.8 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Test de update 2.1.0→2.1.1 (landing): el plan de `update` nombra los metadatos que siempre cambian (`config.yaml`, `manifest.json`); `install.sh` detecta que actualiza una versión previa y sugiere `p60 update` en vez de `init`. |
