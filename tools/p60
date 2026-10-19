@@ -1,30 +1,38 @@
 #!/usr/bin/env bash
 # p60 — CLI del framework P60 (AI-Native Spec-Driven Product Building).
 # Comandos pensados para operar, capacitar y demostrar el framework.
+# Contrato: tools/_specs/p60-cli.spec.md
 #
-#   p60 init <producto> [--dir RUTA] [--escala pb|triada|squad] [--lang es|en|pt]
-#           Instancia un context-repo desde los templates (Etapa 0 lista para poblar).
-#           Idiomas: es (español) · en (inglés) · pt (portugués de Brasil). El contenido
-#           se genera en el idioma elegido; los nombres de carpetas son estructura
-#           canónica del framework y no se traducen.
+#   p60 init [RUTA] [--producto NOMBRE] [--escala pb|triada|squad] [--lang es|en|pt]
+#                   [--tools claude] [--dry-run] [--yes]
+#           Convierte RUTA (default: carpeta actual; se crea si no existe) en un context
+#           repo: todo P60 queda en RUTA/p60/ (framework en p60/_framework/) y la capa
+#           de la herramienta en RUTA/.claude/. Si ya hay git, no commitea; si no, lo
+#           inicializa. Nunca reemplaza archivos existentes sin preguntar.
+#           --dry-run muestra el plan sin escribir · --yes acepta el plan sin preguntar.
 #   p60 skills      Lista los skills disponibles (índice del framework).
 #   p60 agents      Lista los perfiles expertos y cuándo se activan.
 #   p60 lint        Verifica la integridad del repo del framework.
 #   p60 doctor      Chequea prerequisitos del entorno (git, python3, Claude Code).
+#   p60 version     Versión del framework que trae este CLI.
 #   p60 help        Esta ayuda.
 #
 # El framework NO exige este CLI: todo puede hacerse conversando con el agente
-# (patrón agent-driven). El CLI existe para onboarding, demos y scripting.
+# (patrón agent-driven). El CLI existe para instalar, actualizar, demos y scripting.
 
 set -euo pipefail
 P60_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+P60_REPO_URL="https://github.com/guillebecerrao/p60"
+P60_VERSION="$(cat "$P60_ROOT/VERSION" 2>/dev/null || echo dev)"
+TOOLS_SOPORTADAS="claude"
 HOY="$(date +%Y-%m-%d)"
 
 say()  { printf '%s\n' "$*"; }
 die()  { printf 'p60: %s\n' "$*" >&2; exit 1; }
 titulo(){ printf '\n\033[1m%s\033[0m\n' "$*"; }
 
-cmd_help() { sed -n '2,19p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; }
+cmd_help() { awk 'NR>1 && /^#/{sub(/^# ?/,""); print; next} NR>1{exit}' "${BASH_SOURCE[0]}"; }
+cmd_version() { say "p60 $P60_VERSION ($P60_ROOT)"; }
 
 cmd_doctor() {
   titulo "p60 doctor"
@@ -33,7 +41,7 @@ cmd_doctor() {
     if command -v "$bin" >/dev/null; then say "OK    $bin ($(command -v "$bin"))"; else say "FAIL  falta $bin"; fallos=1; fi
   done
   command -v claude >/dev/null && say "OK    claude (Claude Code CLI)" || say "WARN  Claude Code CLI no encontrado — el framework se opera con Claude Code"
-  [ -f "$P60_ROOT/.p60/memory/constitution.md" ] && say "OK    framework P60 en $P60_ROOT" || { say "FAIL  no encuentro el framework en $P60_ROOT"; fallos=1; }
+  [ -f "$P60_ROOT/.p60/memory/constitution.md" ] && say "OK    framework P60 $P60_VERSION en $P60_ROOT" || { say "FAIL  no encuentro el framework en $P60_ROOT"; fallos=1; }
   exit "$fallos"
 }
 
@@ -50,76 +58,208 @@ cmd_agents() {
 
 cmd_lint() { exec "$P60_ROOT/tools/p60-lint.sh" "$P60_ROOT"; }
 
-cmd_init() {
-  local producto="" dir="." escala="" lang=""
-  while [ $# -gt 0 ]; do
-    case "$1" in
-      --dir)    dir="$2"; shift 2;;
-      --escala) escala="$2"; shift 2;;
-      --lang)   lang="$2"; shift 2;;
-      -*)       die "flag desconocido: $1";;
-      *)        producto="$1"; shift;;
-    esac
+# ── Mensajes de init (es/en/pt). Uso: m CLAVE [args printf] ─────────────────────────
+m() {
+  local k="$1"; shift; local f=""
+  case "$LANG_P60:$k" in
+    en:plan)       f="Install plan";;
+    pt:plan)       f="Plano de instalação";;
+    *:plan)        f="Plan de instalación";;
+    en:dest)       f="Target:        %s";;
+    pt:dest)       f="Destino:       %s";;
+    *:dest)        f="Destino:       %s";;
+    en:prod)       f="Product:       %s · scale: %s · language: %s · tools: %s";;
+    pt:prod)       f="Produto:       %s · escala: %s · idioma: %s · ferramentas: %s";;
+    *:prod)        f="Producto:      %s · escala: %s · idioma: %s · herramientas: %s";;
+    en:c_p60)      f="  + p60/                 structure + seeds (team work)";;
+    pt:c_p60)      f="  + p60/                 estrutura + sementes (trabalho do time)";;
+    *:c_p60)       f="  + p60/                 estructura + semillas (trabajo del equipo)";;
+    en:c_fw)       f="  + p60/_framework/      P60 framework v%s (managed by p60)";;
+    pt:c_fw)       f="  + p60/_framework/      framework P60 v%s (gerenciado pelo p60)";;
+    *:c_fw)        f="  + p60/_framework/      framework P60 v%s (gestionado por p60)";;
+    en:c_claude)   f="  + .claude/             %s agents · %s skills";;
+    pt:c_claude)   f="  + .claude/             %s agentes · %s skills";;
+    *:c_claude)    f="  + .claude/             %s agentes · %s skills";;
+    en:s_create)   f="  ~ .claude/settings.json  create with the gate-zonas hook";;
+    pt:s_create)   f="  ~ .claude/settings.json  criar com o hook gate-zonas";;
+    *:s_create)    f="  ~ .claude/settings.json  crear con el hook gate-zonas";;
+    en:s_merge)    f="  ~ .claude/settings.json  add the gate-zonas hook (keeps what's there)";;
+    pt:s_merge)    f="  ~ .claude/settings.json  adicionar o hook gate-zonas (mantém o que existe)";;
+    *:s_merge)     f="  ~ .claude/settings.json  agregar el hook gate-zonas (conserva lo que hay)";;
+    en:s_have)     f="  = .claude/settings.json  already has the gate-zonas hook";;
+    pt:s_have)     f="  = .claude/settings.json  já tem o hook gate-zonas";;
+    *:s_have)      f="  = .claude/settings.json  ya tiene el hook gate-zonas";;
+    en:cm_create)  f="  ~ CLAUDE.md            create with the P60 block";;
+    pt:cm_create)  f="  ~ CLAUDE.md            criar com o bloco P60";;
+    *:cm_create)   f="  ~ CLAUDE.md            crear con el bloque P60";;
+    en:cm_append)  f="  ~ CLAUDE.md            append the P60 block (your content stays)";;
+    pt:cm_append)  f="  ~ CLAUDE.md            adicionar o bloco P60 (seu conteúdo fica)";;
+    *:cm_append)   f="  ~ CLAUDE.md            agregar el bloque P60 (tu contenido se mantiene)";;
+    en:cm_replace) f="  ~ CLAUDE.md            refresh the existing P60 block";;
+    pt:cm_replace) f="  ~ CLAUDE.md            atualizar o bloco P60 existente";;
+    *:cm_replace)  f="  ~ CLAUDE.md            actualizar el bloque P60 existente";;
+    en:g_init)     f="  git: git init + initial commit";;
+    pt:g_init)     f="  git: git init + commit inicial";;
+    *:g_init)      f="  git: git init + commit inicial";;
+    en:g_keep)     f="  git: existing repo (%s) — no commit; review with git status";;
+    pt:g_keep)     f="  git: repo existente (%s) — sem commit; revise com git status";;
+    *:g_keep)      f="  git: repo existente (%s) — sin commit; revisa con git status";;
+    en:w_sub)      f="  ! This folder is inside another repo. Open Claude Code from %s so it finds .claude/.";;
+    pt:w_sub)      f="  ! Esta pasta está dentro de outro repo. Abra o Claude Code a partir de %s para ele achar o .claude/.";;
+    *:w_sub)       f="  ! Esta carpeta está dentro de otro repo. Abre Claude Code desde %s para que encuentre .claude/.";;
+    en:col_h)      f="Already exists (would be replaced):";;
+    pt:col_h)      f="Já existe (seria substituído):";;
+    *:col_h)       f="Ya existe (se reemplazaría):";;
+    en:col_ask)    f="Replace these items? [y/N] ";;
+    pt:col_ask)    f="Substituir esses itens? [s/N] ";;
+    *:col_ask)     f="¿Reemplazar estos elementos? [s/N] ";;
+    en:col_abort)  f="Stopped: there are collisions. Nothing was written. Review the list above (or run interactively to decide).";;
+    pt:col_abort)  f="Parado: há colisões. Nada foi escrito. Revise a lista acima (ou rode de forma interativa para decidir).";;
+    *:col_abort)   f="Detenido: hay colisiones. No se escribió nada. Revisa la lista de arriba (o corre en modo interactivo para decidir).";;
+    en:go_ask)     f="The folder already has content. Continue? [Y/n] ";;
+    pt:go_ask)     f="A pasta já tem conteúdo. Continuar? [S/n] ";;
+    *:go_ask)      f="La carpeta ya tiene contenido. ¿Continuar? [S/n] ";;
+    en:cancel)     f="Cancelled. Nothing was written.";;
+    pt:cancel)     f="Cancelado. Nada foi escrito.";;
+    *:cancel)      f="Cancelado. No se escribió nada.";;
+    en:dry)        f="(--dry-run: nothing was written)";;
+    pt:dry)        f="(--dry-run: nada foi escrito)";;
+    *:dry)         f="(--dry-run: no se escribió nada)";;
+    en:installed)  f="P60 is already installed here (p60/_framework/ exists). To update it: p60 update";;
+    pt:installed)  f="O P60 já está instalado aqui (p60/_framework/ existe). Para atualizar: p60 update";;
+    *:installed)   f="P60 ya está instalado aquí (existe p60/_framework/). Para actualizarlo: p60 update";;
+    en:codebase)   f="This looks like a code repository (%s). P60's constitution (principle 3) keeps product context in its own repo, separate from the code. Create a folder for the context repo and run p60 init there.";;
+    pt:codebase)   f="Isto parece um repositório de código (%s). A constituição do P60 (princípio 3) mantém o contexto de produto num repo próprio, separado do código. Crie uma pasta para o context repo e rode p60 init nela.";;
+    *:codebase)    f="Esto parece un repositorio de código (%s). La constitución de P60 (principio 3) mantiene el contexto de producto en un repo propio, separado del código. Crea una carpeta para el context repo y corre p60 init ahí.";;
+  esac
+  # shellcheck disable=SC2059
+  printf "$f\n" "$@"
+}
+
+# ── Helpers de instanciación ────────────────────────────────────────────────────────
+
+# Reescribe rutas del framework fuente a rutas de instancia (in place). Args: archivos.
+reescribir_instancia() {
+  python3 - "$P60_REPO_URL" "$@" <<'EOF'
+import re, sys
+url, files = sys.argv[1], sys.argv[2:]
+NB = r'(?<![\w/.-])'          # no precedido por parte de otra ruta
+REGLAS = [
+    (NB + r'\.p60/memory/',                     'p60/_framework/memory/'),
+    (NB + r'\.p60/registry/',                   'p60/_framework/registry/'),
+    (NB + r'docs/(P60-Framework-Guide\.md|arranque-rapido\.md|adr/)', r'p60/_framework/docs/\1'),
+    (NB + r'skills/_index\.md',                 'p60/_framework/skills-index.md'),
+    (NB + r'skills/_standards/SKILL-format\.md', url + '/blob/main/skills/_standards/SKILL-format.md'),
+    (NB + r'_standards/component-spec\.md',     'p60/_framework/standards/component-spec.md'),
+    (NB + r'templates/artifacts/',              'p60/_framework/templates/artifacts/'),
+    (NB + r'agents/([a-z0-9-]+)\.md',           r'p60/_framework/agents/\1.md'),
+    (NB + r'skills/([a-z0-9-]+)/',              r'.claude/skills/\1/'),
+]
+for f in files:
+    s = open(f, encoding='utf-8').read(); o = s
+    for pat, rep in REGLAS:
+        s = re.sub(pat, rep, s)
+    if s != o:
+        open(f, 'w', encoding='utf-8').write(s)
+EOF
+}
+
+# Fusiona el hook gate-zonas en .claude/settings.json sin pisar lo existente. Arg: ruta del json.
+fusionar_settings() {
+  python3 - "$1" <<'EOF'
+import json, os, sys
+p = sys.argv[1]
+cmd = '"$CLAUDE_PROJECT_DIR"/p60/_framework/hooks/gate-zonas.sh'
+try:
+    d = json.load(open(p)) if os.path.exists(p) else {}
+except ValueError:
+    sys.exit("p60: .claude/settings.json no es JSON válido; no lo toco. Corrígelo y vuelve a correr init.")
+pre = d.setdefault('hooks', {}).setdefault('PreToolUse', [])
+if not any(h.get('command') == cmd for e in pre for h in e.get('hooks', [])):
+    pre.append({"matcher": "Write|Edit|NotebookEdit", "hooks": [{"type": "command", "command": cmd}]})
+os.makedirs(os.path.dirname(p), exist_ok=True)
+with open(p, 'w') as fh:
+    json.dump(d, fh, indent=2, ensure_ascii=False); fh.write('\n')
+EOF
+}
+
+# Estado del hook en settings.json: create | merge | have
+estado_settings() {
+  [ -f "$1" ] || { echo create; return; }
+  grep -q 'p60/_framework/hooks/gate-zonas.sh' "$1" && echo have || echo merge
+}
+
+# Inserta o reemplaza el bloque <!-- P60:BEGIN … P60:END --> en el CLAUDE.md de la raíz.
+# Args: CLAUDE.md destino, archivo con el bloque.
+bloque_claude() {
+  python3 - "$1" "$2" <<'EOF'
+import os, re, sys
+dst, blk = sys.argv[1], open(sys.argv[2], encoding='utf-8').read().strip() + '\n'
+s = open(dst, encoding='utf-8').read() if os.path.exists(dst) else ''
+pat = re.compile(r'<!-- P60:BEGIN.*?<!-- P60:END -->\n?', re.S)
+if pat.search(s):
+    s = pat.sub(lambda _: blk, s, count=1)
+else:
+    s = (s.rstrip('\n') + '\n\n' if s.strip() else '') + blk
+open(dst, 'w', encoding='utf-8').write(s)
+EOF
+}
+
+# Escribe p60/_framework/manifest.json. Args: raíz instancia, versión, tools, ids agentes, ids skills.
+escribir_manifiesto() {
+  python3 - "$@" <<'EOF'
+import hashlib, json, os, re, sys
+root, version, tools, agentes, skills = sys.argv[1:6]
+def sha(p): return 'sha256:' + hashlib.sha256(open(p, 'rb').read()).hexdigest()
+files = {}
+def add_tree(rel):
+    base = os.path.join(root, rel)
+    for d, _, fs in os.walk(base):
+        for f in fs:
+            p = os.path.join(d, f); r = os.path.relpath(p, root)
+            if r != 'p60/_framework/manifest.json': files[r] = sha(p)
+add_tree('p60/_framework')
+for a in agentes.split():
+    r = f'.claude/agents/{a}.md'; files[r] = sha(os.path.join(root, r))
+for s in skills.split():
+    add_tree(f'.claude/skills/{s}')
+cm = open(os.path.join(root, 'CLAUDE.md'), encoding='utf-8').read()
+blk = re.search(r'<!-- P60:BEGIN.*?<!-- P60:END -->', cm, re.S).group(0)
+man = {
+    "framework_version": version,
+    "tools": tools.split(','),
+    "files": dict(sorted(files.items())),
+    "merged": {
+        ".claude/settings.json": {"hooks.PreToolUse": "gate-zonas"},
+        "CLAUDE.md": {"block": "P60", "sha256": hashlib.sha256(blk.encode()).hexdigest()},
+    },
+}
+with open(os.path.join(root, 'p60/_framework/manifest.json'), 'w') as fh:
+    json.dump(man, fh, indent=2, ensure_ascii=False); fh.write('\n')
+EOF
+}
+
+# Marcadores típicos de un repo de código (para la regla del principio 3).
+marcador_codigo() { # $1=carpeta → imprime el primer marcador encontrado
+  local d="$1" x
+  for x in package.json pyproject.toml requirements.txt go.mod Cargo.toml pom.xml build.gradle Gemfile composer.json src app; do
+    [ -e "$d/$x" ] && { echo "$x"; return 0; }
   done
+  ls "$d"/*.csproj >/dev/null 2>&1 && { echo "*.csproj"; return 0; }
+  return 1
+}
 
-  # Wizard de 3 decisiones (solo pregunta lo que falta)
-  if [ -z "$producto" ]; then read -r -p "Nombre del producto (kebab-case): " producto; fi
-  [ -n "$producto" ] || die "se necesita un nombre de producto"
-  echo "$producto" | grep -Eq '^[a-z0-9][a-z0-9-]*$' || die "el nombre debe ser kebab-case ([a-z0-9-])"
-  if [ -z "$escala" ]; then
-    read -r -p "Escala del equipo [pb=product-builder solo | triada | squad] (pb): " escala
-    escala="${escala:-pb}"
-  fi
-  case "$escala" in pb|triada|squad) ;; *) die "escala inválida: $escala (pb|triada|squad)";; esac
-  if [ -z "$lang" ]; then
-    read -r -p "Idioma del contenido [es=español | en=english | pt=português BR] (es): " lang
-    lang="${lang:-es}"
-  fi
-  case "$lang" in es|en|pt) ;; *) die "idioma inválido: $lang (es|en|pt)";; esac
-
-  local repo="$dir/${producto}-context"
-  [ -e "$repo" ] && die "ya existe $repo"
-  local tpl="$P60_ROOT/templates/context-repo/$lang"
-
-  titulo "p60 init — instanciando $repo"
-
-  # 1) Esqueleto de carpetas (estructura canónica del template README)
-  local carpetas=(
-    "contexto/negocio" "contexto/mercado-usuario" "contexto/equipo" "contexto/dominio"
-    "contexto/estrategia" "contexto/evidencia/_inbox" "contexto/evidencia/fichas" "contexto/evidencia/originales"
-    "shape/entrevistas/transcripciones" "shape/entrevistas/snapshots" "shape/_retro"
-    "ideate/oportunidades" "ideate/_retro"
-    "validate/oportunidades" "validate/_retro"
-    "handoff-delivery/epicas" "handoff-delivery/_retro"
-    "experimentacion/experimentos"
-    "bitacora" "presentaciones" "_historia" "legacy"
-    ".claude/agents" ".claude/skills" "tools/hooks"
-  )
-  for c in "${carpetas[@]}"; do mkdir -p "$repo/$c"; touch "$repo/$c/.keep"; done
-
-  # 2) Archivos semilla desde el template (placeholders: [PRODUCTO], [FECHA], [RUTA_P60])
-  instanciar() { # $1=origen relativo al template  $2=destino relativo al repo
-    sed -e "s|\[PRODUCTO\]|$producto|g" -e "s|\[FECHA\]|$HOY|g" -e "s|\[RUTA_P60\]|$P60_ROOT|g" \
-      "$tpl/$1" > "$repo/$2"
-  }
-  instanciar "CLAUDE.md" "CLAUDE.md"
-  instanciar "framework.md" "framework.md"
-  instanciar "README.md" "README.md"
-  instanciar "contexto/evidencia/_index.md" "contexto/evidencia/_index.md"
-  instanciar "bitacora/bitacora-agentica.md" "bitacora/bitacora-agentica.md"
-  instanciar "bitacora/bitacora-humana.md" "bitacora/bitacora-humana.md"
-  instanciar "experimentacion/pipeline.md" "experimentacion/pipeline.md"
-  # OST semilla (fuente única), localizada
-  case "$lang" in
-    en) cat > "$repo/contexto/estrategia/ost.md" <<EOF
+ost_semilla() { # $1=producto $2=destino
+  case "$LANG_P60" in
+    en) cat > "$2" <<EOF
 ---
 type: ost
-producto: $producto
+producto: $1
 status: draft
 created: $HOY
 ---
 
-# OST — $producto (single source)
+# OST — $1 (single source)
 
 > Created and maintained with the \`ost-facilitator\` skill. Every opportunity, solution and spec traces to a node of this tree. Never duplicated.
 
@@ -130,15 +270,15 @@ created: $HOY
 *(pending)*
 EOF
     ;;
-    pt) cat > "$repo/contexto/estrategia/ost.md" <<EOF
+    pt) cat > "$2" <<EOF
 ---
 type: ost
-producto: $producto
+producto: $1
 status: draft
 created: $HOY
 ---
 
-# OST — $producto (fonte única)
+# OST — $1 (fonte única)
 
 > Criado e mantido com o skill \`ost-facilitator\`. Toda oportunidade, solução e spec se rastreia a um nó desta árvore. Nunca se duplica.
 
@@ -149,15 +289,15 @@ created: $HOY
 *(pendente)*
 EOF
     ;;
-    *)  cat > "$repo/contexto/estrategia/ost.md" <<EOF
+    *)  cat > "$2" <<EOF
 ---
 type: ost
-producto: $producto
+producto: $1
 status: draft
 created: $HOY
 ---
 
-# OST — $producto (fuente única)
+# OST — $1 (fuente única)
 
 > Se crea y mantiene con el skill \`ost-facilitator\`. Toda oportunidad, solución y spec se traza a un nodo de este árbol. Nunca se duplica.
 
@@ -169,74 +309,226 @@ created: $HOY
 EOF
     ;;
   esac
+}
 
-  # 3) Capa agéntica: hooks + agentes nativos + skills nativos (apuntando al framework)
-  cp "$P60_ROOT/tools/hooks/gate-zonas.sh" "$repo/tools/hooks/gate-zonas.sh"
-  chmod +x "$repo/tools/hooks/gate-zonas.sh"
-  cp "$P60_ROOT/.claude/settings.json" "$repo/.claude/settings.json"
-  for a in "$P60_ROOT"/.claude/agents/*.md; do
-    local an; an=$(basename "$a" .md)
-    sed "s|\`agents/$an.md\`[^:]*|\`$P60_ROOT/agents/$an.md\`|" "$a" > "$repo/.claude/agents/$an.md"
-  done
-  for s in "$P60_ROOT"/skills/*/; do
-    local sn; sn=$(basename "$s")
-    [ "$sn" = "_standards" ] && continue
-    ln -s "$P60_ROOT/skills/$sn" "$repo/.claude/skills/$sn"
-  done
-
-  # 4) Git
-  ( cd "$repo" && git init -q && git add -A && git commit -qm "p60 init — context repo de $producto (escala: $escala, lang: $lang)" )
-
-  # 5) Próximos pasos (localizado)
-  case "$lang" in
-    en)
-      titulo "✓ Context repo created: $repo"
-      cat <<EOF
+proximos_pasos() { # $1=ruta mostrada
+  case "$LANG_P60" in
+    en) titulo "✓ P60 installed in $1"; cat <<EOF
 
 Next steps (Stage 0 — Context foundation):
-  1. cd $repo && claude
+  1. cd $1 && claude
   2. Tell the agent: "run the context foundation (fundacion-etapa-0)"
-     → it will interview you about business, market/users, team and domain, and populate contexto/.
+     → it will interview you about business, market/users, team and domain, and populate p60/contexto/.
   3. Once the foundation is in, start the first cycle: "let's start Shape: create the OST".
 
-Quickstart guide with examples: $P60_ROOT/docs/arranque-rapido.md
+Quickstart guide with examples: p60/_framework/docs/arranque-rapido.md
 EOF
-      ;;
-    pt)
-      titulo "✓ Context repo criado: $repo"
-      cat <<EOF
+    ;;
+    pt) titulo "✓ P60 instalado em $1"; cat <<EOF
 
 Próximos passos (Etapa 0 — Fundação de contexto):
-  1. cd $repo && claude
+  1. cd $1 && claude
   2. Diga ao agente: "rode a fundação de contexto (fundacion-etapa-0)"
-     → ele vai te entrevistar sobre negócio, mercado/usuários, time e domínio, e popular contexto/.
+     → ele vai te entrevistar sobre negócio, mercado/usuários, time e domínio, e popular p60/contexto/.
   3. Com a fundação pronta, comece o primeiro ciclo: "vamos começar o Shape: criar o OST".
 
-Guia de início rápido com exemplos: $P60_ROOT/docs/arranque-rapido.md
+Guia de início rápido com exemplos: p60/_framework/docs/arranque-rapido.md
 EOF
-      ;;
-    *)
-      titulo "✓ Context repo creado: $repo"
-      cat <<EOF
+    ;;
+    *)  titulo "✓ P60 instalado en $1"; cat <<EOF
 
 Próximos pasos (Etapa 0 — Fundación de contexto):
-  1. cd $repo && claude
+  1. cd $1 && claude
   2. Dile al agente: "corre la fundación de contexto (fundacion-etapa-0)"
-     → te entrevistará sobre negocio, mercado/usuario, equipo y dominio, y poblará contexto/.
+     → te entrevistará sobre negocio, mercado/usuario, equipo y dominio, y poblará p60/contexto/.
   3. Cuando la fundación esté, arranca el primer ciclo: "iniciemos Shape: creemos el OST".
 
-Guía de arranque con ejemplos: $P60_ROOT/docs/arranque-rapido.md
+Guía de arranque con ejemplos: p60/_framework/docs/arranque-rapido.md
 EOF
-      ;;
+    ;;
   esac
 }
 
+cmd_init() {
+  local ruta="" producto="" escala="" lang="" tools="claude" dry=0 yes=0
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --producto) producto="$2"; shift 2;;
+      --escala)   escala="$2"; shift 2;;
+      --lang)     lang="$2"; shift 2;;
+      --tools)    tools="$2"; shift 2;;
+      --dry-run)  dry=1; shift;;
+      --yes|-y)   yes=1; shift;;
+      --dir)      die "--dir ya no existe: usa 'p60 init RUTA' (la carpeta indicada es el context repo)";;
+      -*)         die "flag desconocido: $1";;
+      *)          [ -z "$ruta" ] || die "sobra un argumento: $1"; ruta="$1"; shift;;
+    esac
+  done
+  ruta="${ruta:-.}"
+  [ -e "$ruta" ] && [ ! -d "$ruta" ] && die "$ruta existe y no es una carpeta"
+  local abs; abs=$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$ruta")
+  local interactivo=0; [ -t 0 ] && [ "$yes" -eq 0 ] && interactivo=1
+
+  # Wizard (solo pregunta lo que falta y solo si hay terminal)
+  local sugerido; sugerido=$(basename "$abs" | tr 'A-Z' 'a-z' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//')
+  if [ -z "$producto" ]; then
+    if [ "$interactivo" -eq 1 ]; then read -r -p "Nombre del producto (kebab-case) [$sugerido]: " producto; fi
+    producto="${producto:-$sugerido}"
+  fi
+  echo "$producto" | grep -Eq '^[a-z0-9][a-z0-9-]*$' || die "el nombre debe ser kebab-case ([a-z0-9-]): '$producto'"
+  if [ -z "$escala" ]; then
+    [ "$interactivo" -eq 1 ] && read -r -p "Escala del equipo [pb=product-builder solo | triada | squad] (pb): " escala
+    escala="${escala:-pb}"
+  fi
+  case "$escala" in pb|triada|squad) ;; *) die "escala inválida: $escala (pb|triada|squad)";; esac
+  if [ -z "$lang" ]; then
+    [ "$interactivo" -eq 1 ] && read -r -p "Idioma del contenido [es=español | en=english | pt=português BR] (es): " lang
+    lang="${lang:-es}"
+  fi
+  case "$lang" in es|en|pt) ;; *) die "idioma inválido: $lang (es|en|pt)";; esac
+  LANG_P60="$lang"
+  local t; for t in $(echo "$tools" | tr ',' ' '); do
+    case " $TOOLS_SOPORTADAS " in *" $t "*) ;; *) die "herramienta no soportada: $t (soportadas hoy: $TOOLS_SOPORTADAS)";; esac
+  done
+  local tpl="$P60_ROOT/templates/context-repo/$lang"
+
+  # ── Pre-flight: qué se crea, qué se fusiona, qué choca ──
+  [ -d "$abs/p60/_framework" ] && { m installed >&2; exit 2; }
+  local agentes="" skills="" a s colisiones=""
+  for a in "$P60_ROOT"/.claude/agents/*.md; do agentes="$agentes $(basename "$a" .md)"; done
+  for s in "$P60_ROOT"/skills/*/; do s=$(basename "$s"); [ "$s" = "_standards" ] || skills="$skills $s"; done
+  [ -e "$abs/p60" ] && colisiones="$colisiones p60/"
+  for a in $agentes; do [ -e "$abs/.claude/agents/$a.md" ] && colisiones="$colisiones .claude/agents/$a.md"; done
+  for s in $skills; do [ -e "$abs/.claude/skills/$s" ] && colisiones="$colisiones .claude/skills/$s/"; done
+
+  local en_repo=0 top="" sonda="$abs"
+  while [ ! -d "$sonda" ]; do sonda=$(dirname "$sonda"); done   # RUTA puede no existir aún
+  if git -C "$sonda" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    en_repo=1; top=$(git -C "$sonda" rev-parse --show-toplevel)
+  fi
+  local codigo=""
+  [ -d "$abs" ] && codigo=$(marcador_codigo "$abs" || true)
+  [ -z "$codigo" ] && [ -n "$top" ] && codigo=$(marcador_codigo "$top" || true)
+
+  local est_settings est_claude="cm_create"
+  est_settings=$(estado_settings "$abs/.claude/settings.json")
+  if [ -f "$abs/CLAUDE.md" ]; then
+    grep -q '<!-- P60:BEGIN' "$abs/CLAUDE.md" && est_claude="cm_replace" || est_claude="cm_append"
+  fi
+  local con_contenido=0; [ -d "$abs" ] && [ -n "$(ls -A "$abs" 2>/dev/null)" ] && con_contenido=1
+
+  titulo "p60 init — $(m plan)"
+  m dest "$abs"
+  m prod "$producto" "$escala" "$lang" "$tools"
+  say ""
+  m c_p60
+  m c_fw "$P60_VERSION"
+  m c_claude "$(echo $agentes | wc -w | tr -d ' ')" "$(echo $skills | wc -w | tr -d ' ')"
+  m "s_$est_settings"
+  m "$est_claude"
+  if [ "$en_repo" -eq 1 ]; then m g_keep "$top"; else m g_init; fi
+  [ "$en_repo" -eq 1 ] && [ "$top" != "$abs" ] && m w_sub "$abs"
+  if [ -n "$colisiones" ]; then
+    say ""; m col_h; for a in $colisiones; do say "  ! $a"; done
+  fi
+  if [ -n "$codigo" ]; then
+    say ""; m codebase "$codigo" >&2
+    [ "$dry" -eq 1 ] && m dry
+    exit 2
+  fi
+  if [ "$dry" -eq 1 ]; then say ""; m dry; exit 0; fi
+
+  # ── Confirmaciones (puerta humana) ──
+  local resp=""
+  if [ -n "$colisiones" ]; then
+    [ "$interactivo" -eq 1 ] || { say ""; m col_abort >&2; exit 2; }
+    say ""; read -r -p "$(m col_ask)" resp
+    case "$resp" in s|S|y|Y|si|sí|yes) ;; *) m cancel; exit 2;; esac
+  elif [ "$con_contenido" -eq 1 ] && [ "$interactivo" -eq 1 ]; then
+    say ""; read -r -p "$(m go_ask)" resp
+    case "$resp" in ""|s|S|y|Y|si|sí|yes) ;; *) m cancel; exit 0;; esac
+  fi
+
+  # ── 1) Estructura del equipo en p60/ ──
+  local p="$abs/p60" fw="$abs/p60/_framework"
+  local carpetas=(
+    "contexto/negocio" "contexto/mercado-usuario" "contexto/equipo" "contexto/dominio"
+    "contexto/estrategia" "contexto/evidencia/_inbox" "contexto/evidencia/fichas" "contexto/evidencia/originales"
+    "shape/entrevistas/transcripciones" "shape/entrevistas/snapshots" "shape/_retro"
+    "ideate/oportunidades" "ideate/_retro"
+    "validate/oportunidades" "validate/_retro"
+    "handoff-delivery/epicas" "handoff-delivery/_retro"
+    "experimentacion/experimentos"
+    "bitacora" "presentaciones" "_historia" "legacy"
+  )
+  local c; for c in "${carpetas[@]}"; do mkdir -p "$p/$c"; touch "$p/$c/.keep"; done
+
+  # ── 2) Semillas localizadas (placeholders: [PRODUCTO], [FECHA], [VERSION]) ──
+  instanciar() { # $1=origen relativo al template  $2=destino absoluto
+    mkdir -p "$(dirname "$2")"
+    sed -e "s|\[PRODUCTO\]|$producto|g" -e "s|\[FECHA\]|$HOY|g" -e "s|\[VERSION\]|$P60_VERSION|g" "$tpl/$1" > "$2"
+  }
+  local sem
+  for sem in CLAUDE.md framework.md README.md contexto/evidencia/_index.md \
+             bitacora/bitacora-agentica.md bitacora/bitacora-humana.md experimentacion/pipeline.md; do
+    instanciar "$sem" "$p/$sem"
+  done
+  ost_semilla "$producto" "$p/contexto/estrategia/ost.md"
+
+  # ── 3) Núcleo del framework vendorizado en p60/_framework/ ──
+  mkdir -p "$fw/memory" "$fw/registry" "$fw/agents" "$fw/hooks" "$fw/docs" "$fw/standards" "$fw/templates"
+  cp "$P60_ROOT/.p60/memory/constitution.md" "$fw/memory/"
+  cp "$P60_ROOT/.p60/registry/agents.yaml" "$fw/registry/"
+  cp "$P60_ROOT"/agents/*.md "$fw/agents/"
+  cp "$P60_ROOT/_standards/component-spec.md" "$fw/standards/"
+  cp -R "$P60_ROOT/templates/artifacts" "$fw/templates/"
+  cp "$P60_ROOT/tools/hooks/gate-zonas.sh" "$fw/hooks/"; chmod +x "$fw/hooks/gate-zonas.sh"
+  cp "$P60_ROOT/docs/P60-Framework-Guide.md" "$P60_ROOT/docs/arranque-rapido.md" "$fw/docs/"
+  cp -R "$P60_ROOT/docs/adr" "$fw/docs/"
+  sed -E 's#\]\(([a-z0-9-]+)/SKILL\.md\)#](../../.claude/skills/\1/SKILL.md)#' "$P60_ROOT/skills/_index.md" > "$fw/skills-index.md"
+  printf '%s\n' "$P60_VERSION" > "$fw/VERSION"
+  cat > "$fw/config.yaml" <<EOF
+# Generado por p60 init. Lo actualiza p60 update.
+producto: $producto
+escala: $escala
+lang: $lang
+tools: [$tools]
+framework_version: $P60_VERSION
+framework_source: $P60_REPO_URL
+installed_at: $HOY
+updated_at: $HOY
+EOF
+
+  # ── 4) Adaptador claude: agentes, skills, hook, bloque en CLAUDE.md ──
+  mkdir -p "$abs/.claude/agents" "$abs/.claude/skills"
+  for a in $agentes; do cp "$P60_ROOT/.claude/agents/$a.md" "$abs/.claude/agents/$a.md"; done
+  for s in $skills; do rm -rf "$abs/.claude/skills/$s"; cp -R "$P60_ROOT/skills/$s" "$abs/.claude/skills/$s"; done
+  find "$fw" "$abs/.claude/skills" -name .DS_Store -delete 2>/dev/null || true
+  local md=()
+  while IFS= read -r f; do md+=("$f"); done < <(
+    find "$fw" "$abs/.claude/skills" -type f \( -name '*.md' -o -name '*.yaml' \)
+    for a in $agentes; do echo "$abs/.claude/agents/$a.md"; done
+  )
+  reescribir_instancia "${md[@]}"
+  fusionar_settings "$abs/.claude/settings.json"
+  bloque_claude "$abs/CLAUDE.md" "$tpl/root-claude-block.md"
+  escribir_manifiesto "$abs" "$P60_VERSION" "$tools" "$agentes" "$skills"
+
+  # ── 5) Git: solo si no había repo ──
+  if [ "$en_repo" -eq 0 ]; then
+    ( cd "$abs" && git init -q && git add -A && git commit -qm "p60 init — $producto (escala: $escala, lang: $lang, P60 v$P60_VERSION)" )
+  fi
+
+  proximos_pasos "$ruta"
+}
+
 case "${1:-help}" in
-  init)   shift; cmd_init "$@";;
-  skills) cmd_skills;;
-  agents) cmd_agents;;
-  lint)   cmd_lint;;
-  doctor) cmd_doctor;;
+  init)    shift; cmd_init "$@";;
+  skills)  cmd_skills;;
+  agents)  cmd_agents;;
+  lint)    cmd_lint;;
+  doctor)  cmd_doctor;;
+  version|--version) cmd_version;;
   help|--help|-h) cmd_help;;
   *) die "comando desconocido: $1 (p60 help)";;
 esac

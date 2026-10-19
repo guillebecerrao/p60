@@ -1,21 +1,21 @@
 ---
 component: fundacion-etapa-0
 type: skill
-version: 1.0
+version: 1.1
 status: active
 agent_role: architect
-last_sync: 2026-07-14
+last_sync: 2026-10-19
 depends_on: [SKILL-format, bibliotecario-evidencia]
 ---
 
 # Fundación de Contexto (Etapa 0) — Spec
 
 ## Propósito
-Dar protocolo a la Etapa 0 (antes solo descrita en el guide): la entrevista de fundación que puebla `contexto/` tras `p60 init` — el complemento agent-driven del wizard (el CLI crea la estructura; este skill la llena de evidencia raíz).
+Dar protocolo a la Etapa 0 (antes solo descrita en el guide): la entrevista de fundación que puebla `p60/contexto/` tras `p60 init` — el complemento agent-driven del wizard (el CLI crea la estructura; este skill la llena de evidencia raíz).
 
 ## Contrato
 - **Input:** context-repo recién instanciado + acceso conversacional al equipo/founder.
-- **Output:** `contexto/{negocio,mercado-usuario,equipo,dominio}/` poblados y validados por bloque; material bruto en `_inbox/`; outcomes candidatos propuestos; estado y bitácora actualizados.
+- **Output:** `p60/contexto/{negocio,mercado-usuario,equipo,dominio}/` poblados y validados por bloque; material bruto en `_inbox/`; outcomes candidatos propuestos; estado y bitácora actualizados.
 - **Invariantes:** cada bloque se valida antes de darse por poblado; el outcome NO se fija (checkpoint de juicio humano en Shape); evidencia previa siempre a `_inbox/`.
 
 ## Criterios de aceptación
@@ -31,3 +31,4 @@ Dar protocolo a la Etapa 0 (antes solo descrita en el guide): la entrevista de f
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
 | 1.0 | 2026-07-13 | Claude Fable 5 (Product-Builder) | Creación — pieza agent-driven del onboarding (`p60 init` + este skill = Etapa 0 completa). |
+| 1.1 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Rutas de instancia explícitas `p60/…` (layout único, `p60-cli.spec` 0.2). |

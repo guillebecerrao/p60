@@ -1,11 +1,11 @@
 ---
 name: actualizar-bitacora-humana
 description: Consolida las notas personales del equipo en la bitácora humana compartida, en orden cronológico y con revisión humana previa.
-version: 2.0
+version: 2.1
 status: active
 triggers: ["actualiza la bitácora humana", "consolida las notas", "sync bitácora", "actualizar bitácora"]
-requires_context: ["bitacora/bitacora-humana.md", "trabajo-individual/*/notas/"]
-last_sync: 2026-07-08
+requires_context: ["p60/bitacora/bitacora-humana.md", "trabajo-individual/*/notas/"]
+last_sync: 2026-10-19
 ---
 
 # Actualizar Bitácora Humana
@@ -22,7 +22,7 @@ Actívalo cuando cualquier miembro del equipo quiera **consolidar sus notas pers
 
 ## Procedure
 
-1. **Identificar el período.** Lee `bitacora/bitacora-humana.md` y registra la fecha de la última entrada. Ese es el corte para lo nuevo.
+1. **Identificar el período.** Lee `p60/bitacora/bitacora-humana.md` y registra la fecha de la última entrada. Ese es el corte para lo nuevo.
 2. **Localizar notas nuevas.** Revisa las carpetas de notas de **todas** las personas del equipo y quédate solo con archivos con entradas **posteriores** a esa fecha:
    - `trabajo-individual/product-manager/notas/` — Product Manager
    - `trabajo-individual/product-designer/notas/` — Product Designer
@@ -31,7 +31,7 @@ Actívalo cuando cualquier miembro del equipo quiera **consolidar sus notas pers
    - Los archivos siguen el patrón `YYYY-WW_[persona].md` (ej. `2026-13_product-manager.md`).
 3. **Extraer cada entrada nueva** con estos campos: **Fecha**, **Persona**, **Tipo** (`reunion` / `decision` / `aprendizaje` / `accion` / `bloqueo`), **Sub-proceso** (`shape` / `ideate-validate` / `handoff` / `general`) y **Contenido** (resumen conciso, 1-3 líneas).
 4. **Presentar al usuario** las entradas a agregar **antes de escribirlas**, para que pueda corregir o descartar alguna. Puerta humana obligatoria.
-5. **Escribir la bitácora.** Una vez aprobado, inserta las entradas en `bitacora/bitacora-humana.md` en **orden cronológico** y actualiza el campo `last_modified`.
+5. **Escribir la bitácora.** Una vez aprobado, inserta las entradas en `p60/bitacora/bitacora-humana.md` en **orden cronológico** y actualiza el campo `last_modified`.
 
 > Formato de salida de cada entrada: **`templates/entrada-bitacora.md`**.
 
@@ -49,4 +49,4 @@ Actívalo cuando cualquier miembro del equipo quiera **consolidar sus notas pers
 - [ ] Cada entrada tiene Fecha, Persona, Tipo, Sub-proceso y Contenido conciso.
 - [ ] El usuario aprobó las entradas antes de la escritura.
 - [ ] Entradas insertadas en orden cronológico; sin duplicados.
-- [ ] `last_modified` actualizado en `bitacora/bitacora-humana.md`.
+- [ ] `last_modified` actualizado en `p60/bitacora/bitacora-humana.md`.

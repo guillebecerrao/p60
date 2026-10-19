@@ -1,10 +1,10 @@
 ---
 component: ost-facilitator
 type: skill
-version: 2.0
+version: 2.1
 status: active
 agent_role: architect
-last_sync: 2026-07-08
+last_sync: 2026-10-19
 depends_on: [SKILL-format]
 ---
 
@@ -15,7 +15,7 @@ Convertir al agente en facilitador experto de sesiones de Opportunity Solution T
 
 ## Contrato
 - **Input:** intención de sesión (A/B/C/D) + evidencia de discovery + OST existente (si hay).
-- **Output:** el artefacto correspondiente al tipo de sesión, y/o el OST actualizado en `contexto/estrategia/ost.md` (fuente única).
+- **Output:** el artefacto correspondiente al tipo de sesión, y/o el OST actualizado en `p60/contexto/estrategia/ost.md` (fuente única).
 - **Invariante:** nunca duplica el OST; siempre trabaja sobre leaf nodes al explorar soluciones.
 
 ## Criterios de aceptación
@@ -31,3 +31,4 @@ Convertir al agente en facilitador experto de sesiones de Opportunity Solution T
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
 | 2.0 | 2026-07-08 | Claude (P60 v2) | Migrado desde skill v1.0 (Guillermo, 2026-03-20) al estándar SKILL.md con progressive disclosure. |
+| 2.1 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Rutas de instancia explícitas `p60/…` (layout único, `p60-cli.spec` 0.2). |

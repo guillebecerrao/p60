@@ -2,11 +2,12 @@
 
 > Este context repo é operado com o framework **P60** (*AI-Native Spec-Driven Product Building*).
 
-- **Fonte do framework:** [RUTA_P60] *(preenchido pelo `p60 init`; tipicamente o clone local do repo P60)*
-- **Constituição (princípios + regras do agente):** `[RUTA_P60]/.p60/memory/constitution.md`
-- **Método completo:** `[RUTA_P60]/docs/P60-Framework-Guide.md`
-- **Skills (índice):** `[RUTA_P60]/skills/_index.md`
-- **Início rápido / treinamento:** `[RUTA_P60]/docs/arranque-rapido.md`
+- **Fonte do framework:** https://github.com/guillebecerrao/p60 · versão instalada em `p60/_framework/VERSION`
+- **Constituição (princípios + regras do agente):** `p60/_framework/memory/constitution.md`
+- **Método completo:** `p60/_framework/docs/P60-Framework-Guide.md`
+- **Skills (índice):** `p60/_framework/skills-index.md`
+- **Início rápido / treinamento:** `p60/_framework/docs/arranque-rapido.md`
+- **Atualizar:** `p60 update` (mostra o que muda antes de aplicar). Não edite `p60/_framework/` à mão: a atualização o substitui.
 
 **Regra:** em caso de conflito entre este repo e a constituição, vale a constituição. As adaptações locais ficam registradas abaixo.
 

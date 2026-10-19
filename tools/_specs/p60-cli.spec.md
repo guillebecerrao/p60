@@ -1,7 +1,7 @@
 ---
 component: p60-cli
 type: tool
-version: 0.2
+version: 0.3
 status: draft
 agent_role: architect
 last_sync: 2026-10-19
@@ -137,19 +137,19 @@ Cada herramienta es un adaptador con tres funciones: `plan` (qué crearía o fus
 ## Criterios de aceptación
 
 **Fase 1 — Portabilidad**
-- [ ] `p60 init demo --lang es|en|pt` → `grep -rI "$HOME" demo` vacío y `find demo -type l` vacío.
-- [ ] Fuera de `p60/`, `init` solo crea o modifica `CLAUDE.md` (bloque) y `.claude/`.
-- [ ] Borrar o mover `~/.p60` después de `init` no rompe el context repo (agentes, skills y hook operan).
-- [ ] Clonar el context repo en otra carpeta o máquina deja agentes, skills y hook operativos sin pasos extra.
-- [ ] El hook sigue pidiendo confirmación en `activas/`, `cerradas/`, `_historia/` y `p60/_framework/memory/`.
+- [x] `p60 init demo --lang es|en|pt` → `grep -rI "$HOME" demo` vacío y `find demo -type l` vacío.
+- [x] Fuera de `p60/`, `init` solo crea o modifica `CLAUDE.md` (bloque) y `.claude/`.
+- [x] Borrar o mover `~/.p60` después de `init` no rompe el context repo (agentes, skills y hook operan).
+- [x] Clonar el context repo en otra carpeta o máquina deja agentes, skills y hook operativos sin pasos extra.
+- [x] El hook sigue pidiendo confirmación en `activas/`, `cerradas/`, `_historia/` y `p60/_framework/memory/`.
 
 **Fase 2 — Carpeta existente + adaptador**
-- [ ] Carpeta con git y `CLAUDE.md` propio → `git status` muestra solo adiciones más el bloque P60; no hay commit nuevo.
-- [ ] Carpeta sin git → queda con `git init` y un commit inicial.
-- [ ] `settings.json` con hooks previos los conserva y suma `gate-zonas`.
-- [ ] Colisión de skill o agente → aparece en `--dry-run`; con `--yes` sale con exit 2 sin escribir nada.
-- [ ] `--tools cursor` → error claro que lista los adaptadores soportados.
-- [ ] Re-ejecutar `init` se niega y sugiere `update`.
+- [x] Carpeta con git y `CLAUDE.md` propio → `git status` muestra solo adiciones más el bloque P60; no hay commit nuevo.
+- [x] Carpeta sin git → queda con `git init` y un commit inicial.
+- [x] `settings.json` con hooks previos los conserva y suma `gate-zonas`.
+- [x] Colisión de skill o agente → aparece en `--dry-run`; con `--yes` sale con exit 2 sin escribir nada.
+- [x] `--tools cursor` → error claro que lista los adaptadores soportados.
+- [x] Re-ejecutar `init` se niega y sugiere `update`.
 
 **Fase 3 — Update y doctor**
 - [ ] Los seis casos de la tabla de `update`, cada uno con un test.
@@ -162,7 +162,7 @@ Cada herramienta es un adaptador con tres funciones: `plan` (qué crearía o fus
 - [ ] `self-update --to vX.Y.Z` cambia `~/.p60/current` sin tocar ningún context repo.
 
 **Transversal**
-- [ ] `p60-lint` reconoce el tipo `tool` y valida esta spec.
+- [x] `p60-lint` reconoce el tipo `tool` y valida esta spec.
 - [ ] Mensajes en es/en/pt para cada comando nuevo.
 
 ## Decisiones (ADR inline)
@@ -181,3 +181,4 @@ Cada herramienta es un adaptador con tres funciones: `plan` (qué crearía o fus
 |---------|------|--------|-------------|
 | 0.1 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Creación (draft). Contrato v2 del CLI: instalación global, init sobre carpeta existente, vendorizado en `.p60/`, manifiesto, update, adaptadores multi-herramienta. Decisiones D1–D6 de Guille Becerra O. |
 | 0.2 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Layout: todo dentro de una carpeta visible `p60/` (framework en `p60/_framework/`); fuera solo `.claude/` y un bloque en `CLAUDE.md`. Rutas explícitas `p60/…` en skills. Pendiente P1 (codebase vs. principio 3). |
+| 0.3 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Implementadas fases 1 y 2 en `tools/p60` (init portable sobre carpeta nueva o existente, plan/`--dry-run`, colisiones, git condicional, manifiesto). Criterios verificados con pruebas en carpetas desechables y descubrimiento real en Claude Code. Pendiente: P1, fases 3–4, prueba del flujo interactivo de colisiones con terminal real. |

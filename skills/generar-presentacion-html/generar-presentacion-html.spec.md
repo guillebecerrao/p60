@@ -1,10 +1,10 @@
 ---
 component: generar-presentacion-html
 type: skill
-version: 2.0
+version: 2.1
 status: active
 agent_role: architect
-last_sync: 2026-07-08
+last_sync: 2026-10-19
 depends_on: [SKILL-format]
 ---
 
@@ -14,8 +14,8 @@ depends_on: [SKILL-format]
 Transformar un artefacto estratégico `.md` (OST, roadmaps, backlog, épicas, release plan, análisis/sizing de oportunidades, u otro indicado) en un HTML ejecutivo, visual y comunicable a stakeholders, respetando design system, versionado (History) y multi-idioma.
 
 ## Contrato
-- **Input:** un artefacto fuente `.md` + confirmación explícita del usuario + `contexto/design-system/DS-input-v1/` + `presentaciones/_presentaciones-config.md` + `presentaciones/_sync-log.md`.
-- **Output:** un archivo HTML autónomo guardado en `presentaciones/` con naming según categoría (referencia / ciclo / cross-ciclo), estilado con el design system, con nav a home y footer de documentos relacionados; en su variante multi-idioma incluye las tres traducciones (ES/EN/PT) embebidas con auto-detección y switcher.
+- **Input:** un artefacto fuente `.md` + confirmación explícita del usuario + `p60/contexto/design-system/DS-input-v1/` + `p60/presentaciones/_presentaciones-config.md` + `p60/presentaciones/_sync-log.md`.
+- **Output:** un archivo HTML autónomo guardado en `p60/presentaciones/` con naming según categoría (referencia / ciclo / cross-ciclo), estilado con el design system, con nav a home y footer de documentos relacionados; en su variante multi-idioma incluye las tres traducciones (ES/EN/PT) embebidas con auto-detección y switcher.
 - **Invariantes:**
   - Nunca genera sin confirmación del usuario (Paso 1), aunque el `.md` esté recién editado.
   - Los HTML son artefactos **generados**: nunca se editan a mano; se regeneran desde el `.md`.
@@ -38,3 +38,4 @@ Transformar un artefacto estratégico `.md` (OST, roadmaps, backlog, épicas, re
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
 | 2.0 | 2026-07-08 | Claude (P60 v2) | Migrado desde skill v1 monolítico (`AI-Framework/skills/generar-presentacion-html.md`) al estándar SKILL.md con progressive disclosure: SKILL.md lean + 3 references + 1 template. Fidelidad preservada. |
+| 2.1 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Rutas de instancia explícitas `p60/…` (layout único, `p60-cli.spec` 0.2). Sync-log apunta al framework P60 (sin referencias a sistemas personales). |

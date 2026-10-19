@@ -1,10 +1,10 @@
 ---
 component: interview-snapshot
 type: skill
-version: 2.0
+version: 2.1
 status: active
 agent_role: architect
-last_sync: 2026-07-08
+last_sync: 2026-10-19
 depends_on: [SKILL-format, ost-facilitator]
 ---
 
@@ -15,7 +15,7 @@ Convertir al agente en documentador experto de entrevistas: a partir de una tran
 
 ## Contrato
 - **Input:** transcripción bruta de una entrevista (Gemini/Meet u otra) + contexto mínimo del participante (speakers confirmados, Quick Facts disponibles).
-- **Output:** un snapshot de una sola página en el formato de `templates/snapshot.md`, guardado en `shape/entrevistas/snapshots/snapshot_[nombre]_[fecha].md`.
+- **Output:** un snapshot de una sola página en el formato de `templates/snapshot.md`, guardado en `p60/shape/entrevistas/snapshots/snapshot_[nombre]_[fecha].md`.
 - **Invariante:** las oportunidades se expresan en voz del participante y nunca como soluciones; el snapshot se ancla en la historia específica, no en generalizaciones; nunca se fabrican datos ausentes de la transcripción.
 
 ## Criterios de aceptación
@@ -32,3 +32,4 @@ Convertir al agente en documentador experto de entrevistas: a partir de una tran
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
 | 2.0 | 2026-07-08 | Claude (P60 v2) | Migrado desde skill v1.0 (Guillermo Becerra, 2026-03-24) al estándar SKILL.md con progressive disclosure. |
+| 2.1 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Rutas de instancia explícitas `p60/…` (layout único, `p60-cli.spec` 0.2). |

@@ -2,7 +2,7 @@
 
 > Detalle de la infraestructura que soporta el skill: el esquema de `_presentaciones-config.md`, la lógica de History/versionado, las convenciones de naming, y el sync-log de cambios transversales.
 
-## Configuración de presentaciones — `presentaciones/_presentaciones-config.md`
+## Configuración de presentaciones — `p60/presentaciones/_presentaciones-config.md`
 
 Del Paso 3, se extraen tres bloques:
 
@@ -28,8 +28,8 @@ La identificación del "mismo artefacto" se hace por **nombre-base** (`ost`, `co
 
 Al detectar una versión previa (Paso 4), el usuario elige:
 
-- **Archivar:** mover el archivo actual a `presentaciones/History/`, **sobreescribiendo** si ya existe uno con el mismo nombre (History guarda solo la versión inmediatamente anterior, no un historial acumulado). Luego guardar el nuevo en `presentaciones/`.
-- **Descartar:** generar el nuevo directamente en `presentaciones/`, sin mover nada a History.
+- **Archivar:** mover el archivo actual a `p60/presentaciones/History/`, **sobreescribiendo** si ya existe uno con el mismo nombre (History guarda solo la versión inmediatamente anterior, no un historial acumulado). Luego guardar el nuevo en `p60/presentaciones/`.
+- **Descartar:** generar el nuevo directamente en `p60/presentaciones/`, sin mover nada a History.
 
 Si se decidió archivar, el movimiento a History se ejecuta **antes** de guardar el nuevo archivo (Paso 7).
 
@@ -43,9 +43,9 @@ El nombre depende de la **categoría** del documento, y es independiente del est
 | **Ciclo** (artefacto de un ciclo y sub-proceso específico) | `nombre_subproceso-cNN-YYYY.html` | `plan-discovery_shape-c01-2026.html` |
 | **Cross-ciclo** (artefacto que abarca varios ciclos) | `nombre_cNN-YYYY.html` | `vision-global_c01-2026.html` |
 
-## Sync-log — `presentaciones/_sync-log.md`
+## Sync-log — `p60/presentaciones/_sync-log.md`
 
-El sync-log registra los cambios **transversales** al patrón de presentaciones, para propagarlos luego a Guilles-Universe.
+El sync-log registra los cambios **transversales** al patrón de presentaciones, para propagarlos luego al framework P60 (mejoras del skill que sirven a otros productos).
 
 ### Chequeo de entrada (Paso 0)
 Contar entradas con `Propagado: ❌ No`:

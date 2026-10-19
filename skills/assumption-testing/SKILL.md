@@ -1,12 +1,12 @@
 ---
 name: assumption-testing
 description: Mapea los supuestos de una candidata (deseabilidad/usabilidad/viabilidad/factibilidad), los rankea por riesgo × desconocimiento y diseña el test más barato para los más riesgosos.
-version: 1.0
+version: 1.1
 status: active
 triggers: ["mapear supuestos", "assumption test", "qué supuestos tiene esta idea", "de-riskear la candidata", "diseñar test de supuesto", "validar supuestos"]
-requires_context: ["el PRD-brief de la candidata (o candidatas.md de Ideate)", "contexto/estrategia/ost.md"]
+requires_context: ["el PRD-brief de la candidata (o candidatas.md de Ideate)", "p60/contexto/estrategia/ost.md"]
 bibliography: "Continuous Discovery Habits — Teresa Torres (2021), caps. 11–13"
-last_sync: 2026-07-13
+last_sync: 2026-10-19
 ---
 
 # Assumption Testing

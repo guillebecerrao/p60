@@ -1,11 +1,11 @@
 ---
 name: cierre-de-ciclo
 description: Cierra el ciclo de un sub-proceso — captura retro del proceso, propone archivado de artefactos y actualiza la bitácora agéntica.
-version: 2.0
+version: 2.1
 status: active
 triggers: ["cerrar ciclo", "cerremos el ciclo", "hacer el cierre", "retro de shape", "retro de ideate", "retro de validate", "retro de handoff", "retrospectiva de sub-proceso"]
-requires_context: ["[sub-proceso]/_retro/", "bitacora/bitacora-agentica.md", "artefactos del ciclo con status: completed"]
-last_sync: 2026-07-08
+requires_context: ["[sub-proceso]/_retro/", "p60/bitacora/bitacora-agentica.md", "artefactos del ciclo con status: completed"]
+last_sync: 2026-10-19
 ---
 
 # Cierre de Ciclo
@@ -25,7 +25,7 @@ Actívalo al **terminar un ciclo** de cualquier sub-proceso de P60 v2: **Shape**
 1. **Identificar el sub-proceso a cerrar.** Confirma con el usuario cuál: `shape`, `ideate`, `validate` o `handoff`.
 2. **Proponer entradas de retrospectiva** para el doc del sub-proceso (`[sub-proceso]/_retro/retro-[sub-proceso].md`). Redacta el borrador con la plantilla y **preséntalo para aprobación antes de escribir**.
 3. **Sugerir archivos a mover a `_historia/`.** Identifica artefactos activos con `status: completed` y propón moverlos como `[archivo]_YYYY-MM-DD.md`. Presenta la lista; **no muevas nada sin confirmación explícita** (puerta humana).
-4. **Actualizar la bitácora agéntica** (`bitacora/bitacora-agentica.md`) con la entrada de cierre del ciclo.
+4. **Actualizar la bitácora agéntica** (`p60/bitacora/bitacora-agentica.md`) con la entrada de cierre del ciclo.
 5. **Confirmar al usuario:** resume lo registrado y lo pendiente (movimientos diferidos, sugerencias de reestructuración futura).
 
 > Protocolo de retro, reglas de archivado y contrato de la bitácora: **`references/retro-y-archivado.md`**.
@@ -43,6 +43,6 @@ Actívalo al **terminar un ciclo** de cualquier sub-proceso de P60 v2: **Shape**
 - [ ] Sub-proceso a cerrar confirmado explícitamente (`shape` / `ideate` / `validate` / `handoff`).
 - [ ] Borrador de retro presentado y aprobado antes de escribir en `_retro/`.
 - [ ] Lista de movimientos a `_historia/` presentada; ninguno ejecutado sin confirmación.
-- [ ] Entrada en `bitacora/bitacora-agentica.md` con estado `completed` y próximos pasos.
+- [ ] Entrada en `p60/bitacora/bitacora-agentica.md` con estado `completed` y próximos pasos.
 - [ ] Aprendizaje registrado es de **proceso**, no de producto.
 - [ ] Pendientes (movimientos diferidos, sugerencias de reestructura) resumidos al usuario.

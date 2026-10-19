@@ -1,10 +1,10 @@
 ---
 component: bibliotecario-evidencia
 type: skill
-version: 1.0
+version: 1.1
 status: active
 agent_role: architect
-last_sync: 2026-07-13
+last_sync: 2026-10-19
 depends_on: [SKILL-format, constitution]
 ---
 
@@ -14,7 +14,7 @@ depends_on: [SKILL-format, constitution]
 Dar mecanismo al principio constitucional "ninguna spec sin evidencia": todo material que entra al context-repo se cataloga con una ficha `EV-NNN` referenciable y buscable, sin que investigar contexto interno exija leer archivos grandes.
 
 ## Contrato
-- **Input:** archivos en `contexto/evidencia/_inbox/` (cualquier formato de material bruto), o una consulta de búsqueda de evidencia.
+- **Input:** archivos en `p60/contexto/evidencia/_inbox/` (cualquier formato de material bruto), o una consulta de búsqueda de evidencia.
 - **Output:** ficha `EV-NNN` por archivo + original archivado en su destino por tipo + `_index.md` actualizado. En búsqueda: las fichas relevantes (y solo si confirman, el original).
 - **Invariantes:** el `_inbox` queda vacío tras cada corrida; las siglas son únicas y no se reutilizan; los artefactos citan siglas, nunca rutas; la ficha cabe en ~1 página.
 
@@ -33,3 +33,4 @@ Dar mecanismo al principio constitucional "ninguna spec sin evidencia": todo mat
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
 | 1.0 | 2026-07-13 | Claude Fable 5 (Product-Builder) | Creación. Cubre el gap H5 del análisis de mejoras (pasada Fable 5), según el diseño "bibliotecario" definido por Guillermo: inbox → ficha EV-NNN → archivado → índice buscable. |
+| 1.1 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Rutas de instancia explícitas `p60/…` (layout único, `p60-cli.spec` 0.2). |

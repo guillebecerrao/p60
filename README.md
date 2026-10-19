@@ -2,7 +2,7 @@
 
 > **AI-Native Spec-Driven Product Building.** Framework que lleva el trabajo de un Product Leader —descubrir, priorizar, validar, especificar— a un repo de git operado con agentes de IA.
 
-Este es el **repo del framework** (la fuente): la constitución, los agentes, los skills, los procedimientos y los templates. Un producto concreto instancia un *context repo* a partir de estos templates (futuro `p60 init`).
+Este es el **repo del framework** (la fuente): la constitución, los agentes, los skills, los procedimientos y los templates. Un producto concreto instancia un *context repo* con `p60 init`: todo P60 queda en una carpeta `p60/` del proyecto, autocontenida y compartible por git.
 
 ## Estructura
 
@@ -26,7 +26,7 @@ P60/
 **Usuario nuevo (10 min):** `docs/arranque-rapido.md` — de cero a primer ciclo, con ejemplos.
 
 ```bash
-tools/p60 init mi-producto      # instancia el context repo del producto
+tools/p60 init ../mi-producto   # convierte esa carpeta en context repo (todo queda en mi-producto/p60/)
 tools/p60 skills                # qué sabe hacer el agente
 ```
 
@@ -37,6 +37,6 @@ tools/p60 skills                # qué sabe hacer el agente
 
 ## Estado
 
-**v2 · post-Fundación Estructural + mejoras Fable 5.** Pipeline de skills completo (Etapa 0 + 6 sub-procesos), agentes y skills nativos de Claude Code, sistema de evidencia EV-NNN, guardarraíles como hooks, `p60 init` operativo **en ES/EN/PT** (`--lang`; carpetas canónicas, contenido localizado), lint de integridad. Templates de artefactos y skills aún ES-first; packaging de distribución diferido. Próximo hito: **test-drive en producto real**.
+**v2 · post-Fundación Estructural + mejoras Fable 5.** Pipeline de skills completo (Etapa 0 + 6 sub-procesos), agentes y skills nativos de Claude Code, sistema de evidencia EV-NNN, guardarraíles como hooks, `p60 init` operativo **en ES/EN/PT** (`--lang`; carpetas canónicas, contenido localizado), lint de integridad. Templates de artefactos y skills aún ES-first; `p60 init` portable (todo en `p60/`, sin rutas absolutas ni symlinks, sobre carpeta nueva o existente). En curso: `p60 update` e instalador de un comando — ver `tools/_specs/p60-cli.spec.md`. Próximo hito: **test-drive en producto real**.
 
 *Creado por Guille Becerra O — hello@guillebecerrao.cl*

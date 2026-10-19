@@ -1,10 +1,10 @@
 ---
 component: artifacts
 type: template
-version: 2.0
+version: 2.1
 status: active
 agent_role: architect
-last_sync: 2026-07-08
+last_sync: 2026-10-19
 depends_on: [constitution]
 ---
 
@@ -18,7 +18,7 @@ El conjunto cubre el lifecycle completo de un doc de producto:
 
 | Template | Nivel | Alcance | Nace en | Ubicación / mutabilidad |
 |----------|-------|---------|---------|-------------------------|
-| `prd-brief.md` | 1 | candidata | Validate | `validate/…` — libre |
+| `prd-brief.md` | 1 | candidata | Validate | `p60/validate/…` — libre |
 | `prd-maestro.md` | 2·Maestro | épica (vivo) | Handoff | `epicas/[epica]/` — vivo, no se cierra |
 | `prd-feature.md` | 2·Feature | feature (validado) | Handoff | `epicas/[epica]/features/[feature]/` |
 | `iteration-prd.md` | 3 | sprint | Handoff | `activas/` (congelado) → `cerradas/` (respaldo) |
@@ -38,3 +38,4 @@ El conjunto cubre el lifecycle completo de un doc de producto:
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
 | 2.0 | 2026-07-08 | Claude (P60 v2) | Templates de artefactos v2 (prd-brief, prd-maestro, prd-feature, iteration-prd, adr) encarnando el modelo de doc del guide v0.3. |
+| 2.1 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Rutas de instancia explícitas `p60/…` (layout único, `p60-cli.spec` 0.2). |

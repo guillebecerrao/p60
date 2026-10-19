@@ -59,6 +59,15 @@ for f in .claude/agents/*.md; do
 done
 ok "agentes: canónicos, specs y wrappers revisados"
 
+# 2b. Tools: cada herramienta ↔ su spec en tools/_specs/ (constitución #1, tipo tool)
+TOOLS="tools/p60:p60-cli tools/p60-lint.sh:p60-lint tools/hooks/gate-zonas.sh:gate-zonas"
+for par in $TOOLS; do
+  comp=${par%%:*}; spec="tools/_specs/${par##*:}.spec.md"
+  [ -f "$comp" ] || continue
+  [ -f "$spec" ] || fail "tool '$comp' sin spec en $spec"
+done
+ok "tools: specs revisadas"
+
 # 3. Regla de sincronía: last_sync de la spec vs último commit del componente (si hay git)
 if git rev-parse --git-dir >/dev/null 2>&1; then
   check_sync() { # $1=componente $2=spec
@@ -75,6 +84,9 @@ if git rev-parse --git-dir >/dev/null 2>&1; then
   for f in agents/*.md; do
     name=$(basename "$f" .md)
     check_sync "$f" "agents/_specs/$name.spec.md"
+  done
+  for par in $TOOLS; do
+    check_sync "${par%%:*}" "tools/_specs/${par##*:}.spec.md"
   done
   ok "regla de sincronía spec↔componente revisada (contra git)"
 else

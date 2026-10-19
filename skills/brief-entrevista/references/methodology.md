@@ -27,7 +27,7 @@ Un brief de entrevista es un **artefacto de planificación de sesión** que trad
 
 **Objetivo:** seleccionar los nodos del OST que justifican abrir una ronda de entrevistas.
 
-1. Leer `contexto/estrategia/ost.md` — sección "Gaps estructurales y preguntas pendientes".
+1. Leer `p60/contexto/estrategia/ost.md` — sección "Gaps estructurales y preguntas pendientes".
 2. Identificar nodos por estado:
    - `HIPÓTESIS DE EQUIPO` → prioridad alta (sin ninguna evidencia de usuario).
    - `INFERIDO` → prioridad media (evidencia indirecta, pendiente de validación directa).
@@ -132,14 +132,14 @@ Principios generales que aplican a toda la sesión. **Incluir siempre:**
 
 Guardar en:
 ```
-shape/guia-entrevistas/brief-entrevista_[nodos]_[YYYY-MM-DD].md
+p60/shape/guia-entrevistas/brief-entrevista_[nodos]_[YYYY-MM-DD].md
 ```
 Formato del nombre: `brief-entrevista_[nodo1]-[nodo2]-[nodo3]_YYYY-MM-DD.md`.
 
 ## Comportamiento esperado del agente
 
 ### Al iniciar
-1. Leer `contexto/estrategia/ost.md` — sección de gaps estructurales y preguntas para próximas entrevistas.
+1. Leer `p60/contexto/estrategia/ost.md` — sección de gaps estructurales y preguntas para próximas entrevistas.
 2. Proponer los nodos candidatos con su estado actual y justificación.
 3. Confirmar con el usuario cuáles nodos serán el foco antes de diseñar nada.
 

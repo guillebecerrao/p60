@@ -1,11 +1,11 @@
 ---
 name: fundacion-etapa-0
-description: Conduce la Etapa 0 de un producto recién instanciado — entrevista guiada de fundación (negocio, mercado/usuario, equipo, dominio) que puebla contexto/ y deja el repo listo para el primer Shape.
-version: 1.0
+description: Conduce la Etapa 0 de un producto recién instanciado — entrevista guiada de fundación (negocio, mercado/usuario, equipo, dominio) que puebla p60/contexto/ y deja el repo listo para el primer Shape.
+version: 1.1
 status: active
 triggers: ["fundación de contexto", "etapa 0", "corre la fundación", "poblar el contexto inicial", "arranquemos el producto", "onboarding del producto"]
 requires_context: ["context-repo recién instanciado (p60 init)", "CLAUDE.md del context-repo"]
-last_sync: 2026-07-14
+last_sync: 2026-10-19
 ---
 
 # Fundación de Contexto (Etapa 0)
@@ -16,17 +16,17 @@ last_sync: 2026-07-14
 
 Actívalo **una vez por producto**, inmediatamente después de `p60 init`, o cuando un producto existente adopta P60 y hay que reconstruir su fundación. Re-actívalo solo ante cambios de fondo (pivot, nueva estrategia, cambio de equipo).
 
-**NO** lo uses para: discovery de oportunidades (eso es Shape, con la fundación ya puesta), ni para mantener la estrategia al día (eso es edición normal de `contexto/`).
+**NO** lo uses para: discovery de oportunidades (eso es Shape, con la fundación ya puesta), ni para mantener la estrategia al día (eso es edición normal de `p60/contexto/`).
 
 ## Procedure
 
 1. **Encuadre (2 min).** Explica al humano qué va a pasar: una entrevista por bloques (~30–45 min en total), se puede pausar y retomar; cada bloque termina con un archivo que él valida.
-2. **Bloque Negocio** → `contexto/negocio/`: modelo de negocio (cómo gana dinero o ganará), estrategia y objetivos corto/mediano/largo plazo, restricciones (runway, regulación, dependencias). Pregunta con historias concretas, no definiciones ("¿qué pasó el último trimestre que te preocupa?").
-3. **Bloque Mercado / Usuario temprano** → `contexto/mercado-usuario/`: a quién sirve, competencia/alternativas, y **toda evidencia ya existente** (entrevistas viejas, métricas, señales de demanda). Lo que sea material bruto **va a `_inbox/`** y se procesa con `bibliotecario-evidencia` — la fundación nace catalogada.
-4. **Bloque Equipo** → `contexto/equipo/`: quiénes son, roles, escala (PB/tríada/squad), modelo de trabajo, quién decide qué (esto calibra los checkpoints de juicio).
-5. **Bloque Dominio** → `contexto/dominio/`: glosario de términos del negocio (los que un agente podría malinterpretar primero), tech-stack si existe, ADRs iniciales, design system semilla si hay.
-6. **Outcome candidato.** Cierra proponiendo 1–3 outcomes candidatos (comportamiento medible, no output) derivados de lo escuchado. **No los fijes**: quedan como propuesta en `contexto/estrategia/` para que el humano elija al abrir Shape (checkpoint de juicio #1).
-7. **Cierre.** Actualiza el **Estado del ciclo** en el `CLAUDE.md` del context-repo, registra la sesión en `bitacora/bitacora-agentica.md` y resume qué quedó poblado y qué quedó pendiente (con dueño).
+2. **Bloque Negocio** → `p60/contexto/negocio/`: modelo de negocio (cómo gana dinero o ganará), estrategia y objetivos corto/mediano/largo plazo, restricciones (runway, regulación, dependencias). Pregunta con historias concretas, no definiciones ("¿qué pasó el último trimestre que te preocupa?").
+3. **Bloque Mercado / Usuario temprano** → `p60/contexto/mercado-usuario/`: a quién sirve, competencia/alternativas, y **toda evidencia ya existente** (entrevistas viejas, métricas, señales de demanda). Lo que sea material bruto **va a `_inbox/`** y se procesa con `bibliotecario-evidencia` — la fundación nace catalogada.
+4. **Bloque Equipo** → `p60/contexto/equipo/`: quiénes son, roles, escala (PB/tríada/squad), modelo de trabajo, quién decide qué (esto calibra los checkpoints de juicio).
+5. **Bloque Dominio** → `p60/contexto/dominio/`: glosario de términos del negocio (los que un agente podría malinterpretar primero), tech-stack si existe, ADRs iniciales, design system semilla si hay.
+6. **Outcome candidato.** Cierra proponiendo 1–3 outcomes candidatos (comportamiento medible, no output) derivados de lo escuchado. **No los fijes**: quedan como propuesta en `p60/contexto/estrategia/` para que el humano elija al abrir Shape (checkpoint de juicio #1).
+7. **Cierre.** Actualiza el **Estado del ciclo** en el `CLAUDE.md` del context-repo, registra la sesión en `p60/bitacora/bitacora-agentica.md` y resume qué quedó poblado y qué quedó pendiente (con dueño).
 
 ## Pitfalls
 

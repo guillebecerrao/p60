@@ -1,10 +1,10 @@
 ---
 component: redactar-prd
 type: skill
-version: 1.0
+version: 1.1
 status: active
 agent_role: architect
-last_sync: 2026-07-13
+last_sync: 2026-10-19
 depends_on: [SKILL-format, artifacts, constitution]
 ---
 
@@ -32,3 +32,4 @@ Dar protocolo al sub-proceso **Handoff** (antes solo tenía templates): madurar 
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
 | 1.0 | 2026-07-13 | Claude Fable 5 (Product-Builder) | Creación. Cubre el gap H6 (Handoff sin skill — el sub-proceso central del framework) del análisis de mejoras (pasada Fable 5). |
+| 1.1 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Rutas de instancia explícitas `p60/…` (layout único, `p60-cli.spec` 0.2). |

@@ -14,9 +14,9 @@ Cada sub-proceso mantiene su documento de retro acumulativo:
 
 | Sub-proceso | Documento de retro |
 |-------------|--------------------|
-| Shape | `shape/_retro/retro-shape.md` |
-| Ideate | `ideate/_retro/retro-ideate.md` |
-| Validate | `validate/_retro/retro-validate.md` |
+| Shape | `p60/shape/_retro/retro-shape.md` |
+| Ideate | `p60/ideate/_retro/retro-ideate.md` |
+| Validate | `p60/validate/_retro/retro-validate.md` |
 | Handoff | `handoff/_retro/retro-handoff.md` |
 
 Basándose en la sesión de trabajo y los artefactos generados, se proponen entradas para el documento correspondiente. La retro captura aprendizajes sobre el **proceso** (cómo trabajamos), nunca sobre el **producto** (qué construimos).
@@ -50,7 +50,7 @@ El usuario puede:
 
 ## Paso 4 — Contrato de la bitácora agéntica
 
-Agregar una entrada en `bitacora/bitacora-agentica.md` con:
+Agregar una entrada en `p60/bitacora/bitacora-agentica.md` con:
 - Fecha de cierre.
 - Sub-proceso cerrado (`shape` / `ideate` / `validate` / `handoff`).
 - Artefactos generados durante el ciclo.

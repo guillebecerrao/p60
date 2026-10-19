@@ -1,10 +1,10 @@
 # Template — Context Repo P60 (es)
 
 > Estructura canónica del **context repo** de un producto. `p60 init` la clona y la puebla.
-> Autocontenido y separado del código. El método completo: `docs/P60-Framework-Guide.md`.
+> Todo vive en la carpeta `p60/` (lo único afuera es `.claude/` y un bloque en el `CLAUDE.md` de la raíz). El método completo: `p60/_framework/docs/P60-Framework-Guide.md`.
 
 ```
-[producto]-context/
+p60/
 ├── CLAUDE.md                       # navegación del context repo
 ├── framework.md                    # puntero a la constitución P60
 │
@@ -44,8 +44,8 @@
 >
 > **Notas de la evolución v2 respecto del template de referencia:**
 > - **Ideate y Validate** ahora son sub-procesos separados (antes "ideate-validate").
-> - **Etapa 0** explícita: `contexto/negocio/` + `contexto/mercado-usuario/` como evidencia fundante.
+> - **Etapa 0** explícita: `p60/contexto/negocio/` + `p60/contexto/mercado-usuario/` como evidencia fundante.
 > - **handoff-delivery** reorganizado por `epicas/[epica]/features/[feature]/` con el PRD Maestro gobernando.
-> - **Ubicación = estado:** `validate/…` (libre) → `activas/` (congelado) → `cerradas/` (respaldo).
+> - **Ubicación = estado:** `p60/validate/…` (libre) → `activas/` (congelado) → `cerradas/` (respaldo).
 >
 > *Esqueleto ES-first. El contenido de cada carpeta (índices de contexto, retros, _schema) se puebla en la migración de templates.*

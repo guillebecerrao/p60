@@ -13,7 +13,7 @@ last_modified: YYYY-MM-DD
 # PRD-brief — [Nombre de la candidata]
 
 > **Nivel 1.** Documento ligero que nace en Validate para de-riskear barato. Siembra un prototipo de baja fidelidad e itera con evidencia. Al cierre del ciclo, al menos uno queda `selected` y siembra un PRD de feature en handoff.
-> **Ubicación (libre):** `validate/oportunidades/[opp]/[idea]/prd-brief.md`
+> **Ubicación (libre):** `p60/validate/oportunidades/[opp]/[idea]/prd-brief.md`
 
 ## Oportunidad y problema
 - **Oportunidad (OST):** [nodo] — qué necesidad/pain resuelve, en voz del usuario.
@@ -28,7 +28,7 @@ Una frase: qué apuesta hace esta candidata y por qué podría impulsar el outco
 | | | | |
 
 ## Prototipo (baja fidelidad)
-Qué se prototipa, con qué fidelidad, para probar qué supuesto. Link: `validate/…/prototipos/`.
+Qué se prototipa, con qué fidelidad, para probar qué supuesto. Link: `p60/validate/…/prototipos/`.
 
 ## Criterio de decisión
 Qué evidencia haría que esta candidata pase a `selected` (o se descarte).

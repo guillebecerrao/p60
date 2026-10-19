@@ -1,10 +1,10 @@
 ---
 component: cierre-de-ciclo
 type: skill
-version: 2.0
+version: 2.1
 status: active
 agent_role: architect
-last_sync: 2026-07-08
+last_sync: 2026-10-19
 depends_on: [SKILL-format]
 ---
 
@@ -15,7 +15,7 @@ Facilitar el cierre de un sub-proceso de P60: destilar aprendizajes de **proceso
 
 ## Contrato
 - **Input:** identificación del sub-proceso a cerrar (`shape` / `ideate` / `validate` / `handoff`) + la sesión de trabajo y los artefactos generados en el ciclo.
-- **Output:** entrada(s) de retro en `[sub-proceso]/_retro/retro-[sub-proceso].md` (previa aprobación), lista de movimientos propuestos a `_historia/`, y entrada de cierre en `bitacora/bitacora-agentica.md`.
+- **Output:** entrada(s) de retro en `[sub-proceso]/_retro/retro-[sub-proceso].md` (previa aprobación), lista de movimientos propuestos a `_historia/`, y entrada de cierre en `p60/bitacora/bitacora-agentica.md`.
 - **Invariantes:** captura aprendizaje de proceso, nunca de producto; ningún archivo se mueve sin confirmación humana explícita (puerta humana / constitución #2).
 
 ## Criterios de aceptación
@@ -33,3 +33,4 @@ Facilitar el cierre de un sub-proceso de P60: destilar aprendizajes de **proceso
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
 | 2.0 | 2026-07-08 | Claude (P60 v2) | Migrado desde skill v1.0 al estándar SKILL.md con progressive disclosure; reflejado el split Ideate/Validate en sub-procesos y retros. |
+| 2.1 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Rutas de instancia explícitas `p60/…` (layout único, `p60-cli.spec` 0.2). |

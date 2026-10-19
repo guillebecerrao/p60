@@ -25,10 +25,10 @@ Definir la estructura canónica y los archivos semilla del context repo de un pr
 |---------|-----|
 | `CLAUDE.md` | Navegación + estado del ciclo + resolver "dónde va cada cosa" |
 | `framework.md` | Puntero al framework + adaptaciones locales |
-| `contexto/evidencia/_index.md` | Catálogo de fichas EV (primera parada de búsqueda) |
-| `bitacora/bitacora-{agentica,humana}.md` | Memoria de sesiones / notas del equipo |
-| `experimentacion/pipeline.md` | Estado vivo de experimentos |
-| `contexto/estrategia/ost.md` | OST semilla (fuente única) — la genera `p60 init` |
+| `p60/contexto/evidencia/_index.md` | Catálogo de fichas EV (primera parada de búsqueda) |
+| `p60/bitacora/bitacora-{agentica,humana}.md` | Memoria de sesiones / notas del equipo |
+| `p60/experimentacion/pipeline.md` | Estado vivo de experimentos |
+| `p60/contexto/estrategia/ost.md` | OST semilla (fuente única) — la genera `p60 init` |
 
 ## Criterios de aceptación
 - [ ] `p60 init` corre limpio y el repo resultante pasa la revisión de estructura (carpetas del README presentes).

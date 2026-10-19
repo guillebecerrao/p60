@@ -1,12 +1,12 @@
 ---
 name: brief-entrevista
 description: Diseña briefs de entrevista cualitativa que traducen gaps del OST en guías de sesión ejecutables (perfil, estructura y preguntas).
-version: 2.0
+version: 2.1
 status: active
 triggers: ["crear brief de entrevista", "diseñar guía de entrevista", "preparar entrevistas de discovery", "cerrar gaps del ost", "protocolo de entrevista"]
-requires_context: ["contexto/estrategia/ost.md", "snapshots de entrevistas previas si existen"]
+requires_context: ["p60/contexto/estrategia/ost.md", "snapshots de entrevistas previas si existen"]
 bibliography: "Continuous Discovery Habits — Teresa Torres (2021), caps. 5–7"
-last_sync: 2026-07-08
+last_sync: 2026-10-19
 ---
 
 # Brief de Entrevista
@@ -21,13 +21,13 @@ Actívalo cuando el usuario quiera **iniciar** una ronda de entrevistas para cer
 
 ## Procedure
 
-1. **Seleccionar nodos.** Lee `contexto/estrategia/ost.md` (sección de gaps). Prioriza `HIPÓTESIS DE EQUIPO` (alta) > `INFERIDO` / evidencia directa débil (media). Agrupa 2–3 nodos solo si comparten momento del journey o perfil de participante. **Confirma el foco con el usuario antes de diseñar nada.**
+1. **Seleccionar nodos.** Lee `p60/contexto/estrategia/ost.md` (sección de gaps). Prioriza `HIPÓTESIS DE EQUIPO` (alta) > `INFERIDO` / evidencia directa débil (media). Agrupa 2–3 nodos solo si comparten momento del journey o perfil de participante. **Confirma el foco con el usuario antes de diseñar nada.**
 2. **Definir el perfil de participante.** Criterios de inclusión (vinculados directamente a los nodos — si un criterio no produce evidencia de ningún nodo, elimínalo), exclusión, número (4–6/ciclo) y priorización de sub-perfiles difíciles de reclutar.
 3. **Estructurar la sesión (≤30 min).** Apertura (2–3) · Calentamiento (3–5, detecta perfil real vs. reclutado) · un bloque por nodo (6–10 c/u) · Cierre (0–2, seguro comprimible). El nodo de mayor vacío va **primero y con el bloque más largo**.
 4. **Redactar preguntas por bloque.** 2–3 principales + sondas. Abrir con pregunta de historia (episodio real), profundizar, y solo al final una hipotética. Cada pregunta debe rastrearse a un nodo; si no, elimínala. Tipos y anti-patrones: ver referencia.
 5. **Notas para el facilitador.** No corregir modelos mentales erróneos (son evidencia) · pedir historias específicas vs. opiniones · consentimiento/grabación · variaciones por segmento.
 6. **Próximos pasos post-entrevista.** Documentar con `interview-snapshot` dentro de 24h · condición de actualización del OST · condición de cambio de estado de nodo (ej. → `VALIDADO` con n) · condición de creación de sub-nodos.
-7. **Producir el brief** en `shape/guia-entrevistas/brief-entrevista_[nodos]_[YYYY-MM-DD].md`.
+7. **Producir el brief** en `p60/shape/guia-entrevistas/brief-entrevista_[nodos]_[YYYY-MM-DD].md`.
 
 > Fundamentos, tablas de tipos de pregunta y anti-patrones, reglas de agrupación: **`references/methodology.md`**.
 > Formato de salida del brief: **`templates/brief-entrevista.md`**.

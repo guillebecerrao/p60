@@ -156,7 +156,7 @@ Una buena quote memorable:
 **Objetivo:** Compilar todo en el documento final usando `templates/snapshot.md`. Guardarlo en:
 
 ```
-shape/entrevistas/snapshots/snapshot_[nombre]_[fecha].md
+p60/shape/entrevistas/snapshots/snapshot_[nombre]_[fecha].md
 ```
 
 Formato del nombre de archivo: `snapshot_nombre-apellido_YYYY-MM-DD.md`

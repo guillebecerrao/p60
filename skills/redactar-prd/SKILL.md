@@ -1,11 +1,11 @@
 ---
 name: redactar-prd
 description: Redacta y madura los PRDs del sub-proceso Handoff — PRD Maestro (épica), PRD de feature validado e Iteration PRD dev-ready — desde el PRD-brief seleccionado, con la jerarquía y los estados correctos.
-version: 1.0
+version: 1.1
 status: active
 triggers: ["redactar el prd", "madurar el brief a prd", "crear el prd maestro", "iteration prd", "descomponer la feature en sprints", "handoff de la solución", "dejar dev-ready"]
-requires_context: ["el PRD-brief selected", "handoff-delivery/epicas/ (jerarquía existente)", "templates/artifacts/es/ (prd-maestro, prd-feature, iteration-prd, adr)"]
-last_sync: 2026-07-13
+requires_context: ["el PRD-brief selected", "p60/handoff-delivery/epicas/ (jerarquía existente)", "templates/artifacts/es/ (prd-maestro, prd-feature, iteration-prd, adr)"]
+last_sync: 2026-10-19
 ---
 
 # Redactar PRD

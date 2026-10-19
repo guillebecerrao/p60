@@ -1,12 +1,12 @@
 ---
 name: ideacion-estructurada
 description: Genera y preselecciona candidatas de solución para la oportunidad target del OST — ideación divergente, comparación estructurada y preselección con criterio explícito.
-version: 1.0
+version: 1.1
 status: active
 triggers: ["generar ideas de solución", "ideación", "ideemos soluciones", "candidatas para la oportunidad", "brainstorm de soluciones", "abrir el solution space"]
-requires_context: ["contexto/estrategia/ost.md (oportunidad target elegida)", "evidencia vinculada al nodo (fichas EV-NNN)"]
+requires_context: ["p60/contexto/estrategia/ost.md (oportunidad target elegida)", "evidencia vinculada al nodo (fichas EV-NNN)"]
 bibliography: "Continuous Discovery Habits — Teresa Torres (2021), caps. 9–10"
-last_sync: 2026-07-13
+last_sync: 2026-10-19
 ---
 
 # Ideación Estructurada
@@ -26,7 +26,7 @@ Actívalo cuando Shape cerró con una **oportunidad target** (nodo hoja del OST)
 3. **Filtrar contra el outcome.** Descarta las que no impulsarían el outcome del OST aunque sean atractivas. Registra el porqué de cada descarte (1 línea — es contexto futuro).
 4. **Comparar las sobrevivientes** con matriz explícita: impacto esperado en el outcome · evidencia que la respalda (siglas EV) · esfuerzo aparente · riesgo mayor. Compare-and-contrast entre ideas — nunca evaluar una idea aislada (whether-or-not).
 5. **Preseleccionar ~3 candidatas** (Torres: testear supuestos de varias ideas en paralelo, no enamorarse de una). La preselección la **decide el humano** con la matriz a la vista — checkpoint de juicio, no delegable.
-6. **Registrar** en `ideate/oportunidades/[opp]/candidatas.md` (template `templates/candidatas.md`) con trazabilidad al nodo OST. Las candidatas siembran sus PRD-brief al entrar a Validate.
+6. **Registrar** en `p60/ideate/oportunidades/[opp]/candidatas.md` (template `templates/candidatas.md`) con trazabilidad al nodo OST. Las candidatas siembran sus PRD-brief al entrar a Validate.
 
 ## Pitfalls
 

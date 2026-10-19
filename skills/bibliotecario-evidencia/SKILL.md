@@ -1,11 +1,11 @@
 ---
 name: bibliotecario-evidencia
 description: Procesa el _inbox de evidencia como un bibliotecario — identifica cada archivo, crea su ficha EV-NNN, archiva el original donde corresponde y mantiene el índice de fichas buscable.
-version: 1.0
+version: 1.1
 status: active
 triggers: ["procesar el inbox", "archivar evidencia", "ficha de evidencia", "catalogar evidencia", "dejé algo en el inbox", "qué evidencia tenemos", "buscar evidencia"]
-requires_context: ["contexto/evidencia/_inbox/", "contexto/evidencia/_index.md"]
-last_sync: 2026-07-13
+requires_context: ["p60/contexto/evidencia/_inbox/", "p60/contexto/evidencia/_index.md"]
+last_sync: 2026-10-19
 ---
 
 # Bibliotecario de Evidencia
@@ -14,7 +14,7 @@ last_sync: 2026-07-13
 
 ## When to Use
 
-Actívalo cuando: hay **archivos nuevos en `contexto/evidencia/_inbox/`** (transcripciones, exports de analytics, informes de mercado, notas, PDFs), el usuario pide **catalogar o archivar evidencia**, o se necesita **buscar qué evidencia existe** sobre un tema (se busca en fichas, nunca leyendo los originales).
+Actívalo cuando: hay **archivos nuevos en `p60/contexto/evidencia/_inbox/`** (transcripciones, exports de analytics, informes de mercado, notas, PDFs), el usuario pide **catalogar o archivar evidencia**, o se necesita **buscar qué evidencia existe** sobre un tema (se busca en fichas, nunca leyendo los originales).
 
 **NO** lo uses para: sintetizar una entrevista en snapshot (eso es `interview-snapshot` — el snapshot resultante SÍ pasa por aquí para su ficha), ni para actualizar el OST con hallazgos (eso es `ost-facilitator`).
 
@@ -23,16 +23,16 @@ Actívalo cuando: hay **archivos nuevos en `contexto/evidencia/_inbox/`** (trans
 1. **Inventariar el `_inbox/`.** Lista los archivos pendientes. Si está vacío y la tarea es búsqueda, salta al paso 6.
 2. **Identificar cada archivo.** Léelo (o su inicio, si es muy grande) y determina: tipo de evidencia, tema, fecha de origen, fuente. Tipos: `entrevista` · `analytics` · `mercado` · `negocio` · `test` (resultado de test/experimento) · `feedback` · `otro`.
 3. **Asignar la sigla.** Siguiente correlativo `EV-NNN` según `_index.md` (tres dígitos, no se reutilizan siglas — ni siquiera de evidencia descartada).
-4. **Crear la ficha** en `contexto/evidencia/fichas/EV-NNN-[slug].md` con el template `templates/ficha-evidencia.md`. La ficha es el **subrogante liviano del original**: debe permitir decidir *sin abrir el original* si contiene lo que se busca — resumen, hallazgos clave con ubicación interna (sección/minuto/página), y ruta al original.
+4. **Crear la ficha** en `p60/contexto/evidencia/fichas/EV-NNN-[slug].md` con el template `templates/ficha-evidencia.md`. La ficha es el **subrogante liviano del original**: debe permitir decidir *sin abrir el original* si contiene lo que se busca — resumen, hallazgos clave con ubicación interna (sección/minuto/página), y ruta al original.
 5. **Archivar el original.** Muévelo a su destino según tipo (tabla abajo) y registra la ruta final en la ficha. Presenta el plan de movimientos antes de mover (puerta humana).
    | Tipo | Destino del original |
    |------|---------------------|
-   | entrevista (transcripción) | `shape/entrevistas/transcripciones/` |
-   | analytics / datos de uso | `contexto/mercado-usuario/analytics/` |
-   | mercado / competencia | `contexto/mercado-usuario/mercado/` |
-   | negocio / estrategia | `contexto/negocio/` |
-   | test / experimento | `experimentacion/resultados/` |
-   | feedback / otro | `contexto/evidencia/originales/` |
+   | entrevista (transcripción) | `p60/shape/entrevistas/transcripciones/` |
+   | analytics / datos de uso | `p60/contexto/mercado-usuario/analytics/` |
+   | mercado / competencia | `p60/contexto/mercado-usuario/mercado/` |
+   | negocio / estrategia | `p60/contexto/negocio/` |
+   | test / experimento | `p60/experimentacion/resultados/` |
+   | feedback / otro | `p60/contexto/evidencia/originales/` |
 6. **Actualizar `_index.md`**: una fila por ficha (sigla, tipo, tema en una línea, fecha, confianza, ruta de ficha). El índice es el primer y a menudo único archivo que se lee al investigar contexto interno.
 7. **Búsqueda (cuando la tarea es investigar):** lee `_index.md` → abre solo las fichas candidatas → solo si la ficha confirma relevancia, abre el original. Nunca al revés.
 

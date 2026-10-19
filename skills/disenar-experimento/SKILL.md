@@ -1,11 +1,11 @@
 ---
 name: disenar-experimento
 description: Diseña el experimento de validación post-build de una feature — método (A/B, fake door, rollout gradual, cohorte), métrica primaria, umbral de éxito pre-registrado y plan de corrida.
-version: 1.0
+version: 1.1
 status: active
 triggers: ["diseñar el experimento", "cómo validamos lo construido", "a/b test de la feature", "fake door", "plan de experimentación", "validación post-build"]
-requires_context: ["el Iteration PRD / PRD de feature construido", "experimentacion/pipeline.md", "outcome del nodo OST correspondiente"]
-last_sync: 2026-07-13
+requires_context: ["el Iteration PRD / PRD de feature construido", "p60/experimentacion/pipeline.md", "outcome del nodo OST correspondiente"]
+last_sync: 2026-10-19
 ---
 
 # Diseñar Experimento
@@ -30,8 +30,8 @@ Actívalo cuando una feature (o rebanada) salió de **Build** deployada y hay qu
    | Validar demanda antes de invertir más | **Fake door / smoke test** |
 3. **Definir métricas**: **una primaria** (la del outcome), 1–2 secundarias de contexto y **guardarraíles** (lo que no puede empeorar: churn, errores, latencia, quejas).
 4. **Pre-registrar el umbral y la duración**: "éxito si [métrica primaria] mejora ≥X% con [ventana/n] — decidimos el [fecha]". Escrito **antes** de exponer usuarios; sin extensión silenciosa de la ventana ("seguir mirando hasta que dé" invalida el experimento).
-5. **Plan de corrida** en `experimentacion/experimentos/[NN]-[slug].md` (template `templates/experimento.md`): asignación/segmento, instrumentación necesaria (verificar que el evento existe ANTES de lanzar), fecha de corte, responsable de la lectura.
-6. **Registrar en el pipeline** (`experimentacion/pipeline.md`) y dejar el experimento `running`. Al llegar la fecha de corte → `decision-ship`.
+5. **Plan de corrida** en `p60/experimentacion/experimentos/[NN]-[slug].md` (template `templates/experimento.md`): asignación/segmento, instrumentación necesaria (verificar que el evento existe ANTES de lanzar), fecha de corte, responsable de la lectura.
+6. **Registrar en el pipeline** (`p60/experimentacion/pipeline.md`) y dejar el experimento `running`. Al llegar la fecha de corte → `decision-ship`.
 
 ## Pitfalls
 

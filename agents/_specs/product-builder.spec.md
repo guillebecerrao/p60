@@ -4,7 +4,7 @@ type: agent
 version: 3.1
 status: active
 agent_role: architect
-last_sync: 2026-07-13
+last_sync: 2026-10-19
 depends_on: [constitution, component-spec, SKILL-format]
 ---
 
@@ -33,3 +33,4 @@ Agente apex del framework P60: orquesta el trabajo, custodia la integridad arqui
 |---------|------|--------|-------------|
 | 3.0 | 2026-07-08 | Claude (P60 v2) | Spec inicial del agente apex migrado desde Ivanov v2.0. |
 | 3.1 | 2026-07-13 | Claude Fable 5 (Product-Builder) | Wrapper nativo `.claude/agents/product-builder.md` (descubrimiento/delegación automática). Ejemplo del few_shot actualizado tras el retiro de `procedures/` (migrado a skills). |
+| 3.1 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Sincronía verificada contra la historia previa a la publicación del repo (sin deriva); sin cambios de contenido. |

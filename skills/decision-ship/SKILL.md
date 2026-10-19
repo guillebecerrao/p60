@@ -1,11 +1,11 @@
 ---
 name: decision-ship
 description: Facilita la decisión ship / no-ship / iterar de un experimento leído — contrasta resultados contra el umbral pre-registrado, prepara la recomendación y cierra el loop de aprendizaje en el repo.
-version: 1.0
+version: 1.1
 status: active
 triggers: ["decidir el experimento", "ship o no ship", "leer los resultados del experimento", "cerrar el experimento", "qué hacemos con la feature", "decisión de lanzamiento"]
-requires_context: ["el experimento EXP-NN con resultados al corte", "el Iteration PRD / PRD de feature correspondiente", "contexto/estrategia/ost.md"]
-last_sync: 2026-07-13
+requires_context: ["el experimento EXP-NN con resultados al corte", "el Iteration PRD / PRD de feature correspondiente", "p60/contexto/estrategia/ost.md"]
+last_sync: 2026-10-19
 ---
 
 # Decisión Ship / No-Ship / Iterar

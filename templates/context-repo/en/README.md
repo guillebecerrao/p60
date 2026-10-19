@@ -1,11 +1,11 @@
 # Template — P60 Context Repo (en)
 
 > Canonical structure of a product's **context repo**. `p60 init` clones and populates it.
-> Self-contained and separate from the code. Full method: `docs/P60-Framework-Guide.md`.
+> Everything lives in the `p60/` folder (only `.claude/` and a block in the root `CLAUDE.md` live outside). Full method: `p60/_framework/docs/P60-Framework-Guide.md`.
 > **Folder names are canonical framework structure** (pipeline logic — referenced by skills and agents) **and are not translated**; file content is localized.
 
 ```
-[product]-context/
+p60/
 ├── CLAUDE.md                       # context repo navigation
 ├── framework.md                    # pointer to the P60 constitution
 │

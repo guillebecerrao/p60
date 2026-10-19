@@ -3,7 +3,7 @@ title: "P60 — Arranque rápido"
 subtitle: "De cero a primer ciclo, con ejemplos explícitos"
 author: Guille Becerra O
 created: 2026-07-14
-version: 1.0
+version: 1.1
 status: active
 audience: nuevo usuario de P60 (PM · Designer · Tech Lead · solo-builder)
 language: es
@@ -16,19 +16,23 @@ language: es
 ## 0. Prerequisitos
 
 ```bash
-P60/tools/p60 doctor        # git, python3, Claude Code
+git clone https://github.com/guillebecerrao/p60.git   # el instalador de un comando llega en la próxima versión
+p60/tools/p60 doctor        # git, python3, Claude Code
 ```
 
 ## 1. Instanciar el producto (2 minutos)
 
 ```bash
-P60/tools/p60 init mi-producto --escala pb --lang es    # escala: pb|triada|squad · idioma: es|en|pt (pt-BR)
-cd mi-producto-context && claude
+mkdir mi-producto && cd mi-producto                    # o una carpeta que ya tengas (con o sin git)
+../p60/tools/p60 init --escala pb --lang es             # escala: pb|triada|squad · idioma: es|en|pt (pt-BR)
+claude                                                  # ábrelo siempre desde esta carpeta (la raíz)
 ```
+
+`init` muestra primero un **plan** (qué crea, qué fusiona, qué ya existe) y no reemplaza nada tuyo sin preguntar. Con `--dry-run` solo muestra el plan. Si la carpeta no tenía git, lo inicializa con un commit; si ya tenía, deja los cambios para que los revises.
 
 El contenido del repo se genera en el idioma elegido; los nombres de carpetas son estructura canónica del framework y no cambian entre idiomas.
 
-Esto crea el **context repo**: estructura completa, OST semilla, sistema de evidencia, bitácoras, agentes y skills conectados, y guardarraíles instalados (las zonas congeladas piden confirmación humana automáticamente).
+Esto convierte la carpeta en el **context repo**. Todo queda dentro de `p60/`: estructura completa, OST semilla, sistema de evidencia, bitácoras y una copia del framework en `p60/_framework/` (no se edita a mano). Afuera solo quedan `.claude/` (agentes, skills y guardarraíles que Claude Code necesita en la raíz) y un bloque en el `CLAUDE.md` de la raíz. El repo es autocontenido: quien lo clone lo tiene funcionando sin instalar nada más que Claude Code.
 
 **Comandos útiles del CLI en cualquier momento:**
 
@@ -70,8 +74,8 @@ El agente prepara, recomienda y propaga; **tú decides**: (1) el outcome y la ap
 
 ## 5. Demo de 10 minutos (para mostrar el framework)
 
-1. `p60 init demo-cafe` → mostrar la estructura creada y el `CLAUDE.md` (30 s).
-2. "Corre la fundación" → responder 3–4 preguntas del bloque negocio → mostrar `contexto/negocio/` poblado (3 min).
+1. `p60 init demo-cafe` → mostrar el plan, la carpeta `p60/` y el `CLAUDE.md` (30 s).
+2. "Corre la fundación" → responder 3–4 preguntas del bloque negocio → mostrar `p60/contexto/negocio/` poblado (3 min).
 3. Pegar una entrevista falsa en el chat → "procesa esta transcripción y déjala fichada" → mostrar snapshot + ficha `EV-001` + índice (3 min).
 4. "Creemos el OST con esto" → mostrar el árbol con evidencia citada `[EV-001]` (2 min).
 5. Intentar editar un archivo en `activas/` → **el guardarraíl pide confirmación humana solo** (30 s — siempre impresiona).
@@ -87,3 +91,4 @@ El agente prepara, recomienda y propaga; **tú decides**: (1) el outcome y la ap
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
 | 1.0 | 2026-07-14 | Claude Fable 5 (Product-Builder) | Creación — guía de onboarding/capacitación con ejemplos explícitos y demo guiada. |
+| 1.1 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | `p60 init` sobre la carpeta actual (nueva o existente), todo dentro de `p60/`, plan previo y `--dry-run`. |

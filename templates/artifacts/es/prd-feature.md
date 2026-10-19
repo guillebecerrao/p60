@@ -14,7 +14,7 @@ last_modified: YYYY-MM-DD
 # PRD de Feature — [Nombre]
 
 > **Nivel 2 · Feature.** El PRD-brief seleccionado que maduró a **validado**, acompañado de **ADR** y **prototipo de alta fidelidad**. Gobernado (subrogado) por el PRD Maestro de su épica. Se descompone en Iteration PRDs para los sprints.
-> **Ubicación:** `handoff-delivery/epicas/[epica]/features/[feature-slug]/prd-[feature].md`
+> **Ubicación:** `p60/handoff-delivery/epicas/[epica]/features/[feature-slug]/prd-[feature].md`
 
 ## Trazabilidad
 - **Épica (PRD Maestro):** [link]
@@ -27,7 +27,7 @@ Qué es la feature, qué problema resuelve, para quién.
 User journeys / capacidades incluidas. No-alcance explícito.
 
 ## Evidencia de validación
-Qué supuestos se validaron y con qué evidencia (link a `contexto/evidencia/`). Prototipo alta-fi: [link].
+Qué supuestos se validaron y con qué evidencia (link a `p60/contexto/evidencia/`). Prototipo alta-fi: [link].
 
 ## Decisiones técnicas (ADR)
 Resumen + link al ADR. Decisiones pendientes de tercero → placeholder explícito.

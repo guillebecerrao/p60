@@ -1,12 +1,12 @@
 ---
 name: interview-snapshot
 description: Sintetiza una entrevista de usuario en un interview snapshot de una página (Torres) a partir de una transcripción bruta, listo para alimentar el OST.
-version: 2.0
+version: 2.1
 status: active
 triggers: ["documentar entrevista", "interview snapshot", "sintetizar entrevista", "extraer oportunidades de entrevista", "procesar transcripción", "snapshot de usuario"]
-requires_context: ["transcripción bruta de la entrevista (Gemini/Meet u otra)", "shape/entrevistas/snapshots/ (destino)"]
+requires_context: ["transcripción bruta de la entrevista (Gemini/Meet u otra)", "p60/shape/entrevistas/snapshots/ (destino)"]
 bibliography: "Continuous Discovery Habits — Teresa Torres (2021), Capítulo 5"
-last_sync: 2026-07-08
+last_sync: 2026-10-19
 ---
 
 # Interview Snapshot
@@ -27,7 +27,7 @@ Actívalo cuando el usuario quiera **documentar** una entrevista desde una trans
 4. **Extraer insights**: observaciones sorprendentes o contradicciones que aún no son oportunidad pero vale registrar (valor acumulativo).
 5. **Completar Quick Facts** con datos de contexto presentes en la transcripción. No inventar; adaptar campos al dominio.
 6. **Seleccionar la quote memorable**: frase textual, emocional o distintiva, que "desbloquea" la memoria de la historia.
-7. **Producir el snapshot** con `templates/snapshot.md` y guardarlo en `shape/entrevistas/snapshots/snapshot_[nombre-apellido]_[YYYY-MM-DD].md`.
+7. **Producir el snapshot** con `templates/snapshot.md` y guardarlo en `p60/shape/entrevistas/snapshots/snapshot_[nombre-apellido]_[YYYY-MM-DD].md`.
 
 > Fundamentos, protocolo detallado por paso, filtros, comportamiento del agente y tablas de anti-patrones: **`references/methodology.md`**.
 > Formato de salida: **`templates/snapshot.md`**.
@@ -49,5 +49,5 @@ Actívalo cuando el usuario quiera **documentar** una entrevista desde una trans
 - [ ] Cada oportunidad en 1ª persona, voz del participante, sin ser solución ni sentimiento sin causa, con su origen en la historia.
 - [ ] Quote memorable textual (no paráfrasis).
 - [ ] Quick Facts solo con datos presentes en la transcripción.
-- [ ] Guardado en `shape/entrevistas/snapshots/snapshot_[nombre]_[fecha].md`.
+- [ ] Guardado en `p60/shape/entrevistas/snapshots/snapshot_[nombre]_[fecha].md`.
 - [ ] Señaladas las oportunidades que podrían alimentar el OST actual.

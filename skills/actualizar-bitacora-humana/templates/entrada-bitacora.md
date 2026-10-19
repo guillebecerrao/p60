@@ -1,4 +1,4 @@
-<!-- Formato de una entrada de la bitácora humana. Las entradas se agregan en orden cronológico dentro de bitacora/bitacora-humana.md. -->
+<!-- Formato de una entrada de la bitácora humana. Las entradas se agregan en orden cronológico dentro de p60/bitacora/bitacora-humana.md. -->
 
 ## [YYYY-MM-DD] — [Contexto breve]
 **Persona:** [product-manager | product-designer | product-engineer | coach]

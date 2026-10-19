@@ -1,11 +1,11 @@
 # Template — Context Repo P60 (pt-BR)
 
 > Estrutura canônica do **context repo** de um produto. O `p60 init` a clona e popula.
-> Autocontido e separado do código. Método completo: `docs/P60-Framework-Guide.md`.
+> Tudo vive na pasta `p60/` (fora dela ficam apenas `.claude/` e um bloco no `CLAUDE.md` da raiz). Método completo: `p60/_framework/docs/P60-Framework-Guide.md`.
 > **Os nomes das pastas são estrutura canônica do framework** (lógica do pipeline — referenciados por skills e agentes) **e não se traduzem**; o conteúdo dos arquivos é localizado.
 
 ```
-[produto]-context/
+p60/
 ├── CLAUDE.md                       # navegação do context repo
 ├── framework.md                    # ponteiro para a constituição P60
 │

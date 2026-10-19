@@ -4,7 +4,7 @@ type: agent
 version: 2.1
 status: active
 agent_role: architect
-last_sync: 2026-07-13
+last_sync: 2026-10-19
 depends_on: [constitution, component-spec, product-builder]
 ---
 
@@ -34,3 +34,4 @@ Perfil experto en Spec-Driven Development: aporta juicio senior para producir es
 |---------|------|--------|-------------|
 | 2.0 | 2026-07-08 | Claude (P60 v2) | Spec inicial del agente experto, migrado desde el system-prompt v1.0 a la arquitectura v2. |
 | 2.1 | 2026-07-13 | Claude Fable 5 (Product-Builder) | Wrapper nativo `.claude/agents/spec-driven-development.md` para descubrimiento y delegación automática de Claude Code (fuente única sigue en `agents/spec-driven-development.md`). |
+| 2.1 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Sincronía verificada contra la historia previa a la publicación del repo (sin deriva); sin cambios de contenido. |

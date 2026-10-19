@@ -1,12 +1,12 @@
 ---
 name: ost-facilitator
 description: Facilita sesiones de Opportunity Solution Tree (crear, actualizar, revisar, priorizar) según Teresa Torres.
-version: 2.0
+version: 2.1
 status: active
 triggers: ["crear ost", "actualizar ost", "revisar ost", "priorizar oportunidades", "mapear entrevistas al árbol", "opportunity solution tree"]
-requires_context: ["contexto/estrategia/ost.md", "evidencia de discovery disponible"]
+requires_context: ["p60/contexto/estrategia/ost.md", "evidencia de discovery disponible"]
 bibliography: "Continuous Discovery Habits — Teresa Torres (2021)"
-last_sync: 2026-07-08
+last_sync: 2026-10-19
 ---
 
 # OST Facilitator
@@ -49,4 +49,4 @@ Actívalo cuando el usuario quiera **crear** un OST desde cero, **actualizar**lo
 - [ ] Cada oportunidad en voz del usuario, con evidencia y nivel de confianza.
 - [ ] Oportunidad target = leaf node, elegida por compare-and-contrast.
 - [ ] ≥3 soluciones candidatas; supuesto más riesgoso + test por cada una.
-- [ ] OST actualizado en `contexto/estrategia/ost.md` (fuente única — nunca duplicar).
+- [ ] OST actualizado en `p60/contexto/estrategia/ost.md` (fuente única — nunca duplicar).

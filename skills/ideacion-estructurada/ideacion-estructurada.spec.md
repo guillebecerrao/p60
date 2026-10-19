@@ -1,10 +1,10 @@
 ---
 component: ideacion-estructurada
 type: skill
-version: 1.0
+version: 1.1
 status: active
 agent_role: architect
-last_sync: 2026-07-13
+last_sync: 2026-10-19
 depends_on: [SKILL-format, ost-facilitator]
 ---
 
@@ -15,7 +15,7 @@ Dar protocolo al sub-proceso **Ideate** (antes sin skill): de la oportunidad tar
 
 ## Contrato
 - **Input:** nodo hoja del OST elegido en Shape + su evidencia (fichas EV).
-- **Output:** `ideate/oportunidades/[opp]/candidatas.md` con ideas, descartes razonados, matriz de comparación y preselección humana.
+- **Output:** `p60/ideate/oportunidades/[opp]/candidatas.md` con ideas, descartes razonados, matriz de comparación y preselección humana.
 - **Invariantes:** divergencia real (≥8 ideas) antes de converger; preselección plural (~3) decidida por el humano; toda candidata trazada al nodo y su evidencia.
 
 ## Criterios de aceptación
@@ -31,3 +31,4 @@ Dar protocolo al sub-proceso **Ideate** (antes sin skill): de la oportunidad tar
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
 | 1.0 | 2026-07-13 | Claude Fable 5 (Product-Builder) | Creación. Cubre el gap H6 (Ideate sin skill) del análisis de mejoras (pasada Fable 5). |
+| 1.1 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Rutas de instancia explícitas `p60/…` (layout único, `p60-cli.spec` 0.2). |

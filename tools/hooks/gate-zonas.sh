@@ -37,7 +37,8 @@ PROTEGIDAS = [
     (r"/activas/",        "Zona CONGELADA (activas/): el doc está en ventana de sprint. Modificarlo exige comunicarlo a quien construye."),
     (r"/cerradas/",       "Zona RESPALDO (cerradas/): inmutable — es contexto histórico, no se edita."),
     (r"/_historia/",      "Zona RESPALDO (_historia/): inmutable — es contexto histórico, no se edita."),
-    (r"\.p60/memory/",    "Memoria del framework (constitución): cambia poco y nunca a mitad de sesión. Confirmar explícitamente."),
+    (r"(\.p60|p60/_framework)/memory/", "Memoria del framework (constitución): cambia poco y nunca a mitad de sesión. Confirmar explícitamente."),
+    (r"/p60/_framework/", "Zona GESTIONADA (p60/_framework/): la reemplaza `p60 update`. Las adaptaciones locales van en p60/framework.md."),
     (r"/legacy/",         "Zona legacy: no se toca por defecto."),
 ]
 for patron, razon in PROTEGIDAS:

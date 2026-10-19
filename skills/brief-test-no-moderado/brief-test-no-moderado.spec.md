@@ -4,7 +4,7 @@ type: skill
 version: 2.0
 status: active
 agent_role: architect
-last_sync: 2026-07-08
+last_sync: 2026-10-19
 depends_on: [SKILL-format]
 ---
 
@@ -34,3 +34,4 @@ Convertir al agente en diseñador de tests no moderados: traducir una hipótesis
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
 | 2.0 | 2026-07-08 | Claude (P60 v2) | Migrado desde skill v1.0 (harvest triad-sdpb, 2026-06-16; origen `brief-test-lyssna`, Yerko Pezzopane, 2026-06-03) al estándar SKILL.md con progressive disclosure. |
+| 2.0 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Sincronía verificada contra la historia previa a la publicación del repo (sin deriva); sin cambios de contenido. |

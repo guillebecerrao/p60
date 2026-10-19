@@ -12,7 +12,7 @@ last_modified: YYYY-MM-DD
 # PRD Maestro — [Épica]
 
 > **Nivel 2 · Maestro.** Documento estratégico **vivo** de la épica. Se actualiza a medida que sus features mutan o se agregan. Gobierna (subroga) a los PRD de feature de la épica. No es input directo de dev — es "el libro de la épica".
-> **Ubicación:** `handoff-delivery/epicas/[epica-slug]/prd-maestro.md`
+> **Ubicación:** `p60/handoff-delivery/epicas/[epica-slug]/prd-maestro.md`
 
 ## Visión de la épica
 Qué es esta épica, qué outcome persigue, por qué existe. Trazabilidad al OST.

@@ -2,7 +2,7 @@
 
 > Memória curada do context repo de **[PRODUCTO]**, operado com o framework **P60**.
 > Curta de propósito (~1 tela). Leia no início de cada sessão. O aprofundamento vive nos arquivos linkados.
-> Regras de comportamento do agente: `framework.md` → constituição P60. Skills disponíveis: índice do framework (`skills/_index.md` no repo P60).
+> Regras de comportamento do agente: `p60/framework.md` → constituição (`p60/_framework/memory/constitution.md`). Skills disponíveis: `p60/_framework/skills-index.md`.
 
 ## O que é este repo
 
@@ -17,36 +17,36 @@ O **sistema operacional de produto** de [PRODUCTO]: discovery, specs, evidência
 | **Subprocesso ativo** | Etapa 0 — Fundação de contexto |
 | **Oportunidade alvo (OST)** | — |
 | **Aposta / apetite vigente** | — |
-| **Última sessão** | ver `bitacora/bitacora-agentica.md` |
+| **Última sessão** | ver `p60/bitacora/bitacora-agentica.md` |
 
 ## Mapa de navegação
 
 | Preciso de… | Vou para… |
 |-------------|-----------|
-| A estratégia e o OST (fonte única) | `contexto/estrategia/ost.md` |
-| Saber que evidências existem | `contexto/evidencia/_index.md` → fichas → só então o original |
-| A fundação (negócio, mercado, time, domínio) | `contexto/negocio/` · `contexto/mercado-usuario/` · `contexto/equipo/` · `contexto/dominio/` |
-| O trabalho do ciclo em andamento | `shape/` · `ideate/` · `validate/` |
-| PRDs e specs de desenvolvimento | `handoff-delivery/epicas/[epico]/` |
-| Experimentos pós-build | `experimentacion/pipeline.md` |
-| O que aconteceu em sessões anteriores | `bitacora/` |
+| A estratégia e o OST (fonte única) | `p60/contexto/estrategia/ost.md` |
+| Saber que evidências existem | `p60/contexto/evidencia/_index.md` → fichas → só então o original |
+| A fundação (negócio, mercado, time, domínio) | `p60/contexto/negocio/` · `p60/contexto/mercado-usuario/` · `p60/contexto/equipo/` · `p60/contexto/dominio/` |
+| O trabalho do ciclo em andamento | `p60/shape/` · `p60/ideate/` · `p60/validate/` |
+| PRDs e specs de desenvolvimento | `p60/handoff-delivery/epicas/[epico]/` |
+| Experimentos pós-build | `p60/experimentacion/pipeline.md` |
+| O que aconteceu em sessões anteriores | `p60/bitacora/` |
 
 ## Onde vai cada coisa (resolver — ler ANTES de criar um arquivo novo)
 
 | É… | Vai em… | NÃO vai em… |
 |----|---------|-------------|
-| Material bruto (transcrição, export, relatório) | `contexto/evidencia/_inbox/` → processado por `bibliotecario-evidencia` | direto numa pasta de contexto (sem ficha não é pesquisável) |
-| Uma oportunidade ou insight de discovery | o OST (nó) + a ficha EV que o respalda | um doc solto em `shape/` |
-| Uma ideia de solução | `ideate/oportunidades/[opp]/candidatas.md` | o OST (lá só se referencia) |
-| Uma premissa e seu teste | `validate/oportunidades/[opp]/[idea]/` (mapa + PRD-brief) | `handoff-delivery/` (lá só chega o validado) |
-| Uma spec de desenvolvimento | `handoff-delivery/epicas/[epico]/features/[feature]/` | `validate/` (isso é nível brief) |
-| O que você não sabe onde arquivar | `contexto/evidencia/_inbox/` — se resolve ao processar | inventar uma pasta nova |
+| Material bruto (transcrição, export, relatório) | `p60/contexto/evidencia/_inbox/` → processado por `bibliotecario-evidencia` | direto numa pasta de contexto (sem ficha não é pesquisável) |
+| Uma oportunidade ou insight de discovery | o OST (nó) + a ficha EV que o respalda | um doc solto em `p60/shape/` |
+| Uma ideia de solução | `p60/ideate/oportunidades/[opp]/candidatas.md` | o OST (lá só se referencia) |
+| Uma premissa e seu teste | `p60/validate/oportunidades/[opp]/[idea]/` (mapa + PRD-brief) | `p60/handoff-delivery/` (lá só chega o validado) |
+| Uma spec de desenvolvimento | `p60/handoff-delivery/epicas/[epico]/features/[feature]/` | `p60/validate/` (isso é nível brief) |
+| O que você não sabe onde arquivar | `p60/contexto/evidencia/_inbox/` — se resolve ao processar | inventar uma pasta nova |
 
 ## Regras locais
 
-1. **Localização = estado.** `validate/` livre · `activas/` congelado · `cerradas/` e `_historia/` backup (não ler por padrão).
+1. **Localização = estado.** `p60/validate/` livre · `activas/` congelado · `cerradas/` e `_historia/` backup (não ler por padrão).
 2. **Citar siglas** (`EV-NNN`, nós do OST, `ADR-NNN`), nunca caminhos nem cópias.
 3. **Checkpoints de julgamento humanos:** escolher outcome/aposta, validar síntese de IA, ship/no-ship.
-4. Este arquivo se mantém curto; o que cresce vai para `bitacora/`.
+4. Este arquivo se mantém curto; o que cresce vai para `p60/bitacora/`.
 
-*Instanciado por `p60 init` em [FECHA]. Framework P60 v2.*
+*Instanciado por `p60 init` em [FECHA]. Framework P60 v[VERSION] (ver `p60/_framework/VERSION`).*

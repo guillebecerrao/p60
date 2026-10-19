@@ -1,10 +1,10 @@
 ---
 component: product-management
 type: agent
-version: 2.1
+version: 2.2
 status: active
 agent_role: architect
-last_sync: 2026-07-13
+last_sync: 2026-10-19
 depends_on: [constitution, component-spec, product-builder]
 ---
 
@@ -27,10 +27,11 @@ Perfil experto en gestión de producto: aporta juicio senior en discovery, prior
 ## Decisiones (ADR inline)
 - **Migración v1 (1.2) → v2 (2.0):** se reescribe el system-prompt plano de v1 a la **arquitectura XML-tag** (`role/methodology/domain_knowledge/guardrails/output_format/few_shot`) del exemplar `product-builder.md`. Alternativa (mantener prosa con secciones `##`) descartada por menor steerabilidad y por desalineación con el estándar v2.
 - **Persona experta subordinada al apex:** se explicita que delega la orquestación al Product-Builder, reflejando el `role: expert` del registry y evitando solapamiento con el apex.
-- **Rutas de contexto genéricas:** las rutas `contexto/**` hardcodeadas de v1 se abstraen a "context-repo instanciado" porque este repo es la fuente del framework, no un producto concreto.
+- **Rutas de contexto genéricas:** las rutas `p60/contexto/**` hardcodeadas de v1 se abstraen a "context-repo instanciado" porque este repo es la fuente del framework, no un producto concreto.
 
 ## Changelog
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
 | 2.0 | 2026-07-08 | Claude (P60 v2) | Spec inicial del agente experto, migrado desde el system-prompt v1.2 a la arquitectura v2. |
 | 2.1 | 2026-07-13 | Claude Fable 5 (Product-Builder) | Wrapper nativo `.claude/agents/product-management.md` para descubrimiento y delegación automática de Claude Code (fuente única sigue en `agents/product-management.md`). |
+| 2.2 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Rutas de instancia explícitas `p60/…` (layout único, `p60-cli.spec` 0.2). |
