@@ -1,7 +1,7 @@
 ---
 component: context-repo
 type: template
-version: 2.0
+version: 2.1
 status: draft
 agent_role: architect
 last_sync: 2026-10-19
@@ -17,8 +17,8 @@ Definir la estructura canónica y los archivos semilla del context repo de un pr
 
 ## Contrato
 - **Input (de `p60 init`):** carpeta destino (vacía o existente, con o sin git), nombre del producto (kebab-case, por defecto el de la carpeta), escala (pb/triada/squad), idioma (`es` | `en` | `pt` — pt-BR), herramientas (`--tools`, v1: `claude`).
-- **Output:** la carpeta queda como context repo: esqueleto completo de carpetas (README del template = fuente de la estructura), semillas con placeholders resueltos (`[PRODUCTO]`, `[FECHA]`), OST semilla, núcleo del framework vendorizado en `.p60/` (versión, config, manifiesto) y capa agéntica generada por el adaptador de cada herramienta (para `claude`: `.claude/agents/` con rutas relativas a `.p60/agents/`, `.claude/skills/` como copias, hook fusionado en `.claude/settings.json`). Layout detallado en `tools/_specs/p60-cli.spec.md`.
-- **Invariantes:** el context repo es **autocontenido** (sin rutas absolutas ni symlinks hacia fuera; funciona clonado en cualquier máquina); el framework se **vendoriza** en `.p60/` y se actualiza solo con `p60 update`; los archivos existentes del equipo nunca se reemplazan (bloques con marcadores o merge); `git init` solo si no había repo; los placeholders no sobreviven a la instanciación.
+- **Output:** la carpeta queda como context repo: esqueleto completo de carpetas (README del template = fuente de la estructura), semillas con placeholders resueltos (`[PRODUCTO]`, `[FECHA]`), OST semilla, todo dentro de una carpeta visible `p60/`, con el núcleo del framework vendorizado en `p60/_framework/` (versión, config, manifiesto), y capa agéntica generada en la raíz por el adaptador de cada herramienta (para `claude`: `.claude/agents/` con rutas relativas a `p60/_framework/agents/`, `.claude/skills/` como copias, hook fusionado en `.claude/settings.json`). Layout detallado en `tools/_specs/p60-cli.spec.md`.
+- **Invariantes:** el context repo es **autocontenido** (sin rutas absolutas ni symlinks hacia fuera; funciona clonado en cualquier máquina); el framework se **vendoriza** en `p60/_framework/` y se actualiza solo con `p60 update`; los archivos existentes del equipo nunca se reemplazan (bloques con marcadores o merge); `git init` solo si no había repo; los placeholders no sobreviven a la instanciación.
 
 ## Archivos semilla del conjunto
 | Semilla | Rol |
@@ -41,7 +41,7 @@ Definir la estructura canónica y los archivos semilla del context repo de un pr
 
 ## Decisiones (ADR inline)
 - **CLI liviano + skill de fundación** (en vez de wizard monolítico): el CLI crea estructura (determinístico → código); la entrevista de fundación es juicio/síntesis (→ skill agent-driven). Es la doctrina latent/deterministic aplicada al onboarding.
-- ~~**Skills por symlink, agentes por copia parametrizada**~~ *(reemplazada en 2.0)*. El symlink y la ruta absoluta ataban el repo al disco de quien lo creó: compartirlo por git dejaba skills y agentes rotos (contradice el principio 3). **Ahora:** todo se copia (vendorizado en `.p60/` + adaptador), con manifiesto de hashes; las mejoras del framework llegan con `p60 update`, que muestra el plan y no pisa ediciones locales.
+- ~~**Skills por symlink, agentes por copia parametrizada**~~ *(reemplazada en 2.0)*. El symlink y la ruta absoluta ataban el repo al disco de quien lo creó: compartirlo por git dejaba skills y agentes rotos (contradice el principio 3). **Ahora:** todo se copia (vendorizado en `p60/_framework/` + adaptador), con manifiesto de hashes; las mejoras del framework llegan con `p60 update`, que muestra el plan y no pisa ediciones locales.
 
 - **Carpetas canónicas, contenido localizado:** traducir nombres de carpeta rompería los `requires_context` de los skills y las referencias del framework. Es el principio i18n del guide ("se localiza sin tocar la lógica del pipeline") hecho regla verificable.
 
@@ -51,3 +51,4 @@ Definir la estructura canónica y los archivos semilla del context repo de un pr
 | 1.0 | 2026-07-14 | Claude Fable 5 (Product-Builder) | Creación — template completado (semillas) + contrato de `p60 init`. |
 | 1.1 | 2026-07-14 | Claude Fable 5 (Product-Builder) | i18n operativo: árboles `en/` y `pt/` (pt-BR) completos; `p60 init --lang es\|en\|pt` con OST semilla y mensajes localizados; regla carpetas-canónicas/contenido-localizado. |
 | 2.0 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Draft del contrato portable: init sobre la carpeta actual (vacía o existente), git condicional, framework vendorizado en `.p60/` con manifiesto, adaptadores por herramienta, fin de symlinks y rutas absolutas. Pendiente de implementación. |
+| 2.1 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Layout: todo el contexto y el framework dentro de `p60/` (visible); framework en `p60/_framework/`. Fuera solo `.claude/` y un bloque en `CLAUDE.md` de la raíz. |

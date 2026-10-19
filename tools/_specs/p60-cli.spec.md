@@ -1,7 +1,7 @@
 ---
 component: p60-cli
 type: tool
-version: 0.1
+version: 0.2
 status: draft
 agent_role: architect
 last_sync: 2026-10-19
@@ -42,29 +42,38 @@ Instalar, instanciar y actualizar P60 de forma determinística: dejar el framewo
 
 ### Layout que produce `init`
 
+Todo P60 vive en **una carpeta visible `p60/`** dentro de RUTA. Es el mismo layout para un context repo dedicado y (si se habilita, ver Pendientes) para un codebase. Lo único fuera de `p60/` es lo que la herramienta exige en la raíz.
+
 ```
 <RUTA>/
-├── CLAUDE.md · README.md · framework.md     ← del equipo (semillas localizadas)
-├── contexto/ shape/ ideate/ validate/ handoff-delivery/ experimentacion/
-├── bitacora/ presentaciones/ _historia/ legacy/
-├── .p60/                                    ← gestionado por p60
-│   ├── VERSION                              ← versión del framework instalada
-│   ├── config.yaml                          ← producto, escala, lang, tools, installed_at, updated_at
-│   ├── manifest.json                        ← archivos gestionados + sha256
-│   ├── memory/constitution.md
-│   ├── registry/agents.yaml                 ← rutas reescritas a .p60/agents/
-│   ├── agents/<id>.md                       ← prompts canónicos
-│   ├── templates/artifacts/<lang>/
-│   ├── hooks/gate-zonas.sh
-│   ├── skills-index.md                      ← índice de skills con rutas del adaptador
-│   └── docs/  (P60-Framework-Guide.md, arranque-rapido.md, adr/)
-└── .claude/                                 ← adaptador `claude`
-    ├── settings.json                        ← hook gate-zonas fusionado
-    ├── agents/<id>.md                       ← wrappers → .p60/agents/<id>.md
-    └── skills/<skill>/                      ← copia completa del skill
+├── CLAUDE.md                                ← si existe, se le agrega un bloque mínimo que apunta a p60/CLAUDE.md; si no, se crea con ese bloque
+├── .claude/                                 ← adaptador `claude` (Claude Code solo lo busca en la raíz)
+│   ├── settings.json                        ← hook gate-zonas fusionado
+│   ├── agents/<id>.md                       ← wrappers → p60/_framework/agents/<id>.md
+│   └── skills/<skill>/                      ← copia completa del skill
+└── p60/
+    ├── CLAUDE.md · README.md · framework.md ← del equipo (semillas localizadas)
+    ├── contexto/ shape/ ideate/ validate/ handoff-delivery/ experimentacion/
+    ├── bitacora/ presentaciones/ _historia/ legacy/
+    └── _framework/                          ← gestionado por p60 (no se edita a mano)
+        ├── VERSION                          ← versión del framework instalada
+        ├── config.yaml                      ← producto, escala, lang, tools, installed_at, updated_at
+        ├── manifest.json                    ← archivos gestionados + sha256 (incluye los de .claude/)
+        ├── memory/constitution.md
+        ├── registry/agents.yaml             ← rutas reescritas a p60/_framework/agents/
+        ├── agents/<id>.md                   ← prompts canónicos
+        ├── templates/artifacts/<lang>/
+        ├── hooks/gate-zonas.sh
+        ├── skills-index.md                  ← índice de skills con rutas del adaptador
+        └── docs/  (P60-Framework-Guide.md, arranque-rapido.md, adr/)
 ```
 
-**Fuera del context repo:** skills fuente, `_standards/`, specs de componentes, `tools/p60`, `p60-lint.sh`. Viven en la instalación global; el context repo trae solo lo que el agente lee en operación.
+- **`p60/` visible, no oculta:** es el trabajo del equipo (OST, PRDs, evidencia). Una carpeta con punto no se ve en Finder ni en muchos editores, y varias herramientas de búsqueda la omiten por defecto.
+- **`_framework/` con guion bajo:** sigue la convención P60 de carpetas de sistema (`_inbox`, `_historia`, `_retro`): visible, primera en la lista, no se edita.
+- **Rutas en skills y templates:** explícitas desde la raíz (`p60/contexto/evidencia/…`), no relativas a una convención.
+- **Abrir la herramienta desde RUTA** (la raíz), no desde `p60/`. `doctor` lo verifica.
+
+**Fuera de la instancia:** skills fuente, `_standards/`, specs de componentes, `tools/p60`, `p60-lint.sh`. Viven en la instalación global; la instancia trae solo lo que el agente lee en operación.
 
 ### Instalación global
 
@@ -79,7 +88,7 @@ Instalar, instanciar y actualizar P60 de forma determinística: dejar el framewo
 {
   "framework_version": "2.1.0",
   "tools": ["claude"],
-  "files": { ".p60/agents/product-builder.md": "sha256:…", ".claude/skills/ost-facilitator/SKILL.md": "sha256:…" },
+  "files": { "p60/_framework/agents/product-builder.md": "sha256:…", ".claude/skills/ost-facilitator/SKILL.md": "sha256:…" },
   "merged": {
     ".claude/settings.json": { "hooks.PreToolUse": "gate-zonas" },
     "CLAUDE.md": { "block": "P60", "sha256": "…" }
@@ -105,29 +114,34 @@ Al final reescribe `VERSION`, `manifest.json` y `config.yaml` (`updated_at`). Si
 
 ### Interfaz de adaptador (multi-herramienta)
 
-Cada herramienta es un adaptador con tres funciones: `plan` (qué crearía o fusionaría y qué colisiones hay), `install` (escribe y registra en el manifiesto) y `capabilities` (qué guardarraíles soporta). Por ejemplo, `claude` tiene hooks nativos y otra herramienta puede tener `hooks: textual`, donde la puerta humana queda como instrucción escrita. El núcleo (`.p60/`, semillas, git) no conoce ninguna herramienta. v1: solo `adapter_claude`.
+Cada herramienta es un adaptador con tres funciones: `plan` (qué crearía o fusionaría y qué colisiones hay), `install` (escribe y registra en el manifiesto) y `capabilities` (qué guardarraíles soporta). Por ejemplo, `claude` tiene hooks nativos y otra herramienta puede tener `hooks: textual`, donde la puerta humana queda como instrucción escrita. El núcleo (`p60/`, semillas, git) no conoce ninguna herramienta. v1: solo `adapter_claude`.
 
 ### Invariantes
 
 1. **Autocontenido:** ningún archivo del context repo contiene rutas absolutas ni symlinks hacia fuera del repo.
-2. **No destructivo:** `init` nunca reemplaza un archivo existente del equipo. `CLAUDE.md` y `README.md` existentes reciben un bloque `<!-- P60:BEGIN -->…<!-- P60:END -->`. `settings.json` se fusiona como JSON, sin sobrescribir.
-3. **Colisiones:** agente o skill con el mismo nombre, hook ya registrado o `.p60/` existente → se listan en el plan. En modo interactivo se pregunta; con `--yes` o sin TTY, aborta (exit 2). Si `.p60/` ya existe, `init` se niega y sugiere `update`.
-4. **Git condicional:** si RUTA no está dentro de un repo git → `git init` + commit inicial. Si ya está en un repo → no commitea; informa qué agregó. Si RUTA está dentro de un repo *de código* (subcarpeta de otro repo), el plan lo advierte (ADR-001: el contexto va separado del código).
+2. **No destructivo:** `init` nunca reemplaza un archivo existente del equipo. Fuera de `p60/` solo se toca `CLAUDE.md` de la raíz (bloque `<!-- P60:BEGIN -->…<!-- P60:END -->` que apunta a `p60/CLAUDE.md`) y `.claude/`. El `README.md` de la raíz no se toca. `settings.json` se fusiona como JSON, sin sobrescribir.
+3. **Colisiones:** agente o skill con el mismo nombre, hook ya registrado o `p60/` existente → se listan en el plan. En modo interactivo se pregunta; con `--yes` o sin TTY, aborta (exit 2). Si `p60/_framework/` ya existe, `init` se niega y sugiere `update`.
+4. **Git condicional:** si RUTA no está dentro de un repo git → `git init` + commit inicial. Si ya está en un repo → no commitea; informa qué agregó. Si RUTA es o está dentro de un repo *de código*, el comportamiento depende de la decisión pendiente P1 (ver Pendientes).
 5. **Idempotencia:** re-ejecutar `init` o `update` sin cambios no modifica nada.
 6. **i18n:** todo mensaje nuevo existe en es/en/pt. Las carpetas no se traducen.
 7. **Sin privilegios:** nada usa sudo ni edita archivos de shell.
-8. **Placeholders:** `[PRODUCTO]` y `[FECHA]` se resuelven. `[RUTA_P60]` desaparece de los templates y se reemplaza por `.p60/` (rutas locales) y la URL del repo público (referencia).
+8. **Placeholders:** `[PRODUCTO]` y `[FECHA]` se resuelven. `[RUTA_P60]` desaparece de los templates y se reemplaza por `p60/_framework/` (rutas locales) y la URL del repo público (referencia).
 
 ### Códigos de salida
 `0` ok · `1` error · `2` requiere confirmación (colisión en modo no interactivo) · `3` prerequisito faltante.
+
+## Pendientes (decisión humana)
+
+- **P1 — P60 dentro de un codebase.** El principio 3 de la constitución dice "el contexto vive en un repo autocontenido, separado del código. Sin excepción de mono-repo". Mientras no se enmiende, `init` sobre un repo de código **avisa y se niega** (exit 2), con `--allow-codebase` reservado para cuando el principio lo permita. Si se enmienda: `init` avisa y continúa.
 
 ## Criterios de aceptación
 
 **Fase 1 — Portabilidad**
 - [ ] `p60 init demo --lang es|en|pt` → `grep -rI "$HOME" demo` vacío y `find demo -type l` vacío.
+- [ ] Fuera de `p60/`, `init` solo crea o modifica `CLAUDE.md` (bloque) y `.claude/`.
 - [ ] Borrar o mover `~/.p60` después de `init` no rompe el context repo (agentes, skills y hook operan).
 - [ ] Clonar el context repo en otra carpeta o máquina deja agentes, skills y hook operativos sin pasos extra.
-- [ ] El hook sigue pidiendo confirmación en `activas/`, `cerradas/`, `_historia/` y `.p60/memory/`.
+- [ ] El hook sigue pidiendo confirmación en `activas/`, `cerradas/`, `_historia/` y `p60/_framework/memory/`.
 
 **Fase 2 — Carpeta existente + adaptador**
 - [ ] Carpeta con git y `CLAUDE.md` propio → `git status` muestra solo adiciones más el bloque P60; no hay commit nuevo.
@@ -159,10 +173,11 @@ Cada herramienta es un adaptador con tres funciones: `plan` (qué crearía o fus
 - **CLI solo global; el repo registra la versión.** Una copia del CLI dentro de cada repo agregaba un segundo lugar que se desincroniza. El trabajo diario no necesita el CLI (solo Claude Code); solo `init` y `update` lo requieren.
 - **La carpeta es el context repo** (no `<producto>-context` creado al lado). Coincide con cómo se trabaja en la práctica (crear la carpeta y abrir la herramienta) y habilita instalar sobre una carpeta que ya existe.
 - **Sin prefijo en agentes y skills.** La carpeta es dedicada al producto, así que las colisiones son raras y se resuelven en el plan. El prefijo obligaba a renombrar referencias en el registry y los skills sin un beneficio práctico.
-- **Skills solo en la carpeta de la herramienta** (no también en `.p60/skills/`): evita duplicar. La fuente para generar adaptadores futuros es la instalación global, no el context repo.
+- **Skills solo en la carpeta de la herramienta** (no también en `p60/_framework/skills/`): evita duplicar. La fuente para generar adaptadores futuros es la instalación global, no el context repo.
 - **`--dry-run` como base de la puerta humana del instalador:** el agente de `install.md` nunca escribe archivos; muestra el plan del CLI, pide confirmación y ejecuta.
 
 ## Changelog
 | Version | Date | Author | Description |
 |---------|------|--------|-------------|
 | 0.1 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Creación (draft). Contrato v2 del CLI: instalación global, init sobre carpeta existente, vendorizado en `.p60/`, manifiesto, update, adaptadores multi-herramienta. Decisiones D1–D6 de Guille Becerra O. |
+| 0.2 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Layout: todo dentro de una carpeta visible `p60/` (framework en `p60/_framework/`); fuera solo `.claude/` y un bloque en `CLAUDE.md`. Rutas explícitas `p60/…` en skills. Pendiente P1 (codebase vs. principio 3). |
