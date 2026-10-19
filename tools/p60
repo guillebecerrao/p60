@@ -10,10 +10,15 @@
 #           de la herramienta en RUTA/.claude/. Si ya hay git, no commitea; si no, lo
 #           inicializa. Nunca reemplaza archivos existentes sin preguntar.
 #           --dry-run muestra el plan sin escribir · --yes acepta el plan sin preguntar.
-#   p60 skills      Lista los skills disponibles (índice del framework).
+#   p60 update [RUTA] [--dry-run] [--yes]
+#           Lleva una instancia a la versión del framework de este CLI. Muestra el plan
+#           antes de aplicar; no pisa archivos que editaste (pregunta, o deja .p60-new)
+#           y nunca borra sin confirmación. No commitea.
+#   p60 skills      Lista los skills disponibles (de la instancia si estás en una).
 #   p60 agents      Lista los perfiles expertos y cuándo se activan.
 #   p60 lint        Verifica la integridad del repo del framework.
-#   p60 doctor      Chequea prerequisitos del entorno (git, python3, Claude Code).
+#   p60 doctor      Prerequisitos (git, python3, Claude Code) y, dentro de una instancia,
+#                   versión, archivos gestionados editados y estado del hook.
 #   p60 version     Versión del framework que trae este CLI.
 #   p60 help        Esta ayuda.
 #
@@ -42,18 +47,23 @@ cmd_doctor() {
   done
   command -v claude >/dev/null && say "OK    claude (Claude Code CLI)" || say "WARN  Claude Code CLI no encontrado — el framework se opera con Claude Code"
   [ -f "$P60_ROOT/.p60/memory/constitution.md" ] && say "OK    framework P60 $P60_VERSION en $P60_ROOT" || { say "FAIL  no encuentro el framework en $P60_ROOT"; fallos=1; }
+  local root; if root=$(instancia_raiz .); then doctor_instancia "$root" || fallos=1; fi
   exit "$fallos"
 }
 
 cmd_skills() {
-  titulo "Skills P60 (fuente: skills/_index.md)"
-  grep '^|' "$P60_ROOT/skills/_index.md" | sed 's/](.*SKILL\.md)//; s/\[//' | column -t -s'|' | sed 's/^ *//'
+  local idx="$P60_ROOT/skills/_index.md" root
+  root=$(instancia_raiz .) && idx="$root/p60/_framework/skills-index.md"
+  titulo "Skills P60 (fuente: $idx)"
+  grep '^|' "$idx" | sed 's/](.*SKILL\.md)//; s/\[//' | column -t -s'|' | sed 's/^ *//'
 }
 
 cmd_agents() {
-  titulo "Agentes P60 (fuente: .p60/registry/agents.yaml)"
+  local reg="$P60_ROOT/.p60/registry/agents.yaml" root
+  root=$(instancia_raiz .) && reg="$root/p60/_framework/registry/agents.yaml"
+  titulo "Agentes P60 (fuente: $reg)"
   awk '/- id:/{id=$3} /role:/{role=$2} /activate_when:/{sub(/.*activate_when: /,""); gsub(/"/,""); printf "  %-26s %-7s %s\n", id, role, $0}' \
-    "$P60_ROOT/.p60/registry/agents.yaml"
+    "$reg"
 }
 
 cmd_lint() { exec "$P60_ROOT/tools/p60-lint.sh" "$P60_ROOT"; }
@@ -134,6 +144,84 @@ m() {
                    ;;
     *:codebase)    f="  ! Esto parece un repositorio de código (%s). Funciona: todo queda en p60/, aparte del código.\n    Sugerencia: para un producto que va a crecer o un equipo que comparte contexto, conviene un repo separado (principio 3 de P60)."
                    ;;
+    en:u_notinst)  f="I can't find a P60 installation here (p60/_framework/manifest.json is missing). To install: p60 init";;
+    pt:u_notinst)  f="Não encontro uma instalação do P60 aqui (falta p60/_framework/manifest.json). Para instalar: p60 init";;
+    *:u_notinst)   f="No encuentro una instalación de P60 aquí (falta p60/_framework/manifest.json). Para instalar: p60 init";;
+    en:u_title)    f="p60 update — %s: v%s → v%s";;
+    pt:u_title)    f="p60 update — %s: v%s → v%s";;
+    *:u_title)     f="p60 update — %s: v%s → v%s";;
+    en:u_uptodate) f="You're up to date (v%s). Nothing to change.";;
+    pt:u_uptodate) f="Você está em dia (v%s). Nada a mudar.";;
+    *:u_uptodate)  f="Ya estás al día (v%s). No hay nada que cambiar.";;
+    en:h_replace)  f="Updated (you hadn't changed them):";;
+    pt:h_replace)  f="Atualizados (você não os tinha mudado):";;
+    *:h_replace)   f="Se actualizan (no los habías cambiado):";;
+    en:h_add)      f="Added or restored (new in the framework, or missing here):";;
+    pt:h_add)      f="Adicionados ou restaurados (novos no framework, ou faltando aqui):";;
+    *:h_add)       f="Se agregan o restauran (nuevos en el framework, o faltaban aquí):";;
+    en:h_keep)     f="Your changes stay (the framework didn't change these):";;
+    pt:h_keep)     f="Suas mudanças ficam (o framework não mudou estes):";;
+    *:h_keep)      f="Se mantienen tus cambios (el framework no cambió estos):";;
+    en:h_conflict) f="Conflicts (you edited them and the framework changed them too):";;
+    pt:h_conflict) f="Conflitos (você os editou e o framework também mudou):";;
+    *:h_conflict)  f="Conflictos (los editaste y el framework también los cambió):";;
+    en:h_collide)  f="New in the framework, but you already have a file with that name:";;
+    pt:h_collide)  f="Novos no framework, mas você já tem um arquivo com esse nome:";;
+    *:h_collide)   f="Nuevos en el framework, pero ya tienes un archivo con ese nombre:";;
+    en:h_gone)     f="No longer in the framework (I'll ask before deleting each one):";;
+    pt:h_gone)     f="Não existem mais no framework (pergunto antes de apagar cada um):";;
+    *:h_gone)      f="Ya no existen en el framework (pregunto antes de borrar cada uno):";;
+    en:u_ask)      f="Apply this plan? [Y/n] ";;
+    pt:u_ask)      f="Aplicar este plano? [S/n] ";;
+    *:u_ask)       f="¿Aplicar este plan? [S/n] ";;
+    en:u_needyes)  f="No terminal to confirm. Review the plan with --dry-run and apply it with --yes.";;
+    pt:u_needyes)  f="Sem terminal para confirmar. Revise o plano com --dry-run e aplique com --yes.";;
+    *:u_needyes)   f="No hay terminal para confirmar. Revisa el plan con --dry-run y aplícalo con --yes.";;
+    en:u_conf_ask) f="%s — [k]eep yours · [t]ake the new one · [s]ave the new one as .p60-new (s): ";;
+    pt:u_conf_ask) f="%s — [m]anter o seu · [p]egar o novo · [g]uardar o novo como .p60-new (g): ";;
+    *:u_conf_ask)  f="%s — [m]antener el tuyo · [t]omar el nuevo · [g]uardar el nuevo como .p60-new (g): ";;
+    en:u_conf_yes) f="  %s: kept yours; the new version is in %s.p60-new";;
+    pt:u_conf_yes) f="  %s: mantido o seu; a versão nova está em %s.p60-new";;
+    *:u_conf_yes)  f="  %s: se mantuvo el tuyo; la versión nueva quedó en %s.p60-new";;
+    en:u_del_ask)  f="Delete %s? [y/N] ";;
+    pt:u_del_ask)  f="Apagar %s? [s/N] ";;
+    *:u_del_ask)   f="¿Borrar %s? [s/N] ";;
+    en:u_del_keep) f="  %s: kept (it's now a team file, p60 won't manage it)";;
+    pt:u_del_keep) f="  %s: mantido (agora é arquivo do time, o p60 não o gerencia)";;
+    *:u_del_keep)  f="  %s: se mantiene (pasa a ser archivo del equipo, p60 ya no lo gestiona)";;
+    en:u_done)     f="✓ P60 updated to v%s. Review with git status and commit when you're happy.";;
+    pt:u_done)     f="✓ P60 atualizado para v%s. Revise com git status e faça commit quando estiver tudo certo.";;
+    *:u_done)      f="✓ P60 actualizado a v%s. Revisa con git status y commitea cuando estés conforme.";;
+    en:d_inst)     f="P60 installation: %s";;
+    pt:d_inst)     f="Instalação P60: %s";;
+    *:d_inst)      f="Instalación P60: %s";;
+    en:d_ver_ok)   f="OK    version %s (same as this CLI)";;
+    pt:d_ver_ok)   f="OK    versão %s (igual a este CLI)";;
+    *:d_ver_ok)    f="OK    versión %s (igual a la de este CLI)";;
+    en:d_ver_old)  f="WARN  installed v%s · this CLI brings v%s → p60 update";;
+    pt:d_ver_old)  f="WARN  instalada v%s · este CLI traz v%s → p60 update";;
+    *:d_ver_old)   f="WARN  instalada v%s · este CLI trae v%s → p60 update";;
+    en:d_clean)    f="OK    managed files intact (%s)";;
+    pt:d_clean)    f="OK    arquivos gerenciados intactos (%s)";;
+    *:d_clean)     f="OK    archivos gestionados intactos (%s)";;
+    en:d_mod)      f="WARN  managed file edited locally: %s (update will ask before touching it)";;
+    pt:d_mod)      f="WARN  arquivo gerenciado editado localmente: %s (o update pergunta antes de mexer)";;
+    *:d_mod)       f="WARN  archivo gestionado editado localmente: %s (update preguntará antes de tocarlo)";;
+    en:d_miss)     f="FAIL  managed file missing: %s → p60 update restores it";;
+    pt:d_miss)     f="FAIL  falta arquivo gerenciado: %s → p60 update o restaura";;
+    *:d_miss)      f="FAIL  falta archivo gestionado: %s → p60 update lo restaura";;
+    en:d_hook_ok)  f="OK    gate-zonas hook registered and executable";;
+    pt:d_hook_ok)  f="OK    hook gate-zonas registrado e executável";;
+    *:d_hook_ok)   f="OK    hook gate-zonas registrado y ejecutable";;
+    en:d_hook_no)  f="FAIL  gate-zonas hook is not active (missing in .claude/settings.json or not executable) → p60 update";;
+    pt:d_hook_no)  f="FAIL  o hook gate-zonas não está ativo (falta em .claude/settings.json ou não é executável) → p60 update";;
+    *:d_hook_no)   f="FAIL  el hook gate-zonas no está activo (falta en .claude/settings.json o no es ejecutable) → p60 update";;
+    en:d_links)    f="WARN  symlinks inside the installation (the repo stops being portable): %s";;
+    pt:d_links)    f="WARN  symlinks dentro da instalação (o repo deixa de ser portável): %s";;
+    *:d_links)     f="WARN  hay symlinks en la instalación (el repo deja de ser portable): %s";;
+    en:d_sub)      f="WARN  you're in a subfolder: open Claude Code from %s so it finds .claude/";;
+    pt:d_sub)      f="WARN  você está numa subpasta: abra o Claude Code a partir de %s para ele achar o .claude/";;
+    *:d_sub)       f="WARN  estás en una subcarpeta: abre Claude Code desde %s para que encuentre .claude/";;
   esac
   # shellcheck disable=SC2059
   printf "$f\n" "$@"
@@ -220,14 +308,17 @@ def add_tree(rel):
     for d, _, fs in os.walk(base):
         for f in fs:
             p = os.path.join(d, f); r = os.path.relpath(p, root)
-            if r != 'p60/_framework/manifest.json': files[r] = sha(p)
+            if r not in ('p60/_framework/manifest.json', 'p60/_framework/config.yaml'): files[r] = sha(p)
 add_tree('p60/_framework')
 for a in agentes.split():
     r = f'.claude/agents/{a}.md'; files[r] = sha(os.path.join(root, r))
 for s in skills.split():
     add_tree(f'.claude/skills/{s}')
-cm = open(os.path.join(root, 'CLAUDE.md'), encoding='utf-8').read()
-blk = re.search(r'<!-- P60:BEGIN.*?<!-- P60:END -->', cm, re.S).group(0)
+cmp = os.path.join(root, 'CLAUDE.md')
+cm = open(cmp, encoding='utf-8').read() if os.path.exists(cmp) else ''
+mb = re.search(r'<!-- P60:BEGIN.*?<!-- P60:END -->', cm, re.S)
+blk = mb.group(0) if mb else ''
+
 man = {
     "framework_version": version,
     "tools": tools.split(','),
@@ -352,6 +443,219 @@ EOF
   esac
 }
 
+# Componentes que distribuye el framework de este CLI → globals AGENTES, SKILLS (ids separados por espacio).
+listar_componentes() {
+  AGENTES=""; SKILLS=""; local a s
+  for a in "$P60_ROOT"/.claude/agents/*.md; do AGENTES="$AGENTES $(basename "$a" .md)"; done
+  for s in "$P60_ROOT"/skills/*/; do s=$(basename "$s"); [ "$s" = "_standards" ] || SKILLS="$SKILLS $s"; done
+}
+
+# Escribe todo lo GESTIONADO por p60 bajo la raíz $1: p60/_framework/ (sin config ni manifiesto)
+# y la capa del adaptador claude (.claude/agents, .claude/skills). La usan init y update.
+generar_gestionados() { # $1=raíz destino  $2=lang
+  local root="$1" fw="$1/p60/_framework" a s f
+  listar_componentes
+  mkdir -p "$fw/memory" "$fw/registry" "$fw/agents" "$fw/hooks" "$fw/docs" "$fw/standards" "$fw/templates"
+  cp "$P60_ROOT/.p60/memory/constitution.md" "$fw/memory/"
+  cp "$P60_ROOT/.p60/registry/agents.yaml" "$fw/registry/"
+  cp "$P60_ROOT"/agents/*.md "$fw/agents/"
+  cp "$P60_ROOT/_standards/component-spec.md" "$fw/standards/"
+  cp -R "$P60_ROOT/templates/artifacts" "$fw/templates/"
+  cp "$P60_ROOT/tools/hooks/gate-zonas.sh" "$fw/hooks/"; chmod +x "$fw/hooks/gate-zonas.sh"
+  cp "$P60_ROOT/docs/P60-Framework-Guide.md" "$P60_ROOT/docs/arranque-rapido.md" "$fw/docs/"
+  cp -R "$P60_ROOT/docs/adr" "$fw/docs/"
+  sed -E 's#\]\(([a-z0-9-]+)/SKILL\.md\)#](../../.claude/skills/\1/SKILL.md)#' "$P60_ROOT/skills/_index.md" > "$fw/skills-index.md"
+  printf '%s\n' "$P60_VERSION" > "$fw/VERSION"
+  mkdir -p "$root/.claude/agents" "$root/.claude/skills"
+  for a in $AGENTES; do cp "$P60_ROOT/.claude/agents/$a.md" "$root/.claude/agents/$a.md"; done
+  for s in $SKILLS; do rm -rf "$root/.claude/skills/$s"; cp -R "$P60_ROOT/skills/$s" "$root/.claude/skills/$s"; done
+  find "$fw" "$root/.claude/skills" -name .DS_Store -delete 2>/dev/null || true
+  local md=()
+  while IFS= read -r f; do md+=("$f"); done < <(
+    find "$fw" "$root/.claude/skills" -type f \( -name '*.md' -o -name '*.yaml' \)
+    for a in $AGENTES; do echo "$root/.claude/agents/$a.md"; done
+  )
+  reescribir_instancia "${md[@]}"
+}
+
+escribir_config() { # $1=raíz $2=producto $3=escala $4=lang $5=tools $6=installed_at
+  cat > "$1/p60/_framework/config.yaml" <<EOF
+# Generado por p60 init. Lo actualiza p60 update.
+producto: $2
+escala: $3
+lang: $4
+tools: [$5]
+framework_version: $P60_VERSION
+framework_source: $P60_REPO_URL
+installed_at: $6
+updated_at: $HOY
+EOF
+}
+
+# Raíz de la instancia P60 que contiene a $1 (default: carpeta actual), o falla.
+instancia_raiz() {
+  local d; d=$(cd "${1:-.}" 2>/dev/null && pwd -P) || return 1
+  while :; do
+    [ -f "$d/p60/_framework/manifest.json" ] && { echo "$d"; return 0; }
+    [ "$d" = "/" ] && return 1
+    d=$(dirname "$d")
+  done
+}
+
+config_get() { # $1=raíz $2=clave
+  awk -v k="$2" -F': *' '$1==k{print $2; exit}' "$1/p60/_framework/config.yaml" | tr -d '[]'
+}
+
+cmd_update() {
+  local ruta="." dry=0 yes=0
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --dry-run) dry=1; shift;;
+      --yes|-y)  yes=1; shift;;
+      -*)        die "flag desconocido: $1";;
+      *)         ruta="$1"; shift;;
+    esac
+  done
+  LANG_P60=es
+  local root; root=$(instancia_raiz "$ruta") || { m u_notinst >&2; exit 1; }
+  LANG_P60=$(config_get "$root" lang); LANG_P60=${LANG_P60:-es}
+  local interactivo=0; [ -t 0 ] && [ "$yes" -eq 0 ] && interactivo=1
+  local inst_ver tools producto escala installed
+  inst_ver=$(cat "$root/p60/_framework/VERSION" 2>/dev/null || echo "?")
+  tools=$(config_get "$root" tools); tools=${tools:-claude}
+  producto=$(config_get "$root" producto); escala=$(config_get "$root" escala)
+  installed=$(config_get "$root" installed_at)
+
+  # Versión nueva generada aparte, con la misma función que init
+  local tmp; tmp=$(mktemp -d "${TMPDIR:-/tmp}/p60-update.XXXXXX")
+  trap "rm -rf '$tmp'" EXIT
+  generar_gestionados "$tmp" "$LANG_P60"
+  bloque_claude "$tmp/CLAUDE.md" "$P60_ROOT/templates/context-repo/$LANG_P60/root-claude-block.md"
+  escribir_manifiesto "$tmp" "$P60_VERSION" "$tools" "$AGENTES" "$SKILLS"
+
+  # Plan: compara manifiesto instalado (base) · disco (tuyo) · versión nueva
+  local plan="$tmp/plan.tsv"
+  python3 - "$root" "$tmp" > "$plan" <<'EOF'
+import hashlib, json, os, sys
+root, tmp = sys.argv[1:3]
+old = json.load(open(os.path.join(root, 'p60/_framework/manifest.json')))['files']
+new = json.load(open(os.path.join(tmp, 'p60/_framework/manifest.json')))['files']
+def disco(p):
+    f = os.path.join(root, p)
+    return 'sha256:' + hashlib.sha256(open(f, 'rb').read()).hexdigest() if os.path.isfile(f) else None
+for p in sorted(set(old) | set(new)):
+    o, n, d = old.get(p), new.get(p), disco(p)
+    if n and not o:
+        acc = 'add' if d is None else ('same' if d == n else 'collide')
+    elif o and not n:
+        acc = 'gone' if d is not None else 'same'
+    elif d == n:
+        acc = 'same'
+    elif d is None:
+        acc = 'add'              # gestionado y borrado localmente: se restaura
+    elif d == o:
+        acc = 'replace'          # sin cambios locales, cambió en el framework
+    elif n == o:
+        acc = 'keep'             # cambio local, el framework no lo tocó
+    else:
+        acc = 'conflict'         # cambió en los dos lados
+    if acc != 'same':
+        print(f'{acc}\t{p}')
+EOF
+
+  titulo "$(m u_title "$producto" "$inst_ver" "$P60_VERSION")"
+  if ! grep -qv '^keep	' "$plan"; then   # nada que aplicar (a lo sumo, tus cambios que se mantienen)
+    fusionar_settings "$root/.claude/settings.json"
+    m u_uptodate "$P60_VERSION"; exit 0
+  fi
+  local acc ruta_f
+  for acc in replace add keep conflict collide gone; do
+    grep -q "^$acc	" "$plan" || continue
+    say ""; m "h_$acc"
+    grep "^$acc	" "$plan" | cut -f2 | sed 's/^/  · /'
+  done
+  if [ "$dry" -eq 1 ]; then say ""; m dry; exit 0; fi
+
+  local resp=""
+  if [ "$interactivo" -eq 1 ]; then
+    say ""; read -r -p "$(m u_ask)" resp
+    case "$resp" in ""|s|S|y|Y|si|sí|yes) ;; *) m cancel; exit 0;; esac
+  elif [ "$yes" -eq 0 ]; then
+    say ""; m u_needyes >&2; exit 2
+  fi
+
+  say ""
+  while IFS='	' read -r acc ruta_f; do
+    case "$acc" in
+      replace|add)
+        mkdir -p "$(dirname "$root/$ruta_f")"; cp "$tmp/$ruta_f" "$root/$ruta_f";;
+      keep) ;;
+      conflict|collide)
+        resp="g"
+        if [ "$interactivo" -eq 1 ]; then
+          [ -f "$root/$ruta_f" ] && diff -u "$root/$ruta_f" "$tmp/$ruta_f" | head -40 || true
+          read -r -p "$(m u_conf_ask "$ruta_f")" resp </dev/tty; resp=${resp:-g}
+        fi
+        case "$resp" in
+          t|T|p|P) mkdir -p "$(dirname "$root/$ruta_f")"; cp "$tmp/$ruta_f" "$root/$ruta_f";;
+          m|M|k|K) ;;
+          *)       mkdir -p "$(dirname "$root/$ruta_f")"; cp "$tmp/$ruta_f" "$root/$ruta_f.p60-new"
+                   m u_conf_yes "$ruta_f" "$ruta_f";;
+        esac;;
+      gone)
+        resp="n"
+        [ "$interactivo" -eq 1 ] && { read -r -p "$(m u_del_ask "$ruta_f")" resp </dev/tty || true; }
+        case "$resp" in s|S|y|Y|si|sí|yes) rm -f "$root/$ruta_f";; *) m u_del_keep "$ruta_f";; esac;;
+    esac
+  done < "$plan"
+
+  # Fragmentos fusionados, manifiesto (base = versión nueva) y config
+  fusionar_settings "$root/.claude/settings.json"
+  bloque_claude "$root/CLAUDE.md" "$P60_ROOT/templates/context-repo/$LANG_P60/root-claude-block.md"
+  cp "$tmp/p60/_framework/manifest.json" "$root/p60/_framework/manifest.json"
+  escribir_config "$root" "$producto" "$escala" "$LANG_P60" "$tools" "${installed:-$HOY}"
+  say ""; m u_done "$P60_VERSION"
+}
+
+# Diagnóstico de una instancia (si la carpeta actual está dentro de una).
+doctor_instancia() { # $1=raíz → imprime checks; devuelve 1 si hay FAIL
+  local root="$1" fallos=0 iv
+  LANG_P60=$(config_get "$root" lang); LANG_P60=${LANG_P60:-es}
+  say ""; m d_inst "$root"
+  iv=$(cat "$root/p60/_framework/VERSION" 2>/dev/null || echo "?")
+  if [ "$iv" = "$P60_VERSION" ]; then m d_ver_ok "$iv"; else m d_ver_old "$iv" "$P60_VERSION"; fi
+  local estado
+  estado=$(python3 - "$root" <<'EOF'
+import hashlib, json, os, sys
+root = sys.argv[1]
+files = json.load(open(os.path.join(root, 'p60/_framework/manifest.json')))['files']
+for p, h in sorted(files.items()):
+    f = os.path.join(root, p)
+    if not os.path.isfile(f): print('miss\t' + p)
+    elif 'sha256:' + hashlib.sha256(open(f, 'rb').read()).hexdigest() != h: print('mod\t' + p)
+print('total\t%d' % len(files))
+EOF
+)
+  local acc ruta_f total=0 sucio=0
+  while IFS='	' read -r acc ruta_f; do
+    case "$acc" in
+      total) total="$ruta_f";;
+      mod)   m d_mod "$ruta_f"; sucio=1;;
+      miss)  m d_miss "$ruta_f"; sucio=1; fallos=1;;
+    esac
+  done <<< "$estado"
+  [ "$sucio" -eq 0 ] && m d_clean "$total"
+  if [ "$(estado_settings "$root/.claude/settings.json")" = "have" ] && [ -x "$root/p60/_framework/hooks/gate-zonas.sh" ]; then
+    m d_hook_ok
+  else
+    m d_hook_no; fallos=1
+  fi
+  local links; links=$(cd "$root" && find p60 .claude -type l 2>/dev/null | head -3 | tr '\n' ' ')
+  [ -n "$links" ] && m d_links "$links"
+  [ "$(pwd -P)" != "$root" ] && m d_sub "$root"
+  return "$fallos"
+}
+
 cmd_init() {
   local ruta="" producto="" escala="" lang="" tools="claude" dry=0 yes=0
   while [ $# -gt 0 ]; do
@@ -397,9 +701,8 @@ cmd_init() {
 
   # ── Pre-flight: qué se crea, qué se fusiona, qué choca ──
   [ -d "$abs/p60/_framework" ] && { m installed >&2; exit 2; }
-  local agentes="" skills="" a s colisiones=""
-  for a in "$P60_ROOT"/.claude/agents/*.md; do agentes="$agentes $(basename "$a" .md)"; done
-  for s in "$P60_ROOT"/skills/*/; do s=$(basename "$s"); [ "$s" = "_standards" ] || skills="$skills $s"; done
+  listar_componentes
+  local agentes="$AGENTES" skills="$SKILLS" a s colisiones=""
   [ -e "$abs/p60" ] && colisiones="$colisiones p60/"
   for a in $agentes; do [ -e "$abs/.claude/agents/$a.md" ] && colisiones="$colisiones .claude/agents/$a.md"; done
   for s in $skills; do [ -e "$abs/.claude/skills/$s" ] && colisiones="$colisiones .claude/skills/$s/"; done
@@ -474,48 +777,17 @@ cmd_init() {
   done
   ost_semilla "$producto" "$p/contexto/estrategia/ost.md"
 
-  # ── 3) Núcleo del framework vendorizado en p60/_framework/ ──
-  mkdir -p "$fw/memory" "$fw/registry" "$fw/agents" "$fw/hooks" "$fw/docs" "$fw/standards" "$fw/templates"
-  cp "$P60_ROOT/.p60/memory/constitution.md" "$fw/memory/"
-  cp "$P60_ROOT/.p60/registry/agents.yaml" "$fw/registry/"
-  cp "$P60_ROOT"/agents/*.md "$fw/agents/"
-  cp "$P60_ROOT/_standards/component-spec.md" "$fw/standards/"
-  cp -R "$P60_ROOT/templates/artifacts" "$fw/templates/"
-  cp "$P60_ROOT/tools/hooks/gate-zonas.sh" "$fw/hooks/"; chmod +x "$fw/hooks/gate-zonas.sh"
-  cp "$P60_ROOT/docs/P60-Framework-Guide.md" "$P60_ROOT/docs/arranque-rapido.md" "$fw/docs/"
-  cp -R "$P60_ROOT/docs/adr" "$fw/docs/"
-  sed -E 's#\]\(([a-z0-9-]+)/SKILL\.md\)#](../../.claude/skills/\1/SKILL.md)#' "$P60_ROOT/skills/_index.md" > "$fw/skills-index.md"
-  printf '%s\n' "$P60_VERSION" > "$fw/VERSION"
-  cat > "$fw/config.yaml" <<EOF
-# Generado por p60 init. Lo actualiza p60 update.
-producto: $producto
-escala: $escala
-lang: $lang
-tools: [$tools]
-framework_version: $P60_VERSION
-framework_source: $P60_REPO_URL
-installed_at: $HOY
-updated_at: $HOY
-EOF
-
-  # ── 4) Adaptador claude: agentes, skills, hook, bloque en CLAUDE.md ──
-  mkdir -p "$abs/.claude/agents" "$abs/.claude/skills"
-  for a in $agentes; do cp "$P60_ROOT/.claude/agents/$a.md" "$abs/.claude/agents/$a.md"; done
-  for s in $skills; do rm -rf "$abs/.claude/skills/$s"; cp -R "$P60_ROOT/skills/$s" "$abs/.claude/skills/$s"; done
-  find "$fw" "$abs/.claude/skills" -name .DS_Store -delete 2>/dev/null || true
-  local md=()
-  while IFS= read -r f; do md+=("$f"); done < <(
-    find "$fw" "$abs/.claude/skills" -type f \( -name '*.md' -o -name '*.yaml' \)
-    for a in $agentes; do echo "$abs/.claude/agents/$a.md"; done
-  )
-  reescribir_instancia "${md[@]}"
+  # ── 3) Framework vendorizado + adaptador (misma función que usa update) ──
+  generar_gestionados "$abs" "$lang"
+  escribir_config "$abs" "$producto" "$escala" "$lang" "$tools" "$HOY"
   fusionar_settings "$abs/.claude/settings.json"
   bloque_claude "$abs/CLAUDE.md" "$tpl/root-claude-block.md"
-  escribir_manifiesto "$abs" "$P60_VERSION" "$tools" "$agentes" "$skills"
+  escribir_manifiesto "$abs" "$P60_VERSION" "$tools" "$AGENTES" "$SKILLS"
 
-  # ── 5) Git: solo si no había repo ──
+  # ── 4) Git: solo si no había repo. El commit incluye solo lo que creó p60 ──
   if [ "$en_repo" -eq 0 ]; then
-    ( cd "$abs" && git init -q && git add -A && git commit -qm "p60 init — $producto (escala: $escala, lang: $lang, P60 v$P60_VERSION)" )
+    ( cd "$abs" && git init -q && git add p60 .claude CLAUDE.md \
+      && git commit -qm "p60 init — $producto (escala: $escala, lang: $lang, P60 v$P60_VERSION)" )
   fi
 
   proximos_pasos "$ruta"
@@ -523,6 +795,7 @@ EOF
 
 case "${1:-help}" in
   init)    shift; cmd_init "$@";;
+  update)  shift; cmd_update "$@";;
   skills)  cmd_skills;;
   agents)  cmd_agents;;
   lint)    cmd_lint;;

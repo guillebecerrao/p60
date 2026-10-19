@@ -1,7 +1,7 @@
 ---
 component: p60-cli
 type: tool
-version: 0.4
+version: 0.5
 status: draft
 agent_role: architect
 last_sync: 2026-10-19
@@ -22,7 +22,7 @@ Instalar, instanciar y actualizar P60 de forma determinística: dejar el framewo
 | Comando | Qué hace | Dónde corre |
 |---------|----------|-------------|
 | `p60 init [RUTA] [flags]` | Convierte RUTA (default `.`; se crea si no existe) en un context repo | cualquier carpeta |
-| `p60 update [--dry-run] [--yes]` | Lleva el context repo a la versión del framework que tiene el CLI instalado | dentro de un context repo |
+| `p60 update [RUTA] [--dry-run] [--yes]` | Lleva el context repo a la versión del framework que tiene el CLI instalado. Sin terminal exige `--yes` (exit 2) | dentro de un context repo (busca la raíz hacia arriba) |
 | `p60 self-update [--to vX.Y.Z]` | Actualiza la instalación global del CLI y el framework | cualquier lugar |
 | `p60 doctor` | Prerequisitos del entorno; dentro de un context repo, además: versión instalada vs. disponible, integridad del manifiesto, hook registrado | cualquier lugar |
 | `p60 skills` · `p60 agents` | Listan skills y agentes (del context repo si estás en uno; si no, del framework instalado) | cualquier lugar |
@@ -105,12 +105,14 @@ Para cada archivo, comparando el manifiesto instalado, el disco y la versión nu
 |-----------|--------|
 | Sin cambios locales, cambió en el framework | reemplaza |
 | Editado localmente, sin cambios en el framework | conserva y avisa |
-| Editado localmente y cambió en el framework | muestra diff y pregunta: mantener local / tomar nuevo / guardar el nuevo como `.p60-new` |
+| Editado localmente y cambió en el framework | muestra diff y pregunta: mantener local / tomar nuevo / guardar el nuevo como `.p60-new` (default; con `--yes` se aplica este) |
+| Gestionado y borrado localmente | se restaura |
+| Nuevo en el framework y ya existe un archivo tuyo con ese nombre | como conflicto: se pregunta; con `--yes`, el tuyo queda y el nuevo va a `.p60-new` |
 | Nuevo en el framework | agrega |
-| Eliminado del framework | propone borrar; no borra sin confirmación (`--yes` no alcanza) |
+| Eliminado del framework | propone borrar; no borra sin confirmación (`--yes` no alcanza). Si se mantiene, sale del manifiesto y pasa a ser del equipo |
 | Fragmento `merged` | reaplica solo el fragmento |
 
-Al final reescribe `VERSION`, `manifest.json` y `config.yaml` (`updated_at`). Siempre imprime el plan antes de aplicar; `--dry-run` solo imprime.
+Al final reescribe `VERSION`, `manifest.json` y `config.yaml` (`updated_at`). El manifiesto guarda siempre la versión **del framework** de cada archivo (la base), no la local, para que la próxima comparación sea correcta. Siempre imprime el plan antes de aplicar; `--dry-run` solo imprime. `update` no commitea. La versión nueva se genera en una carpeta temporal con la misma función que usa `init`.
 
 ### Interfaz de adaptador (multi-herramienta)
 
@@ -121,7 +123,7 @@ Cada herramienta es un adaptador con tres funciones: `plan` (qué crearía o fus
 1. **Autocontenido:** ningún archivo del context repo contiene rutas absolutas ni symlinks hacia fuera del repo.
 2. **No destructivo:** `init` nunca reemplaza un archivo existente del equipo. Fuera de `p60/` solo se toca `CLAUDE.md` de la raíz (bloque `<!-- P60:BEGIN -->…<!-- P60:END -->` que apunta a `p60/CLAUDE.md`) y `.claude/`. El `README.md` de la raíz no se toca. `settings.json` se fusiona como JSON, sin sobrescribir.
 3. **Colisiones:** agente o skill con el mismo nombre, hook ya registrado o `p60/` existente → se listan en el plan. En modo interactivo se pregunta; con `--yes` o sin TTY, aborta (exit 2). Si `p60/_framework/` ya existe, `init` se niega y sugiere `update`.
-4. **Git condicional:** si RUTA no está dentro de un repo git → `git init` + commit inicial. Si ya está en un repo → no commitea; informa qué agregó. Si RUTA es o está dentro de un repo *de código* (marcadores como `package.json`, `pyproject.toml`, `src/`), el plan muestra una advertencia con la sugerencia de usar un repo separado y la instalación continúa (constitución 2.3, principio 3).
+4. **Git condicional:** si RUTA no está dentro de un repo git → `git init` + commit inicial **solo con lo que creó p60** (`p60/`, `.claude/`, `CLAUDE.md`); los archivos previos quedan sin commitear. Si ya está en un repo → no commitea; informa qué agregó. Si RUTA es o está dentro de un repo *de código* (marcadores como `package.json`, `pyproject.toml`, `src/`), el plan muestra una advertencia con la sugerencia de usar un repo separado y la instalación continúa (constitución 2.3, principio 3).
 5. **Idempotencia:** re-ejecutar `init` o `update` sin cambios no modifica nada.
 6. **i18n:** todo mensaje nuevo existe en es/en/pt. Las carpetas no se traducen.
 7. **Sin privilegios:** nada usa sudo ni edita archivos de shell.
@@ -148,9 +150,9 @@ Cada herramienta es un adaptador con tres funciones: `plan` (qué crearía o fus
 - [x] Re-ejecutar `init` se niega y sugiere `update`.
 
 **Fase 3 — Update y doctor**
-- [ ] Los seis casos de la tabla de `update`, cada uno con un test.
-- [ ] `update` sin cambios disponibles → "ya estás al día", sin escrituras.
-- [ ] `doctor` dentro de un context repo reporta versión, archivos gestionados editados y estado del hook.
+- [x] Los seis casos de la tabla de `update`, cada uno con un test.
+- [x] `update` sin cambios disponibles → "ya estás al día", sin escrituras.
+- [x] `doctor` dentro de un context repo reporta versión, archivos gestionados editados y estado del hook.
 
 **Fase 4 — Distribución**
 - [ ] En una máquina limpia, `install.sh` deja `p60 version` funcionando sin sudo.
@@ -180,3 +182,4 @@ Cada herramienta es un adaptador con tres funciones: `plan` (qué crearía o fus
 | 0.2 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Layout: todo dentro de una carpeta visible `p60/` (framework en `p60/_framework/`); fuera solo `.claude/` y un bloque en `CLAUDE.md`. Rutas explícitas `p60/…` en skills. Pendiente P1 (codebase vs. principio 3). |
 | 0.3 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Implementadas fases 1 y 2 en `tools/p60` (init portable sobre carpeta nueva o existente, plan/`--dry-run`, colisiones, git condicional, manifiesto). Criterios verificados con pruebas en carpetas desechables y descubrimiento real en Claude Code. Pendiente: P1, fases 3–4, prueba del flujo interactivo de colisiones con terminal real. |
 | 0.4 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | P1 resuelto: `init` en un codebase advierte y sugiere repo separado, pero continúa (constitución 2.3). |
+| 0.5 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Fase 3 implementada: `p60 update` (plan, `--dry-run`, `--yes`, conflictos con `.p60-new`, restauración, borrado solo con confirmación) y `doctor` de instancia (versión, integridad, hook, subcarpeta). Commit de `init` limitado a lo que crea p60. Probado con un framework simulado v2.2.0. |

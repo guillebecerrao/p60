@@ -3,7 +3,7 @@ title: "P60 — Arranque rápido"
 subtitle: "De cero a primer ciclo, con ejemplos explícitos"
 author: Guille Becerra O
 created: 2026-07-14
-version: 1.1
+version: 1.2
 status: active
 audience: nuevo usuario de P60 (PM · Designer · Tech Lead · solo-builder)
 language: es
@@ -33,6 +33,14 @@ claude                                                  # ábrelo siempre desde 
 El contenido del repo se genera en el idioma elegido; los nombres de carpetas son estructura canónica del framework y no cambian entre idiomas.
 
 Esto convierte la carpeta en el **context repo**. Todo queda dentro de `p60/`: estructura completa, OST semilla, sistema de evidencia, bitácoras y una copia del framework en `p60/_framework/` (no se edita a mano). Afuera solo quedan `.claude/` (agentes, skills y guardarraíles que Claude Code necesita en la raíz) y un bloque en el `CLAUDE.md` de la raíz. El repo es autocontenido: quien lo clone lo tiene funcionando sin instalar nada más que Claude Code.
+
+**Actualizar P60 en un producto** (cuando sale una versión nueva del framework):
+
+```bash
+p60 update --dry-run    # muestra qué cambiaría, sin escribir
+p60 update              # aplica: actualiza lo que no tocaste, pregunta por lo que editaste, nunca borra sin confirmar
+p60 doctor              # versión instalada, archivos editados y estado de los guardarraíles
+```
 
 **Comandos útiles del CLI en cualquier momento:**
 
@@ -92,3 +100,4 @@ El agente prepara, recomienda y propaga; **tú decides**: (1) el outcome y la ap
 |---------|------|--------|-------------|
 | 1.0 | 2026-07-14 | Claude Fable 5 (Product-Builder) | Creación — guía de onboarding/capacitación con ejemplos explícitos y demo guiada. |
 | 1.1 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | `p60 init` sobre la carpeta actual (nueva o existente), todo dentro de `p60/`, plan previo y `--dry-run`. |
+| 1.2 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Cómo actualizar (`p60 update`, `doctor`) y uso dentro de un codebase. |
