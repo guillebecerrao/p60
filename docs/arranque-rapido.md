@@ -1,7 +1,7 @@
 ---
 title: "P60 — Arranque rápido"
 subtitle: "De cero a primer ciclo, con ejemplos explícitos"
-author: Guillermo Becerra
+author: Guille Becerra O
 created: 2026-07-14
 version: 1.0
 status: active

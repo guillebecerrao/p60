@@ -39,4 +39,4 @@ tools/p60 skills                # qué sabe hacer el agente
 
 **v2 · post-Fundación Estructural + mejoras Fable 5.** Pipeline de skills completo (Etapa 0 + 6 sub-procesos), agentes y skills nativos de Claude Code, sistema de evidencia EV-NNN, guardarraíles como hooks, `p60 init` operativo **en ES/EN/PT** (`--lang`; carpetas canónicas, contenido localizado), lint de integridad. Templates de artefactos y skills aún ES-first; packaging de distribución diferido. Próximo hito: **test-drive en producto real**.
 
-*Creado por Guillermo Becerra — MIRA Studio.*
+*Creado por Guille Becerra O — hello@guillebecerrao.cl*

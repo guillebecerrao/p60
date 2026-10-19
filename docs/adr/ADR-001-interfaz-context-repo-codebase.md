@@ -3,7 +3,7 @@ type: adr
 id: ADR-001
 status: accepted
 scope: framework
-decision_owner: Guillermo Becerra (Product Builder)
+decision_owner: Guille Becerra O (Product Builder)
 created: 2026-07-13
 last_modified: 2026-07-13
 supersedes: []

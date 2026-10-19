@@ -1,7 +1,7 @@
 ---
 title: "P60 — Framework Guide"
 subtitle: "AI-Native Spec-Driven Product Building"
-author: Guillermo Becerra
+author: Guille Becerra O
 created: 2026-07-08
 last_modified: 2026-07-14
 last_modified_by: Claude Fable 5 (Product-Builder)
