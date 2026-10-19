@@ -9,11 +9,15 @@
 #           repo: todo P60 queda en RUTA/p60/ (framework en p60/_framework/) y la capa
 #           de la herramienta en RUTA/.claude/. Si ya hay git, no commitea; si no, lo
 #           inicializa. Nunca reemplaza archivos existentes sin preguntar.
-#           --dry-run muestra el plan sin escribir · --yes acepta el plan sin preguntar.
+#           --dry-run muestra el plan sin escribir · --yes acepta el plan sin preguntar
+#           (salvo colisiones) · --overwrite reemplaza las colisiones listadas en el plan.
 #   p60 update [RUTA] [--dry-run] [--yes]
 #           Lleva una instancia a la versión del framework de este CLI. Muestra el plan
 #           antes de aplicar; no pisa archivos que editaste (pregunta, o deja .p60-new)
 #           y nunca borra sin confirmación. No commitea.
+#   p60 self-update [--to vX.Y.Z]
+#           Actualiza la instalación global del CLI (~/.p60). No toca ningún proyecto:
+#           después corre `p60 update` en cada producto.
 #   p60 skills      Lista los skills disponibles (de la instancia si estás en una).
 #   p60 agents      Lista los perfiles expertos y cuándo se activan.
 #   p60 lint        Verifica la integridad del repo del framework.
@@ -26,7 +30,12 @@
 # (patrón agent-driven). El CLI existe para instalar, actualizar, demos y scripting.
 
 set -euo pipefail
-P60_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+_src="${BASH_SOURCE[0]}"   # resolver symlinks: ~/.local/bin/p60 → ~/.p60/current → versions/<v>
+while [ -L "$_src" ]; do
+  _dir="$(cd -P "$(dirname "$_src")" && pwd)"; _src="$(readlink "$_src")"
+  case "$_src" in /*) ;; *) _src="$_dir/$_src";; esac
+done
+P60_ROOT="$(cd -P "$(dirname "$_src")/.." && pwd)"
 P60_REPO_URL="https://github.com/guillebecerrao/p60"
 P60_VERSION="$(cat "$P60_ROOT/VERSION" 2>/dev/null || echo dev)"
 TOOLS_SOPORTADAS="claude"
@@ -656,8 +665,28 @@ EOF
   return "$fallos"
 }
 
+# Actualiza la instalación global (~/.p60) reutilizando el install.sh de esta versión.
+cmd_self_update() {
+  local to=""
+  while [ $# -gt 0 ]; do
+    case "$1" in --to) to="$2"; shift 2;; *) die "flag desconocido: $1";; esac
+  done
+  case "$P60_ROOT" in
+    */versions/*) ;;
+    *) case "${LANG:-}" in
+         en*) die "this p60 runs from a clone ($P60_ROOT): update it with git pull";;
+         pt*) die "este p60 roda a partir de um clone ($P60_ROOT): atualize com git pull";;
+         *)   die "este p60 corre desde un clon ($P60_ROOT): actualízalo con git pull";;
+       esac;;
+  esac
+  local prefix bindir enlace
+  prefix=$(cd -P "$P60_ROOT/../.." && pwd)
+  enlace=$(command -v p60 || true); bindir=$(dirname "${enlace:-$HOME/.local/bin/p60}")
+  bash "$P60_ROOT/install.sh" --prefix "$prefix" --bin-dir "$bindir" ${to:+--version "$to"}
+}
+
 cmd_init() {
-  local ruta="" producto="" escala="" lang="" tools="claude" dry=0 yes=0
+  local ruta="" producto="" escala="" lang="" tools="claude" dry=0 yes=0 overwrite=0
   while [ $# -gt 0 ]; do
     case "$1" in
       --producto) producto="$2"; shift 2;;
@@ -666,6 +695,7 @@ cmd_init() {
       --tools)    tools="$2"; shift 2;;
       --dry-run)  dry=1; shift;;
       --yes|-y)   yes=1; shift;;
+      --overwrite) overwrite=1; shift;;
       --dir)      die "--dir ya no existe: usa 'p60 init RUTA' (la carpeta indicada es el context repo)";;
       -*)         die "flag desconocido: $1";;
       *)          [ -z "$ruta" ] || die "sobra un argumento: $1"; ruta="$1"; shift;;
@@ -742,7 +772,7 @@ cmd_init() {
 
   # ── Confirmaciones (puerta humana) ──
   local resp=""
-  if [ -n "$colisiones" ]; then
+  if [ -n "$colisiones" ] && [ "$overwrite" -eq 0 ]; then
     [ "$interactivo" -eq 1 ] || { say ""; m col_abort >&2; exit 2; }
     say ""; read -r -p "$(m col_ask)" resp
     case "$resp" in s|S|y|Y|si|sí|yes) ;; *) m cancel; exit 2;; esac
@@ -796,6 +826,7 @@ cmd_init() {
 case "${1:-help}" in
   init)    shift; cmd_init "$@";;
   update)  shift; cmd_update "$@";;
+  self-update) shift; cmd_self_update "$@";;
   skills)  cmd_skills;;
   agents)  cmd_agents;;
   lint)    cmd_lint;;

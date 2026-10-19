@@ -1,7 +1,7 @@
 ---
 component: p60-cli
 type: tool
-version: 0.5
+version: 0.6
 status: draft
 agent_role: architect
 last_sync: 2026-10-19
@@ -39,6 +39,7 @@ Instalar, instanciar y actualizar P60 de forma determinística: dejar el framewo
 | `--tools LISTA` | `claude` | lista separada por comas; v1 acepta solo `claude` (otro valor → error claro que lista los soportados) |
 | `--dry-run` | — | imprime el plan (crear / fusionar / colisiones) y sale sin escribir. Es lo que usa `install.md` para pedir confirmación |
 | `--yes` | — | no interactivo: acepta el plan, salvo colisiones (ver Invariantes) |
+| `--overwrite` | — | reemplaza las colisiones listadas en el plan. Lo usa `install.md` solo tras un sí explícito del usuario en el chat |
 
 ### Layout que produce `init`
 
@@ -80,7 +81,7 @@ Todo P60 vive en **una carpeta visible `p60/`** dentro de RUTA. Es el mismo layo
 - `~/.p60/versions/<versión>/`: árbol del framework de ese tag. `~/.p60/current` apunta a la versión activa.
 - `~/.local/bin/p60` → `~/.p60/current/tools/p60`. Si `~/.local/bin` no está en el PATH, el instalador lo dice y muestra la línea a agregar. No edita archivos de shell.
 - Fuente de releases: tags semver del repo `github.com/guillebecerrao/p60` (tarball `archive/refs/tags/vX.Y.Z.tar.gz`). El framework declara su versión en `VERSION` en la raíz.
-- Canales: `install.sh` (manual, vía `curl` a bash) e `install.md` (agent-driven, vía `curl` a `claude`). Los dos terminan en el mismo `~/.p60` y producen el mismo manifiesto. `install.md` además ofrece el modo "solo este proyecto": descarga temporal → `init` → limpieza, sin instalación global.
+- Canales (en la raíz del repo, cubiertos por esta spec): `install.sh` (manual, vía `curl` a bash; flags `--version`, `--prefix`, `--bin-dir`, `--tarball`) e `install.md` (agent-driven, vía `curl` a `claude`; el agente orquesta y confirma, el CLI escribe). La última versión se resuelve con la redirección de `releases/latest`, sin la API de GitHub. `p60 self-update` reutiliza el `install.sh` de la versión instalada; desde un clon se niega y sugiere `git pull`. `p60` resuelve symlinks para encontrar su framework. Los dos terminan en el mismo `~/.p60` y producen el mismo manifiesto. `install.md` además ofrece el modo "solo este proyecto": descarga temporal → `init` → limpieza, sin instalación global.
 
 ### `manifest.json`
 
@@ -155,7 +156,7 @@ Cada herramienta es un adaptador con tres funciones: `plan` (qué crearía o fus
 - [x] `doctor` dentro de un context repo reporta versión, archivos gestionados editados y estado del hook.
 
 **Fase 4 — Distribución**
-- [ ] En una máquina limpia, `install.sh` deja `p60 version` funcionando sin sudo.
+- [x] En una máquina limpia, `install.sh` deja `p60 version` funcionando sin sudo.
 - [ ] `install.md` (agent-driven) produce el mismo `manifest.json` que el camino manual.
 - [ ] `self-update --to vX.Y.Z` cambia `~/.p60/current` sin tocar ningún context repo.
 
@@ -183,3 +184,4 @@ Cada herramienta es un adaptador con tres funciones: `plan` (qué crearía o fus
 | 0.3 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Implementadas fases 1 y 2 en `tools/p60` (init portable sobre carpeta nueva o existente, plan/`--dry-run`, colisiones, git condicional, manifiesto). Criterios verificados con pruebas en carpetas desechables y descubrimiento real en Claude Code. Pendiente: P1, fases 3–4, prueba del flujo interactivo de colisiones con terminal real. |
 | 0.4 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | P1 resuelto: `init` en un codebase advierte y sugiere repo separado, pero continúa (constitución 2.3). |
 | 0.5 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Fase 3 implementada: `p60 update` (plan, `--dry-run`, `--yes`, conflictos con `.p60-new`, restauración, borrado solo con confirmación) y `doctor` de instancia (versión, integridad, hook, subcarpeta). Commit de `init` limitado a lo que crea p60. Probado con un framework simulado v2.2.0. |
+| 0.6 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Fase 4: `install.sh`, `install.md`, `self-update`, `--overwrite`, `docs/instalacion.md`, `CHANGELOG.md`, release v2.1.0. |

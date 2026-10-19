@@ -3,7 +3,7 @@ title: "P60 — Arranque rápido"
 subtitle: "De cero a primer ciclo, con ejemplos explícitos"
 author: Guille Becerra O
 created: 2026-07-14
-version: 1.2
+version: 1.3
 status: active
 audience: nuevo usuario de P60 (PM · Designer · Tech Lead · solo-builder)
 language: es
@@ -16,15 +16,15 @@ language: es
 ## 0. Prerequisitos
 
 ```bash
-git clone https://github.com/guillebecerrao/p60.git   # el instalador de un comando llega en la próxima versión
-p60/tools/p60 doctor        # git, python3, Claude Code
+curl -fsSL https://raw.githubusercontent.com/guillebecerrao/p60/main/install.sh | bash   # una vez por computador
+p60 doctor                  # git, python3, Claude Code
 ```
 
 ## 1. Instanciar el producto (2 minutos)
 
 ```bash
 mkdir mi-producto && cd mi-producto                    # o una carpeta que ya tengas (con o sin git)
-../p60/tools/p60 init --escala pb --lang es             # escala: pb|triada|squad · idioma: es|en|pt (pt-BR)
+p60 init --escala pb --lang es                          # escala: pb|triada|squad · idioma: es|en|pt (pt-BR)
 claude                                                  # ábrelo siempre desde esta carpeta (la raíz)
 ```
 
@@ -101,3 +101,4 @@ El agente prepara, recomienda y propaga; **tú decides**: (1) el outcome y la ap
 | 1.0 | 2026-07-14 | Claude Fable 5 (Product-Builder) | Creación — guía de onboarding/capacitación con ejemplos explícitos y demo guiada. |
 | 1.1 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | `p60 init` sobre la carpeta actual (nueva o existente), todo dentro de `p60/`, plan previo y `--dry-run`. |
 | 1.2 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Cómo actualizar (`p60 update`, `doctor`) y uso dentro de un codebase. |
+| 1.3 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Prerequisitos con el instalador de un comando (`install.sh`); detalle en `docs/instalacion.md`. |
