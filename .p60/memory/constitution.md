@@ -1,7 +1,7 @@
 ---
 title: "P60 — Constitución"
 type: constitution
-version: 2.3
+version: 2.4
 status: active
 last_sync: 2026-10-19
 ---
@@ -40,7 +40,7 @@ last_sync: 2026-10-19
 10. **Doble-gate de auto-modificación**: cualquier escritura del agente sobre memoria, skills o specs pasa por (a) escaneo de patrones peligrosos/inyección y (b) confirmación humana.
 11. **Analyze-gate antes de construir**: detectar inconsistencias y dependencias faltantes antes de cualquier paso que escriba código.
 12. Razonamiento visible para decisiones con trade-offs no obvios o irreversibles.
-13. **Integridad verificable**: `tools/p60-lint.sh` comprueba specs, índice, frontmatter y links; correrlo al cerrar un ciclo y antes de todo commit estructural.
+13. **Integridad verificable**: `p60 lint` comprueba la integridad. En un producto revisa los archivos gestionados, el hook, los links de `p60/` y el catálogo de evidencia; en el repo del framework (`p60 lint --framework`, o `tools/p60-lint.sh`) revisa specs, índice, frontmatter y links. Correrlo al cerrar un ciclo y antes de todo commit estructural.
 
 ## Referencias
 - Método completo: `docs/P60-Framework-Guide.md`
@@ -54,3 +54,4 @@ last_sync: 2026-10-19
 | 2.1 | 2026-07-13 | Claude Fable 5 (Product-Builder) | Pasada Fable 5 + input de Guillermo: puerta humana calibrada por contrato de mutabilidad (regla 2); checkpoints de juicio humano explícitos (nueva regla 3); evidencia catalogada EV-NNN (nueva regla 7); lint de integridad (nueva regla 13); retirado el tipo `procedure` (migró a skills en el origen del framework). |
 | 2.2 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Regla 1 incluye el tipo `tool` (CLI, scripts, hooks), alineado con `_standards/component-spec.md`. Aprobado por Guille Becerra O. |
 | 2.3 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Principio 3 enmendado: el contexto vive autocontenido en `p60/`; repo propio por defecto, dentro de un codebase como opción aceptada con advertencia. Decisión de Guille Becerra O. |
+| 2.4 | 2026-10-19 | Claude Opus 5.5 (Product-Builder) | Regla 13: `p60 lint` revisa el producto donde corre; `--framework` (o `tools/p60-lint.sh`) la fuente. Antes apuntaba a un script que no existe en los productos. Aprobado por Guille Becerra O. |
